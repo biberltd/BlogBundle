@@ -14,7 +14,7 @@
  * @description Model / Entity class.
  *
  */
-namespace BiberLtd\Core\Bundles\BlogBundle\Entity;
+namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
 use BiberLtd\Core\CoreEntity;
 
@@ -44,7 +44,7 @@ class BlogPostFieldContent extends CoreEntity
 
     /** 
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\MultiLanguageSupportBundle\Entity\Language")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language")
      * @ORM\JoinColumn(name="language", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $language;
@@ -52,7 +52,7 @@ class BlogPostFieldContent extends CoreEntity
     /** 
      * @ORM\Id
      * @ORM\ManyToOne(
-     *     targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPostField", 
+     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostField",
      *     inversedBy="blog_post_field_contents"
      * )
      * @ORM\JoinColumn(name="field", referencedColumnName="id", nullable=false, onDelete="CASCADE")
@@ -62,7 +62,7 @@ class BlogPostFieldContent extends CoreEntity
     /** 
      * @ORM\Id
      * @ORM\ManyToOne(
-     *     targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\Blog", 
+     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\Blog",
      *     inversedBy="blog_post_field_contents"
      * )
      * @ORM\JoinColumn(name="blog", referencedColumnName="id", nullable=false, onDelete="CASCADE")
@@ -72,7 +72,7 @@ class BlogPostFieldContent extends CoreEntity
     /** 
      * @ORM\Id
      * @ORM\ManyToOne(
-     *     targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPost", 
+     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost",
      *     inversedBy="blog_post_field_contents"
      * )
      * @ORM\JoinColumn(name="post", referencedColumnName="id", nullable=false, onDelete="CASCADE")

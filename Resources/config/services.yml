@@ -1,4 +1,4 @@
 services:
     blog.model:
-        class:        BiberLtd\Core\Bundles\BlogBundle\Services\BlogModel
+        class:        BiberLtd\Bundle\BlogBundle\Services\BlogModel
         arguments:    [@kernel, "default", "doctrine"]

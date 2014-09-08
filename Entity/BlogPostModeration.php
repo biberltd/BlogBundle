@@ -14,7 +14,7 @@
  * @description Model / Entity class.
  *
  */
-namespace BiberLtd\Core\Bundles\BlogBundle\Entity;
+namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
 use BiberLtd\Core\CoreEntity;
 
@@ -61,21 +61,21 @@ class BlogPostModeration extends CoreEntity
 
     /** 
      * @ORM\OneToMany(
-     *     targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPostModerationReply",
+     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostModerationReply",
      *     mappedBy="blog_post_moderation"
      * )
      */
     private $blog_post_moderation_replies;
 
     /** 
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\MemberManagementBundle\Entity\Member")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MemberManagementBundle\Entity\Member")
      * @ORM\JoinColumn(name="moderator", referencedColumnName="id", nullable=false, onDelete="RESTRICT")
      */
     private $member;
 
     /** 
      * @ORM\ManyToOne(
-     *     targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPost",
+     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost",
      *     inversedBy="blog_post_moderations"
      * )
      * @ORM\JoinColumn(name="post", referencedColumnName="id", nullable=false, onDelete="CASCADE")

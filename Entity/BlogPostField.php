@@ -14,7 +14,7 @@
  * @description Model / Entity class.
  *
  */
-namespace BiberLtd\Core\Bundles\BlogBundle\Entity;
+namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
 use BiberLtd\Core\CoreEntity;
 
@@ -42,7 +42,7 @@ class BlogPostField extends CoreEntity
 
     /** 
      * @ORM\OneToMany(
-     *     targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPostFieldLocalization", 
+     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostFieldLocalization",
      *     mappedBy="blog_post_field"
      * )
      */
@@ -50,20 +50,20 @@ class BlogPostField extends CoreEntity
 
     /** 
      * @ORM\OneToMany(
-     *     targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPostFieldContent", 
+     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostFieldContent",
      *     mappedBy="blog_post_field"
      * )
      */
     private $blog_post_field_contents;
 
     /** 
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\Blog", inversedBy="blog_post_fields")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\Blog", inversedBy="blog_post_fields")
      * @ORM\JoinColumn(name="blog", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $blog;
 
     /** 
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\SiteManagementBundle\Entity\Site")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\SiteManagementBundle\Entity\Site")
      * @ORM\JoinColumn(name="site", referencedColumnName="id", onDelete="CASCADE")
      */
     private $site;

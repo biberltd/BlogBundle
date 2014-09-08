@@ -14,7 +14,7 @@
  * @description Model / Entity class.
  *
  */
-namespace BiberLtd\Core\Bundles\BlogBundle\Entity;
+namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
 use BiberLtd\Core\CoreEntity;
 
@@ -77,7 +77,7 @@ class BlogPostComment extends CoreEntity
 
     /** 
      * @ORM\OneToOne(
-     *     targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPostComment",
+     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment",
      *     inversedBy="blog_post_comment_parent"
      * )
      * @ORM\JoinColumn(name="parent", referencedColumnName="id", nullable=false, unique=true)
@@ -86,26 +86,26 @@ class BlogPostComment extends CoreEntity
 
     /** 
      * @ORM\OneToOne(
-     *     targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPostComment",
+     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment",
      *     mappedBy="blog_post_comment"
      * )
      */
     private $blog_post_comment_parent;
 
     /** 
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\SiteManagementBundle\Entity\Site")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\SiteManagementBundle\Entity\Site")
      * @ORM\JoinColumn(name="site", referencedColumnName="id", onDelete="CASCADE")
      */
     private $site;
 
     /** 
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\MemberManagementBundle\Entity\Member")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MemberManagementBundle\Entity\Member")
      * @ORM\JoinColumn(name="author", referencedColumnName="id", onDelete="SET NULL")
      */
     private $member;
 
     /** 
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPost", inversedBy="blog_post_comments")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost", inversedBy="blog_post_comments")
      */
     private $blog_post;
     /******************************************************************

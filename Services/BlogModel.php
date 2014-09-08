@@ -37,17 +37,17 @@
  * =============================================================================================================
  * TODOs:
  */
-namespace BiberLtd\Core\Bundles\BlogBundle\Services;
+namespace BiberLtd\Bundle\BlogBundle\Services;
 
 /** Extends CoreModel */
 use BiberLtd\Core\CoreModel;
 
 /** Entities to be used */
-use BiberLtd\Core\Bundles\BlogBundle\Entity as BundleEntity;
-use BiberLtd\Core\Bundles\FileManagementBundle\Entity as FileEntity;
+use BiberLtd\Bundle\BlogBundle\Entity as BundleEntity;
+use BiberLtd\Bundle\FileManagementBundle\Entity as FileEntity;
 
 /** Helper Models */
-use BiberLtd\Core\Bundles\SiteManagementBundle\Services as SMMService;
+use BiberLtd\Bundle\SiteManagementBundle\Services as SMMService;
 
 /** Core Service*/
 use BiberLtd\Core\Services as CoreServices;

@@ -14,7 +14,7 @@
  * @description Model / Entity class.
  *
  */
-namespace BiberLtd\Core\Bundles\BlogBundle\Entity;
+namespace BiberLtd\Bundle\BlogBundle\Entity;
 use BiberLtd\Core\CoreLocalizableEntity;
 use Doctrine\ORM\Mapping AS ORM;
 
@@ -92,25 +92,25 @@ class BlogPost extends CoreLocalizableEntity
     private $count_comment;
 
     /** 
-     * @ORM\OneToMany(targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPostModeration", mappedBy="blog_post")
+     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostModeration", mappedBy="blog_post")
      */
     private $blog_post_moderations;
 
     /** 
      * @ORM\OneToMany(
-     *     targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPostLocalization",
+     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostLocalization",
      *     mappedBy="blog_post"
      * )
      */
     protected $localizations;
 
     /** 
-     * @ORM\OneToMany(targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPostComment", mappedBy="blog_post")
+     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment", mappedBy="blog_post")
      */
     private $blog_post_comments;
 
     /** 
-     * @ORM\OneToMany(targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPostAction", mappedBy="blog_post")
+     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostAction", mappedBy="blog_post")
      */
     private $blog_post_actions;
 
@@ -120,25 +120,25 @@ class BlogPost extends CoreLocalizableEntity
     private $blog_post_field_contents;
 
     /** 
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\FileManagementBundle\Entity\File")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\FileManagementBundle\Entity\File")
      * @ORM\JoinColumn(name="preview_image", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $file;
 
     /** 
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\Blog", inversedBy="blog_posts")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\Blog", inversedBy="blog_posts")
      * @ORM\JoinColumn(name="blog", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $blog;
 
     /** 
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\SiteManagementBundle\Entity\Site")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\SiteManagementBundle\Entity\Site")
      * @ORM\JoinColumn(name="site", referencedColumnName="id", onDelete="CASCADE")
      */
     private $site;
 
     /** 
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\MemberManagementBundle\Entity\Member")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MemberManagementBundle\Entity\Member")
      * @ORM\JoinColumn(name="author", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $author;
