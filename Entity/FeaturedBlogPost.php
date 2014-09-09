@@ -1,7 +1,7 @@
 <?php
 /**
  * @name        FeaturedBlogPost
- * @package		BiberLtd\Core\BlogBundle
+ * @package		BiberLtd\Bundle\CoreBundle\BlogBundle
  *
  * @author		Murat Ünal
  *
@@ -14,9 +14,9 @@
  * @description Model / Entity class.
  *
  */
-namespace BiberLtd\Core\Bundles\BlogBundle\Entity;
+namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
-use BiberLtd\Core\CoreEntity;
+use BiberLtd\Bundle\CoreBundle\CoreEntity;
 
 /** 
  * @ORM\Entity
@@ -62,14 +62,14 @@ class FeaturedBlogPost extends CoreEntity
 
     /** 
      * @ORM\OneToMany(
-     *     targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\FeaturedBlogPostLocalization",
+     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPostLocalization",
      *     mappedBy="featured_blog_post"
      * )
      */
     protected $localizations;
 
     /** 
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPost")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost")
      * @ORM\JoinColumn(name="post", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $blog_post;

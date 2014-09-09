@@ -1,7 +1,7 @@
 <?php
 /**
  * @name        BlogPostCategory
- * @package		BiberLtd\Core\BlogBundle
+ * @package		BiberLtd\Bundle\CoreBundle\BlogBundle
  *
  * @author		Murat Ünal
  *
@@ -14,8 +14,8 @@
  * @description Model / Entity class.
  *
  */
-namespace BiberLtd\Core\Bundles\BlogBundle\Entity;
-use BiberLtd\Core\CoreLocalizableEntity;
+namespace BiberLtd\Bundle\BlogBundle\Entity;
+use BiberLtd\Bundle\CoreBundle\CoreLocalizableEntity;
 use Doctrine\ORM\Mapping AS ORM;
 
 /** 
@@ -43,39 +43,39 @@ class BlogPostCategory extends CoreLocalizableEntity
 
     /** 
      * @ORM\OneToMany(
-     *     targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogModerator",
+     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogModerator",
      *     mappedBy="blog_post_category"
      * )
      */
     private $blog_moderators;
 
     /** 
-     * @ORM\OneToMany(targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPostCategory", mappedBy="parents")
+     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory", mappedBy="parents")
      */
     private $children;
 
     /** 
      * @ORM\OneToMany(
-     *     targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPostCategoryLocalization",
+     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategoryLocalization",
      *     mappedBy="post_category"
      * )
      */
     protected $localizations;
 
     /** 
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\SiteManagementBundle\Entity\Site")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\SiteManagementBundle\Entity\Site")
      * @ORM\JoinColumn(name="site", referencedColumnName="id", onDelete="CASCADE")
      */
     private $site;
 
     /** 
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\Blog", inversedBy="blog_post_categories")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\Blog", inversedBy="blog_post_categories")
      * @ORM\JoinColumn(name="blog", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $blog;
 
     /** 
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPostCategory", inversedBy="children")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory", inversedBy="children")
      * @ORM\JoinColumn(name="parent", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $parents;

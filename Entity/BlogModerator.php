@@ -1,7 +1,7 @@
 <?php
 /**
  * @name        BlogModerator
- * @package		BiberLtd\Core\BlogBundle
+ * @package		BiberLtd\Bundle\CoreBundle\BlogBundle
  *
  * @author		Murat Ünal
  *
@@ -14,9 +14,9 @@
  * @description Model / Entity class.
  *
  */
-namespace BiberLtd\Core\Bundles\BlogBundle\Entity;
+namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
-use BiberLtd\Core\CoreEntity;
+use BiberLtd\Bundle\CoreBundle\CoreEntity;
 
 /** 
  * @ORM\Entity
@@ -36,21 +36,21 @@ class BlogModerator extends CoreEntity
 
     /** 
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\MemberManagementBundle\Entity\Member")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MemberManagementBundle\Entity\Member")
      * @ORM\JoinColumn(name="moderator", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $member;
 
     /** 
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\Blog", inversedBy="blog_moderators")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\Blog", inversedBy="blog_moderators")
      * @ORM\JoinColumn(name="blog", referencedColumnName="id", nullable=false)
      */
     private $blog;
 
     /** 
      * @ORM\ManyToOne(
-     *     targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPostCategory",
+     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory",
      *     inversedBy="blog_moderators"
      * )
      * @ORM\JoinColumn(name="category", referencedColumnName="id", nullable=false, onDelete="CASCADE")

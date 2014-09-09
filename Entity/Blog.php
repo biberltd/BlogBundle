@@ -1,7 +1,7 @@
 <?php
 /**
  * @name        Blog
- * @package		BiberLtd\Core\BlogBundle
+ * @package		BiberLtd\Bundle\CoreBundle\BlogBundle
  *
  * @author		Murat Ünal
  *
@@ -14,10 +14,10 @@
  * @description Model / Entity class.
  *
  */
-namespace BiberLtd\Core\Bundles\BlogBundle\Entity;
-use BiberLtd\Core\CoreLocalizableEntity;
+namespace BiberLtd\Bundle\BlogBundle\Entity;
+use BiberLtd\Bundle\CoreBundle\CoreLocalizableEntity;
 use Doctrine\ORM\Mapping AS ORM;
-use BiberLtd\Core\CoreEntity;
+use BiberLtd\Bundle\CoreBundle\CoreEntity;
 
 /** 
  * @ORM\Entity
@@ -56,27 +56,27 @@ class Blog extends CoreLocalizableEntity
     private $count_posts;
 
     /** 
-     * @ORM\OneToMany(targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPostTag", mappedBy="blog")
+     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag", mappedBy="blog")
      */
     private $blog_post_tags;
 
     /** 
-     * @ORM\OneToMany(targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogLocalization", mappedBy="blog")
+     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogLocalization", mappedBy="blog")
      */
     protected $localizations;
 
     /** 
-     * @ORM\OneToMany(targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogModerator", mappedBy="blog")
+     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogModerator", mappedBy="blog")
      */
     private $blog_moderators;
 
     /** 
-     * @ORM\OneToMany(targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPostCategory", mappedBy="blog")
+     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory", mappedBy="blog")
      */
     private $blog_post_categories;
 
     /** 
-     * @ORM\OneToMany(targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPost", mappedBy="blog")
+     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost", mappedBy="blog")
      */
     private $blog_posts;
 
@@ -91,7 +91,7 @@ class Blog extends CoreLocalizableEntity
     private $blog_post_field_contents;
 
     /** 
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\SiteManagementBundle\Entity\Site")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\SiteManagementBundle\Entity\Site")
      * @ORM\JoinColumn(name="site", referencedColumnName="id", onDelete="CASCADE")
      */
     private $site;

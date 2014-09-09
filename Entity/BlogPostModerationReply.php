@@ -1,7 +1,7 @@
 <?php
 /**
  * @name        BlogPostModerationReply
- * @package		BiberLtd\Core\BlogBundle
+ * @package		BiberLtd\Bundle\CoreBundle\BlogBundle
  *
  * @author		Murat Ünal
  *
@@ -14,9 +14,9 @@
  * @description Model / Entity class.
  *
  */
-namespace BiberLtd\Core\Bundles\BlogBundle\Entity;
+namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
-use BiberLtd\Core\CoreEntity;
+use BiberLtd\Bundle\CoreBundle\CoreEntity;
 
 /** 
  * @ORM\Entity
@@ -58,7 +58,7 @@ class BlogPostModerationReply extends CoreEntity
 
     /** 
      * @ORM\ManyToOne(
-     *     targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPostModeration",
+     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostModeration",
      *     inversedBy="blog_post_moderation_replies"
      * )
      * @ORM\JoinColumn(name="moderation", referencedColumnName="id", nullable=false)
@@ -66,7 +66,7 @@ class BlogPostModerationReply extends CoreEntity
     private $blog_post_moderation;
 
     /** 
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\MemberManagementBundle\Entity\Member")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MemberManagementBundle\Entity\Member")
      * @ORM\JoinColumn(name="author", referencedColumnName="id", nullable=false)
      */
     private $member;
