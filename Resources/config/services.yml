@@ -1,0 +1,7 @@
+parameters:
+#    biber_ltd_blog.example.class: BiberLtd\Bundle\BlogBundle\Example
+
+services:
+#    biber_ltd_blog.example:
+#        class: %biber_ltd_blog.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

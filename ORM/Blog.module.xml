@@ -1,0 +1,825 @@
+<?xml version="1.0"?>
+<skipper version="3.0.0.1104" mvc="Symfony2" orm="Doctrine2">
+  <module name="BlogBundle" import-format="Doctrine2Php" import-path="../Entity" uuid="1b76a8f1-70bf-4d0d-9efe-09cd274f555f">
+    <entity name="BlogPostModeration" description="Tracks blog post moderation activities." uuid="239c27b0-2883-46e8-bcbd-010fd9235aaf">
+      <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="ab3dd4a4-f67a-44b1-8e23-d35ef68d2aa2"/>
+      <field name="post" description="Moderated post." type="integer" size="10" required="true" uuid="14010aa3-c606-4015-be69-56683b9ac5ac"/>
+      <field name="moderator" description="The person who has moderated blog post." type="integer" size="10" required="true" uuid="76915630-ae85-4e91-ad81-29ced6fdfeaf"/>
+      <field name="comment" description="Comment about blog post if available." type="string" size="255" uuid="2737afd1-dac1-4543-8860-2f43bd29c622"/>
+      <field name="status" description="a:accepted;d:denied;c:change requested" type="string" size="1" default="a" required="true" uuid="92f3c558-8813-40f7-ba5d-82f7486e813f"/>
+      <field name="date_reviewed" description="Date of first review." type="datetime" uuid="dafc60d2-2e22-4674-9e45-459bf0f3134d"/>
+      <field name="date_updated" description="Date when the review is updated." type="datetime" uuid="b458fddf-1f86-482c-b3a8-6b31dc141110"/>
+      <index name="idx_u_blog_post_moderation_id" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idx_n_blog_post_moderation_date_reviewed">
+        <index-field name="date_reviewed"/>
+      </index>
+      <index name="idx_n_blog_post_moderation_date_updated">
+        <index-field name="date_updated"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_post_moderation</attribute>
+        <attribute name="export-file-name">BlogPostModeration.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="BlogPostModeration" to="Member" caption="idx_f_blog_post_moderation_moderator" inverse-alias="member" uuid="302e9a0d-c92f-47d9-bae9-4e4b20c56c65">
+      <association-field from="moderator" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">RESTRICT</attribute>
+      </orm-attributes>
+    </association>
+    <association from="BlogPostModeration" to="BlogPost" caption="idx_f_blog_post_moderation_post" owner-alias="blog_post_moderations" inverse-alias="blog_post" uuid="fbc3082b-9294-4f73-82ca-1e446236f969">
+      <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <entity name="BlogPostModerationReply" description="Stores a list of moderation related conversations.&#10;&#10;Requires: MemberManagementBundle" uuid="1421f0f1-e591-42f7-b63c-2a522d14a937">
+      <field name="id" description="System given id." type="integer" size="15" required="true" unique="true" primary="true" auto-increment="true" uuid="f56344d3-1346-42ad-be41-88b7ff598f10"/>
+      <field name="moderation" description="Moderation that conversation belongs to." type="integer" size="10" required="true" uuid="68f630f4-bc8d-4c8f-82f7-ecf6993eaab1"/>
+      <field name="author" description="Author of the reply." type="integer" size="10" required="true" uuid="57730030-fab0-4ecc-93c4-62ef4321b186"/>
+      <field name="date_replied" description="Date of reply." type="datetime" required="true" uuid="5d6960cd-d24d-4ca4-bc01-c21488dda553"/>
+      <field name="comment" description="Reply to the moderation comment." type="string" size="255" required="true" uuid="39795466-f2fa-4a13-ae00-f468d5921a66"/>
+      <field name="sent_from" description="a:author;m:moderator" type="string" size="1" default="a" required="true" uuid="8131a687-36b1-4191-b749-2c3e440c24a2"/>
+      <field name="is_read" description="y.yes;n:no" type="string" size="1" default="n" required="true" uuid="7f6d66cf-1a0c-4dca-a16d-b0c2e627bd81"/>
+      <index name="idx_u_blog_post_moderation_reply_id" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idx_n_blog_post_moderation_reply_date_replied">
+        <index-field name="date_replied"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="export-file-name">BlogPostModerationReply.php</attribute>
+        <attribute name="table">blog_post_moderation_reply</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="BlogPostModerationReply" to="BlogPostModeration" caption="idx_f_blog_post_moderation_reply_moderation" owner-alias="blog_post_moderation_replies" inverse-alias="blog_post_moderation" uuid="ae6b2362-f162-4445-9648-30c5d7d44c30">
+      <association-field from="moderation" to="id"/>
+    </association>
+    <association from="BlogPostModerationReply" to="Member" caption="idx_f_blog_post_moderation_reply_author" inverse-alias="member" uuid="88830c55-2904-48c0-b947-e6d84eb6532a">
+      <association-field from="author" to="id"/>
+    </association>
+    <entity name="BlogPostTag" description="Stores a list of tag definitions." uuid="a89cf5c8-aa5d-42ec-bbba-163c5a014c3d">
+      <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="3c5fa229-33a7-48ab-b580-c75dd7df3b75"/>
+      <field name="date_added" description="Date when the tag is added." type="datetime" required="true" uuid="70927a8d-33a4-448d-9d3b-e42af2c6d63f"/>
+      <field name="count_posts" description="Number of posts associated with this tag." type="integer" size="10" default="0" required="true" uuid="ce100ea2-e7a4-499c-856b-b166f28105a8"/>
+      <field name="member" description="Member who added this tag." type="integer" size="10" required="true" uuid="325b61d0-2aa0-44a2-8e4c-8034cd7c45c4"/>
+      <field name="blog" description="Blog that this tag belongs to." type="integer" size="10" required="true" uuid="f9e65d2b-010d-4b4e-b092-ef74d9bfed28"/>
+      <field name="site" description="Site that this tag belongs to." type="integer" size="10" uuid="cc05006d-6e0e-4390-b57c-2dbebac04da2"/>
+      <index name="idx_u_blog_post_tag_id" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idx_n_blog_post_tag_date_added">
+        <index-field name="date_added"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_post_tag</attribute>
+        <attribute name="export-file-name">BlogPostTag.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="BlogPostTag" to="Site" caption="idx_f_blog_post_tag_site" inverse-alias="site" uuid="b9515313-83a8-41cd-8b13-4e1cf6280dec">
+      <association-field from="site" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <association from="BlogPostTag" to="Blog" caption="idx_f_blog_post_tag_blog" owner-alias="blog_post_tags" inverse-alias="blog" uuid="d3102fab-427e-46ae-9876-5e71e8807c77">
+      <association-field from="blog" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <association from="BlogPostTag" to="Member" caption="idx_f_blog_post_tag_member" inverse-alias="member" uuid="3873a818-fd4b-4b92-8ce6-2964e6e8b44a">
+      <association-field from="member" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <entity name="BlogPostTagLocalization" description="Stores localized values of blog post tags.&#10;&#10;Requires: MultiLanguageSupportBundle&#10;" uuid="5caac17f-21c3-4d96-ad7e-e5c9c46f3072">
+      <field name="tag" description="Localized blog post tag." type="integer" size="10" required="true" primary="true" uuid="5877a747-c396-4525-baa6-f2eafef08e66"/>
+      <field name="language" description="Localization language." type="integer" size="5" required="true" unique="true" primary="true" uuid="334b0faa-83bd-485d-8e26-2f402ddedde5"/>
+      <field name="name" description="Localized tag name." type="string" size="155" required="true" uuid="924a4ebb-7091-4d18-a35b-28b406116709"/>
+      <field name="url_key" description="Localized url key of tag." type="string" size="255" required="true" uuid="f3560ad5-2746-48b2-9986-4548603b5390"/>
+      <index name="idx_u_blog_post_tag_localization">
+        <index-field name="tag"/>
+        <index-field name="language"/>
+      </index>
+      <index name="idx_u_blog_post_tag_localization_url_key" unique="true">
+        <index-field name="language"/>
+        <index-field name="url_key"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_post_tag_localization</attribute>
+        <attribute name="export-file-name">BlogPostTagLocalization.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="BlogPostTagLocalization" to="BlogPostTag" caption="idx_f_blog_post_tag_localization_tag" owner-alias="localizations" inverse-alias="blog_post_tag" uuid="0aff81ea-4e3f-4bfd-bdf3-74245dfd259c">
+      <association-field from="tag" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <association from="BlogPostTagLocalization" to="Language" caption="idx_f_blog_post_tag_localization_language" inverse-alias="language" uuid="796757ac-35eb-4155-bc3e-659b2d78666a">
+      <association-field from="language" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <entity name="TagsOfBlogPost" description="Associates tags with posts." uuid="d8535833-d214-46a5-a12e-bd11539eb18b">
+      <field name="post" description="Associated post." type="integer" size="10" required="true" primary="true" uuid="17a8f648-7744-4ead-b011-9b75d12fe7d8"/>
+      <field name="tag" description="Associated tag." type="integer" size="10" required="true" primary="true" uuid="ad17a0b7-3135-46ca-8734-29b193979f6e"/>
+      <field name="date_added" description="Date when the tag has been added to the post." type="datetime" required="true" uuid="77672de2-fd7e-4992-bda8-338e04f18f55"/>
+      <index name="idx_u_tags_of_blog_post">
+        <index-field name="post"/>
+        <index-field name="tag"/>
+      </index>
+      <index name="idx_n_tags_of_blog_post_date_added">
+        <index-field name="tag"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">tags_of_blog_post</attribute>
+        <attribute name="export-file-name">TagsOfBlogPost.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="TagsOfBlogPost" to="BlogPostTag" caption="idx_f_tags_of_blog_post_tag" inverse-alias="blog_post_tag" uuid="43ab0ad0-b8c1-4f39-9865-9ae73771951f">
+      <association-field from="tag" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <association from="TagsOfBlogPost" to="BlogPost" caption="idx_f_tags_of_blog_post_post" inverse-alias="blog_post" uuid="eef48b82-733d-498b-acef-09421c9f4a1d">
+      <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <entity name="Blog" description="Stores all blog definitions." uuid="c221008d-3462-4c58-b3b3-b4d027b70afc">
+      <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="35a92f07-cbe6-4ea0-b0cb-f039bf660c38"/>
+      <field name="date_created" description="Date when the blog is created." type="datetime" required="true" uuid="d41a50cc-a1b1-4d01-bf56-db8f5666a850"/>
+      <field name="date_updated" description="Date when the blog is last updated." type="datetime" required="true" uuid="874fda4a-c74f-46cc-a8fe-8eeb4b428405"/>
+      <field name="count_posts" description="Number of total posts within blog." type="integer" size="10" default="0" required="true" uuid="2a846a01-9b8a-4a4d-ba40-76016553141c"/>
+      <field name="site" description="Site that blog belongs to." type="integer" size="10" uuid="0582530d-975e-4522-8530-9e1d2fc34da1"/>
+      <index name="idx_u_blog_id" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idx_n_blog_date_created">
+        <index-field name="date_created"/>
+      </index>
+      <index name="idx_n_blog_date_updated">
+        <index-field name="date_updated"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog</attribute>
+        <attribute name="export-file-name">Blog.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="Blog" to="Site" caption="idx_f_blog_site" inverse-alias="site" uuid="8e84cd0e-865c-47c4-b0d9-203fd6d27e27">
+      <association-field from="site" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <entity name="BlogLocalization" description="Stores localized values for each blog entry&#xE7;" uuid="f6d679d7-c495-4963-9006-98a851a54798">
+      <field name="blog" description="Localized blog." type="integer" size="10" required="true" primary="true" uuid="6640a90b-b0c0-4c3e-ac43-10aba26028a5"/>
+      <field name="language" description="Localization language." type="integer" size="5" required="true" primary="true" uuid="ec9d0867-6726-4e77-a5db-a721530518bf"/>
+      <field name="title" description="Localized title of blog." type="string" size="155" required="true" uuid="c2d966a4-9027-4a38-baf9-8c85c8f80402"/>
+      <field name="url_key" description="Localized url key of blog." type="string" size="255" required="true" uuid="8a863498-acc0-4a8f-ba4e-dba17b5d80b9"/>
+      <field name="description" description="Localized description of blog." type="string" size="255" uuid="049f00b8-a0be-4370-b96d-57f743b1e72c"/>
+      <field name="meta_description" description="Localized meta description of blog." type="string" size="255" uuid="bd294a14-68ba-4e0c-8396-3fa2ffe2da8f"/>
+      <field name="meta_keywords" description="Localized keywords of blog." type="string" size="155" uuid="0e95e5cc-71f2-4297-aa8b-2ba9458cbb12"/>
+      <index name="idx_u_blog_localization" unique="true">
+        <index-field name="blog"/>
+        <index-field name="language"/>
+      </index>
+      <index name="idx_u_blog_localization_url_key">
+        <index-field name="language"/>
+        <index-field name="url_key"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_localization</attribute>
+        <attribute name="export-file-name">BlogLocalization.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="BlogLocalization" to="Language" caption="idx_f_blog_localization_language" inverse-alias="language" uuid="a263e690-a22d-4910-8b24-76753282e836">
+      <association-field from="language" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <association from="BlogLocalization" to="Blog" caption="idx_f_blog_localization_blog" owner-alias="localizations" inverse-alias="blog" uuid="3ce7245a-507f-41c8-8012-764b5b34c637">
+      <association-field from="blog" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <entity name="BlogModerator" description="Associates members with moderation rights with blogs or blog post categories.&#10;&#10;Requires: MemberManagemetBundle" uuid="a8ac4769-debb-43f7-a155-857b0534ef04">
+      <field name="moderator" description="Associated member." type="integer" size="10" required="true" primary="true" uuid="11d6b5f7-be15-4aca-b00b-25baa3c67a88"/>
+      <field name="blog" description="Associated blog." type="integer" size="10" required="true" primary="true" uuid="05a496b8-74cc-48e2-8195-077a63348c8d"/>
+      <field name="date_added" description="Date when the member is assigned to blog as moderator." type="datetime" required="true" uuid="389152dd-fd15-4d25-ab45-c77805a9c796"/>
+      <field name="category" description="If member is a moderator of only a specific category." type="integer" size="10" required="true" uuid="391e3caa-8743-49c7-81a4-86e56aefd9a2"/>
+      <index name="idx_u_blog_moderator" unique="true">
+        <index-field name="moderator"/>
+        <index-field name="blog"/>
+        <index-field name="category"/>
+      </index>
+      <index name="idx_n_blog_moderator_date_added">
+        <index-field name="date_added"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_moderator</attribute>
+        <attribute name="export-file-name">BlogModerator.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="BlogModerator" to="Member" caption="idx_f_blog_moderator_moderator" inverse-alias="member" uuid="13acdf29-ae74-4ad2-a301-52bd877ef05b">
+      <association-field from="moderator" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <association from="BlogModerator" to="Blog" caption="idx_f_blog_moderator_blog" owner-alias="blog_moderators" inverse-alias="blog" uuid="af763499-aa02-411d-b4f3-ea3adc3879c7">
+      <association-field from="blog" to="id"/>
+    </association>
+    <association from="BlogModerator" to="BlogPostCategory" caption="idx_f_blog_moderator_category" owner-alias="blog_moderators" inverse-alias="blog_post_category" uuid="ffd383c2-e9de-458f-8324-3d04a22696cf">
+      <association-field from="category" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <entity name="BlogPostCategory" description="Stores definitions of blog post categories.&#10;&#10;Requires: [SiteManagementBundlle]" uuid="d01f6c43-64e1-452e-991f-036c673ac11c">
+      <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="0eac2abb-900b-4b99-8fa6-92011aff7c2b"/>
+      <field name="date_added" description="Date when category is added." type="datetime" required="true" uuid="cc59b077-de55-4219-ac51-b81ca821b4a0"/>
+      <field name="blog" description="Blog that post category belongs to." type="integer" size="10" required="true" uuid="0374f2d7-ee8d-4b1f-abd7-c704e551791d"/>
+      <field name="parent" description="Parent category if exists." type="integer" size="10" required="true" uuid="454be223-9b44-4c3e-acfa-8685ff68069b"/>
+      <field name="site" description="Site that blog post category belongs to." type="integer" size="10" uuid="6cb5bb58-b9d9-4bec-8e9c-0aaadbb1fb38"/>
+      <index name="idx_u_blog_post_category_id" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idx_n_blog_post_category_date_added">
+        <index-field name="date_added"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_post_category</attribute>
+        <attribute name="export-file-name">BlogPostCategory.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="BlogPostCategory" to="Site" caption="idx_f_blog_post_category_site" inverse-alias="site" uuid="bed78311-e828-43f4-a4ed-951beb3ee5eb">
+      <association-field from="site" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <association from="BlogPostCategory" to="Blog" caption="idx_f_blog_post_category_blog" owner-alias="blog_post_categories" inverse-alias="blog" uuid="5acf3682-59f9-4105-8a6f-a21c1202c27a">
+      <association-field from="blog" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <association from="BlogPostCategory" to="BlogPostCategory" caption="idx_f_blog_post_category" owner-alias="children" inverse-alias="parents" uuid="39b83ac5-5c1b-4e05-8a3d-4c2789956f07">
+      <association-field from="parent" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <entity name="BlogPostCategoryLocalization" description="Stores localized values for each post category.&#10;&#10;Requires: MultiLanguageSupportBundle&#10;" uuid="51ec9be8-4890-4887-addd-6819fa8f6fb7">
+      <field name="category" description="Localized post category." type="integer" size="10" required="true" primary="true" uuid="2d1f900a-bfda-4aa2-9fec-56d97e09dee4"/>
+      <field name="language" description="Localization language." type="integer" size="5" required="true" primary="true" uuid="1f7acbb1-6096-49d9-8e05-6d32f0b1f464"/>
+      <field name="name" description="Localized name of category." type="string" size="155" required="true" uuid="ab280678-7709-4021-ad35-88211ef9692e"/>
+      <field name="url_key" description="Localized url key." type="string" size="255" required="true" uuid="fa2f8321-359b-4f7f-8801-d7327a64ba0c"/>
+      <field name="description" type="string" size="255" uuid="f328160d-06b0-47a0-8c2e-b7f177565160"/>
+      <index name="idx_u_blog_post_localization" unique="true">
+        <index-field name="category"/>
+        <index-field name="language"/>
+      </index>
+      <index name="idx_u_blog_post_localization_url_key" unique="true">
+        <index-field name="language"/>
+        <index-field name="url_key"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_post_category_localization</attribute>
+        <attribute name="export-file-name">BlogPostCategoryLocalization.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="BlogPostCategoryLocalization" to="Language" caption="idx_f_blog_post_category_localization_url_key" inverse-alias="language" uuid="25f9e3da-4b68-4712-9643-34d5b86aee96">
+      <association-field from="language" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <association from="BlogPostCategoryLocalization" to="BlogPostCategory" caption="idx_f_blog_post_category_localization_post_category" owner-alias="localizations" inverse-alias="post_category" uuid="4c1f815c-2308-4cb1-baf6-a842cf08c2a2">
+      <association-field from="category" to="id"/>
+    </association>
+    <entity name="BlogPost" description="Holds definitions of blog posts." uuid="52633a6e-346a-4e12-b99e-0f492b048a4c">
+      <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="b0abd43c-348b-4ed3-9a6b-dca7733055fc"/>
+      <field name="author" description="Post author." type="integer" size="10" required="true" uuid="01e70203-e063-40e1-a482-4cf6ad054f7c"/>
+      <field name="blog" description="Blog that post is written for." type="integer" size="10" required="true" uuid="887a1547-80dc-447f-9146-3780e7447e33"/>
+      <field name="site" description="Site that blog post belongs to." type="integer" size="10" uuid="2865ba9c-7206-495d-adb8-25bd9da5bb5f"/>
+      <field name="type" description="a:article;i:image;g:gallery;v:video;d:document;" type="string" size="1" default="a" required="true" uuid="29ae9e85-3ca1-487d-9c96-4ee8be075c55"/>
+      <field name="preview_image" description="Associated file for preview image." type="integer" size="15" required="true" uuid="047df1ba-7af9-4afe-b342-57ef89703b8a"/>
+      <field name="status" description="o:open,c:closed,p:published,m:modetation;u:unpublished" type="string" size="1" default="o" required="true" uuid="eefbd9c5-4f15-43ae-b109-a80f52193c7d"/>
+      <field name="date_added" description="Date when the blog post is added." type="datetime" required="true" uuid="e8450f66-5163-48b6-bbc6-d796a127a3eb"/>
+      <field name="date_approved" description="Date when the blog post  is approved" type="datetime" uuid="029f174c-d24a-46f5-ab3f-0d3609ee9015"/>
+      <field name="date_published" description="Date when the blog post will be published." type="datetime" required="true" uuid="e907361a-fca5-44d0-8c02-f1db148b2461"/>
+      <field name="date_unpublished" description="Date when the blog post will be unpublished." type="datetime" uuid="f3af1802-944e-4924-b3f1-4b8bb6638c56"/>
+      <field name="count_view" description="Number of times a blog post viewed." type="integer" size="10" default="0" required="true" uuid="438817fd-7e8d-491e-9011-4aa642f2c54d"/>
+      <field name="count_like" description="Total number of likes that blog post gets." type="integer" size="10" default="0" required="true" uuid="d8229fbb-0562-4ebf-a5fb-af73b8f52757"/>
+      <field name="count_dislike" description="Total number of dislikes that the blog post gets." type="integer" size="10" default="0" required="true" uuid="d13a6085-9e9d-4e55-8319-64ca09d15c65"/>
+      <field name="count_comment" description="Total number of comments associated with the blog post." type="integer" size="10" default="0" required="true" uuid="c8ad2eef-d2f7-485a-b330-dc04a38c0c00"/>
+      <index name="idx_u_blog_post_id" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idx_n_blog_post_date_added">
+        <index-field name="date_added"/>
+      </index>
+      <index name="idx_n_blog_post_date_published">
+        <index-field name="date_published"/>
+      </index>
+      <index name="idx_n_blog_post_date_approved">
+        <index-field name="date_approved"/>
+      </index>
+      <index name="idx_n_blog_post_date_unpublished">
+        <index-field name="date_unpublished"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_post</attribute>
+        <attribute name="export-file-name">BlogPost.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="BlogPost" to="File" caption="idx_f_blog_post_preview_image" inverse-alias="file" uuid="ae7f15da-67f8-4011-86f2-3f040542cf19">
+      <association-field from="preview_image" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <association from="BlogPost" to="Blog" caption="idx_f_blog_post_blog" owner-alias="blog_posts" inverse-alias="blog" uuid="3207bf25-161b-495c-823b-e56fd0643399">
+      <association-field from="blog" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <association from="BlogPost" to="Site" caption="idx_f_blog_post_site" inverse-alias="site" uuid="7d72d3c7-e97d-4b81-bdce-151bec188ad7">
+      <association-field from="site" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <association from="BlogPost" to="Member" caption="idx_f_blog_post_author" inverse-alias="author" uuid="1d827c52-41ba-4ae7-aaab-47c8d3778a08">
+      <association-field from="author" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <entity name="BlogPostLocalization" description="Stores localized values for each blog post entry." uuid="124be203-cd78-4b96-bc03-210c1f0db117">
+      <field name="post" description="Associated blog post." type="integer" size="10" required="true" primary="true" uuid="738e3a93-eec8-4b4c-a6d3-a3ceab89a968"/>
+      <field name="language" description="Localization language." type="integer" size="5" required="true" primary="true" uuid="ad3319bb-8b07-4a13-b496-b14bd0c8e8f2"/>
+      <field name="title" description="Localized title of blog post." type="string" size="155" required="true" uuid="96fa8129-00a7-4fc7-ae60-a3eb35b117ca"/>
+      <field name="url_key" description="Localized url key of blog post." type="string" size="255" required="true" uuid="59efe506-6977-4303-b594-beaf2b801ab4"/>
+      <field name="summary" description="Localized summary of blog post." type="string" size="255" uuid="168be092-d785-4fa8-aff5-826e393ce978"/>
+      <field name="meta_description" description="Localized meta description of blog post." type="string" size="255" uuid="ff1bbdd3-d790-4944-b6e7-c9b4fd4b880d"/>
+      <field name="meta_keywords" description="Localized meta keywords of blog posts." type="string" size="255" uuid="f670b061-f602-4f4a-a31e-53c4c55b01e9"/>
+      <field name="content" description="Blog post content - usually a json encoded string." type="text" uuid="56f3df3b-2cb1-4ef4-8ba7-8b109f0ee8f3"/>
+      <index name="idx_u_blog_post_localization">
+        <index-field name="post"/>
+        <index-field name="language"/>
+      </index>
+      <index name="idx_u_blog_post_localization_url_key">
+        <index-field name="language"/>
+        <index-field name="url_key"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_post_localization</attribute>
+        <attribute name="export-file-name">BlogPostLocalization.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="BlogPostLocalization" to="BlogPost" caption="idx_f_blog_post_localization_post" owner-alias="localizations" inverse-alias="blog_post" uuid="432c0176-0a29-4845-87ee-88070753d665">
+      <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning">
+          <attribute name="cascade">
+            <attribute name="cascade-persist">true</attribute>
+          </attribute>
+        </attribute>
+      </orm-attributes>
+    </association>
+    <association from="BlogPostLocalization" to="Language" caption="idx_f_blog_post_localization_language" inverse-alias="language" uuid="840e2a15-aa53-476a-9c39-9820b3b18031">
+      <association-field from="language" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <entity name="BlogPostComment" description="Holds a list of comments made to each blog post.&#10;&#10;Requires: MemberManagementBundle, [SiteManagementBundlle]" uuid="7a06efe4-87ce-4810-9039-1e1c8ffb811f">
+      <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="654db702-9016-4d29-93ca-793876c7e88b"/>
+      <field name="parent" description="If this is a comment-reply then the parent comment." type="integer" size="10" required="true" unique="true" uuid="569b9198-20ed-4e5b-b86c-f8c46eb4b59e"/>
+      <field name="author" description="Author of the comment if a registered member." type="integer" size="10" uuid="de6b5e4e-f89d-438f-8aee-3f7c8ed67fc4"/>
+      <field name="date_added" description="Date when the comment is added." type="datetime" required="true" uuid="5ec34359-860c-412b-abbb-d1e6789abe9a"/>
+      <field name="date_removed" description="Date when the comment is removed." type="datetime" uuid="df902d84-8131-4bf9-b967-e350f72f2205"/>
+      <field name="date_published" description="Date when the comment is published." type="datetime" required="true" uuid="84bbda21-96a4-40e6-ade3-2d22106aaa43"/>
+      <field name="name" description="Name of commentor." type="string" size="255" required="true" uuid="2c09f8b5-d2be-4984-a539-1579de5f0d79"/>
+      <field name="email" description="Email of commentor." type="string" size="255" required="true" uuid="c38697c1-ffec-4f10-9668-20cef1f5aed6"/>
+      <field name="url" description="URL of commentor." type="text" uuid="f9ebff80-e520-4d07-9576-fd1c5cce0dad"/>
+      <field name="count_likes" description="Number of likes that this comment gets." type="integer" size="10" default="0" required="true" uuid="11512975-aedc-4802-99f5-719ebdea5570"/>
+      <field name="count_dislikes" description="Number of dislikes that this comment gets." type="integer" size="10" default="0" required="true" uuid="a51f3a7b-d831-4396-a82f-65016918fbd7"/>
+      <field name="site" description="Site that blog post comment belongs to." type="integer" size="10" uuid="dcd4abb2-6e68-411f-a2fb-c8f09a8c5892"/>
+      <index name="idx_u_blog_post_comment_id" unique="true">
+        <index-field name="id"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_post_comment</attribute>
+        <attribute name="export-file-name">BlogPostComment.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="BlogPostComment" to="Site" caption="idx_f_blog_post_comment_site" inverse-alias="site" uuid="921b62e8-bc57-4e52-9003-5da8643f9d96">
+      <association-field from="site" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <association from="BlogPostComment" to="Member" caption="idx_f_blog_post_comment_author" inverse-alias="member" uuid="2c2dd436-3289-4060-9538-3c902237a755">
+      <association-field from="author" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">SET NULL</attribute>
+      </orm-attributes>
+    </association>
+    <association from="BlogPostComment" to="BlogPost" caption="idx_f_blog_post_comment_post" owner-alias="blog_post_comments" inverse-alias="blog_post" uuid="d72388eb-5bb3-45e1-990b-d10f121b3a1a"/>
+    <association from="BlogPostComment" to="BlogPostComment" caption="idx_f_blog_post_comment_parent" owner-alias="blog_post_comment_parent" inverse-alias="blog_post_comment" uuid="cbefcaa0-97cc-4c66-b65b-5d99804927f8">
+      <association-field from="parent" to="id"/>
+    </association>
+    <entity name="BlogPostCommentAction" description="Keeps track of actions (likes, dislikes) for each blog post comment.&#10;&#10;Requires: MemberManagementBundle" uuid="d33e0252-193b-4ad3-a4bd-535b22a4dd54">
+      <field name="id" description="System given id." type="integer" size="15" required="true" unique="true" primary="true" auto-increment="true" uuid="6d48389c-84ce-4294-8481-eeab42060212"/>
+      <field name="post" description="Blog post that action is made." type="integer" size="10" required="true" uuid="2e56bced-99e8-4018-bb8f-febfd81be74d"/>
+      <field name="comment" description="Blog post comment." type="integer" size="10" required="true" uuid="d900dacf-298d-4efb-8ac1-ef4c959d5890"/>
+      <field name="member" description="Only registered members can post actions." type="integer" size="10" required="true" uuid="5e9ebcdd-027e-4057-9705-efbfa583b9f6"/>
+      <field name="action" description="l:like;d:dislike" type="string" size="1" default="l" required="true" uuid="68f557f3-2e7a-4dda-bff0-59f9c15ba5ec"/>
+      <field name="date_added" description="Date when the action has been added." type="datetime" required="true" uuid="f8d501b1-fd23-46e8-a290-9bbcbf132e32"/>
+      <index name="idx_u_blog_post_comment_action_id" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idx_u_blog_post_comment_member" unique="true">
+        <index-field name="comment"/>
+        <index-field name="member"/>
+        <index-field name="post"/>
+      </index>
+      <index name="idx_n_blog_post_comment_action_date_added">
+        <index-field name="date_added"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_post_comment_action</attribute>
+        <attribute name="export-file-name">BlogPostCommentAction.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="BlogPostCommentAction" to="Member" caption="idx_f_blog_post_comment_action_member" inverse-alias="member" uuid="826be9b9-4fd5-4da9-a8e6-62810155668c">
+      <association-field from="member" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <association from="BlogPostCommentAction" to="BlogPostComment" caption="idx_f_blog_post_comment_action_comment" inverse-alias="blog_post_comment" uuid="9c54d716-ed9a-48ab-9cd0-f38d14f7150e">
+      <association-field from="comment" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <association from="BlogPostCommentAction" to="BlogPost" caption="idx_f_blog_post_comment_blog" inverse-alias="blog_post" uuid="13157d1d-3576-422b-8abb-7d6ac40e1ade">
+      <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <entity name="BlogPostAction" description="Keeps track of actions (likes, dislikes) for each blog post. Tracks only member actions.&#10;&#10;Requires: MemberManagementBundle" uuid="a70427d3-c8e0-4829-93e3-de66bb9c9c61">
+      <field name="id" description="System given id." type="integer" size="15" required="true" unique="true" primary="true" auto-increment="true" uuid="04d5686c-441a-4edd-9f24-5e1818d95ba7"/>
+      <field name="post" description="Post action is made" type="integer" size="10" required="true" uuid="9bb7553b-f220-485f-aa38-40d026eefbb5"/>
+      <field name="member" description="Member who has done the action." type="integer" size="10" required="true" uuid="8552c055-ffc7-4f18-85d9-64b3a859a8eb"/>
+      <field name="action" description="v:view;l:like;d:dislike;f:favorite;u:unfavorite" type="string" size="1" default="v" required="true" uuid="13463ff8-6c3a-462b-aa93-592ee593e996"/>
+      <field name="date_added" description="Date when the action is occured." type="datetime" required="true" uuid="8a9b8f38-fb77-4f38-a124-51cf64754673"/>
+      <index name="idx_u_blog_post_action_id">
+        <index-field name="id"/>
+      </index>
+      <index name="idx_n_blog_post_action_date_added">
+        <index-field name="date_added"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_post_action</attribute>
+        <attribute name="export-file-name">BlogPostAction.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="BlogPostAction" to="BlogPost" caption="idx_f_blog_post_action_post" owner-alias="blog_post_actions" inverse-alias="blog_post" uuid="e12a81e2-734f-4e3f-b3a5-496cc581af51">
+      <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <association from="BlogPostAction" to="Member" caption="idx_f_blog_post_action_member" inverse-alias="member" uuid="26f58696-02d0-4c67-9a61-cfd78d4e18ec">
+      <association-field from="member" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <entity name="CategoriesOfBlogPost" description="Associates blog posts with categories." uuid="0935da16-1ed5-48ac-b4bc-16b04799f560">
+      <field name="post" description="Associated post." type="integer" size="10" required="true" primary="true" uuid="1be8586e-9ab6-4866-912c-758a8973077d"/>
+      <field name="category" description="Associated category." type="integer" size="10" required="true" primary="true" uuid="e6bbaf6f-4fd2-4d34-bb2d-f67abac9013d"/>
+      <field name="date_added" description="Date when blog post added to category." type="datetime" required="true" uuid="c18adadd-5813-41c0-983e-a95d942cee65"/>
+      <field name="is_primary" description="y:yes;n:no" type="string" size="1" default="y" required="true" uuid="23fc9b0d-135e-4a49-9f82-a84beb3daab9"/>
+      <index name="idx_u_categories_of_blog_post" unique="true">
+        <index-field name="post"/>
+        <index-field name="category"/>
+      </index>
+      <index name="idx_n_Categories_of_blog_post_date_added">
+        <index-field name="date_added"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">categories_of_blog_post</attribute>
+        <attribute name="export-file-name">CategoriesOfBlogPost.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="CategoriesOfBlogPost" to="BlogPost" caption="idx_f_categories_of_blog_post_post" inverse-alias="post" uuid="a044b579-9e18-4849-9740-dccb505935d9">
+      <association-field from="post" to="id"/>
+    </association>
+    <association from="CategoriesOfBlogPost" to="BlogPostCategory" caption="idx_f_categories_of_blog_post_category" inverse-alias="category" uuid="1a2118bf-3f11-4495-8ac8-39eada533ab8">
+      <association-field from="category" to="id"/>
+    </association>
+    <entity name="FavoriteBlogPostsOfMember" description="Keeps track of each user's favorite blog posts.&#10;&#10;Requires: MemberManagementBundle-" uuid="019e4713-ec7b-4600-b59d-3b7984060e19">
+      <field name="member" description="Associated member." type="integer" size="10" required="true" primary="true" uuid="8652aa06-8f8b-43f0-b9fb-78f712297041"/>
+      <field name="post" description="Associated blog post." type="integer" size="10" required="true" primary="true" uuid="36d1f295-ac12-42b7-b5c3-122ef072be38"/>
+      <field name="date_added" description="Date when the member favorited the blog post." type="datetime" required="true" uuid="3c506365-2724-4232-a6cf-aeea15b29547"/>
+      <index name="idx_u_favroite_blog_post_of_member" unique="true">
+        <index-field name="member"/>
+        <index-field name="post"/>
+      </index>
+      <index name="idx_n_favorite_blog_post_of_member_date_added">
+        <index-field name="date_added"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">favorite_blog_posts_of_member</attribute>
+        <attribute name="export-file-name">FavoriteBlogPostsOfMember.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="FavoriteBlogPostsOfMember" to="Member" caption="idx_f_favorite_blog_post_of_member_member" inverse-alias="member" uuid="eda725ac-394a-4fce-9662-066e59803f03">
+      <association-field from="member" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <association from="FavoriteBlogPostsOfMember" to="BlogPost" caption="idx_f_favorite_blog_post_of_member_post" inverse-alias="blog_posts" uuid="058a6e13-e0ea-4b66-b1f8-6a7498fdf188">
+      <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <entity name="FeaturedBlogPost" description="Stores definitions of featured blog posts." uuid="37003f2f-c374-4082-855d-b3cf8a3206a7">
+      <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="ffd3f2fc-e10a-404a-997a-53eaa21283c4"/>
+      <field name="post" description="Blog post id." type="integer" size="10" required="true" uuid="326e96c1-a071-41f7-8efa-ba451c616180"/>
+      <field name="date_added" description="Date when post has been added to featured list." type="datetime" required="true" uuid="8f7c9d01-0376-44fd-8239-7af544faafab"/>
+      <field name="date_published" description="Date when post is published as featured." type="datetime" required="true" uuid="e07e5016-190e-4ad1-afc2-a8eb2cd3fab2"/>
+      <field name="date_unpublished" description="Date when the post will be removed from features aread." type="datetime" required="true" uuid="133e12d3-28e3-44e1-82ea-452af098930a"/>
+      <field name="sort_order" description="Custom sort order." type="integer" size="10" default="1" required="true" uuid="12ab7992-95cd-48d1-a7bd-d063a90f3de6"/>
+      <index name="idx_u_featured_blog_post_id" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idx_n_featured_blog_post_date_added">
+        <index-field name="date_added"/>
+      </index>
+      <index name="idx_n_featured_blog_post_date_published">
+        <index-field name="date_published"/>
+      </index>
+      <index name="idx_n_featured_blog_post_unpublished">
+        <index-field name="date_unpublished"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">featured_blog_post</attribute>
+        <attribute name="export-file-name">FeaturedBlogPost.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="FeaturedBlogPost" to="BlogPost" caption="idx_f_featured_blog_post_post" inverse-alias="blog_post" uuid="b50044e5-d3bc-411c-a1d2-cb4db4473f37">
+      <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <entity name="FeaturedBlogPostLocalization" description="Holds localized values of featured blog posts.&#10;&#10;Requires: MultiLanguageSupportBundle," uuid="595454de-6d7b-4a1d-a72b-786544a330a3">
+      <field name="language" description="Localization language." type="integer" size="5" required="true" primary="true" uuid="f0efffac-8907-41dd-ad22-6b3787d2371d"/>
+      <field name="content" description="Localized content." type="text" required="true" uuid="9117f9a3-15f9-405a-aa55-86238a719ade"/>
+      <field name="post" type="integer" size="10" required="true" uuid="1f9218b9-9e09-4373-873a-0e2f37a9e391"/>
+      <index name="idx_u_featured_blog_post_localization" unique="true">
+        <index-field name="language"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">featured_blog_post_localization</attribute>
+        <attribute name="export-file-name">FeaturedBlogPostLocalization.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="FeaturedBlogPostLocalization" to="Language" caption="idx_f_featured_blog_post_localization_post" inverse-alias="language" uuid="006aea27-250f-4e3a-ab46-5d036ab4f812">
+      <association-field from="language" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <association from="FeaturedBlogPostLocalization" to="FeaturedBlogPost" caption="idx_f_featured_blog_post_localization_post" owner-alias="localizations" inverse-alias="featured_blog_post" uuid="39308ad3-c509-4ccf-bde4-d6ca38318d7b">
+      <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <entity name="RelatedBlogPost" description="Defines all related posts that are associated with the original post." uuid="c04d3548-e6b1-452c-b622-8f3986a8e693">
+      <field name="post" description="Original post." type="integer" size="10" required="true" primary="true" uuid="ee60ce88-2815-4773-bd7c-722b26440d97"/>
+      <field name="related_post" description="Related post." type="integer" size="10" required="true" primary="true" uuid="7af22b3c-aabb-4fa3-a0e9-424c1fa68476"/>
+      <field name="date_added" description="Date when the post is related." type="datetime" required="true" uuid="ea3c7023-dbcf-41ca-966c-0571542aa407"/>
+      <index name="idx_u_related_blog_post" unique="true">
+        <index-field name="post"/>
+        <index-field name="related_post"/>
+      </index>
+      <index name="idx_n_related_blog_post_date_added">
+        <index-field name="date_added"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">related_blog_post</attribute>
+        <attribute name="export-file-name">RelatedBlogPost.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="RelatedBlogPost" to="BlogPost" caption="idx_f_related_blog_post_post" inverse-alias="blog_post" uuid="6c4617fa-12a1-48da-acc8-0b7de14c8422">
+      <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <association from="RelatedBlogPost" to="BlogPost" caption="idx_f_related_blog_post_related_post" inverse-alias="related_post" uuid="345f47c9-df4b-4b41-8793-4003eda7b64a">
+      <association-field from="related_post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <comment caption="BlogBundle Pricing" description="blog: 125 TL&#10;blog_localization: 180 TL&#10;blog_moderator: 155 TL&#10;blog_post: 620 TL&#10;blog_post_localization: 190 TL&#10;blog_post_action: 130 TL&#10;blog_post_category: 175 TL&#10;blog_post_category_localization: 150 TL&#10;blog_post_comment: 315 TL&#10;blog_post_comment_action: 215 TL&#10;blog_post_field: 130 TL&#10;blog_post_field_localization: 150 TL&#10;blog_post_field_content: 220 TL&#10;blog_post_moderation: 210 TL&#10;blog_post_moderation_reply: 230 TL&#10;blog_post_tag: 195 TL&#10;blog_post_tag_localization: 130 TL&#10;categories_of_blog_post: 150 TL&#10;favorite_blog_post_of_member: 110 TL&#10;featured_blog_post: 145 TL&#10;featured_blog_post_localization: 110 TL&#10;files_of_blog_post: 130 TL&#10;related_blog_posts: 110 TL&#10;tags_of_blog_post: 110 TL&#10;&#10;toplam: 3.155  TL" uuid="31e5d310-b878-484f-93c4-d5282873c3af"/>
+    <region caption="BlogPostModerationModule" uuid="17dd8f17-8eed-4535-bda3-bdcca80b4d95">
+      <entity-ref name="BlogPostModeration"/>
+      <entity-ref name="BlogPostModerationReply"/>
+      <entity-ref name="BlogModerator"/>
+    </region>
+    <region caption="BlogPostCommentModule" uuid="b0c195a4-e41b-4486-9231-7fe07d88781c">
+      <entity-ref name="BlogPostComment"/>
+    </region>
+    <region caption="BlogPostActionTrackerModule" uuid="f7210e58-9166-4aba-8f79-e0e996a741d7">
+      <entity-ref name="BlogPostAction"/>
+    </region>
+    <region caption="BlogPostCommentActionTrackerModule" uuid="f59a7b6b-4543-40a0-a981-f13549bf4f23">
+      <entity-ref name="BlogPostCommentAction"/>
+    </region>
+    <region caption="RelatedBlogPostsModule" uuid="8513c45d-b4e7-413f-b7c6-4d58b3c53d3b">
+      <entity-ref name="RelatedBlogPost"/>
+    </region>
+    <region caption="FavoriteBlogPostsModule" uuid="a0a3337a-6806-4eb6-9695-0a1051ae2e7e">
+      <entity-ref name="FavoriteBlogPostsOfMember"/>
+    </region>
+    <region caption="BlogPostCategoryManagementModule" uuid="40ef7a91-816f-4c6e-a580-0f01d93f36ee">
+      <entity-ref name="BlogPostCategory"/>
+      <entity-ref name="BlogPostCategoryLocalization"/>
+      <entity-ref name="CategoriesOfBlogPost"/>
+    </region>
+    <region caption="FeaturedBlogPostModule" uuid="440e5af7-ace6-4cec-b07e-2c516be0d5d1">
+      <entity-ref name="FeaturedBlogPost"/>
+      <entity-ref name="FeaturedBlogPostLocalization"/>
+    </region>
+    <region caption="BlogPostTaggingModule" uuid="3449791f-06a3-4081-a8c0-4ea5cf36f46e">
+      <entity-ref name="BlogPostTag"/>
+      <entity-ref name="BlogPostTagLocalization"/>
+      <entity-ref name="TagsOfBlogPost"/>
+    </region>
+    <orm-attributes>
+      <attribute name="namespace">BiberLtd\Core\Bundles\BlogBundle\Entity</attribute>
+      <attribute name="file-suffix">without-suffix</attribute>
+      <attribute name="filename-format">entity-name-only</attribute>
+    </orm-attributes>
+  </module>
+  <visual-data>
+    <entity uuid="019e4713-ec7b-4600-b59d-3b7984060e19" bg-color="4294967295" hdr-color="4292006610" position-x="50" position-y="50" size-x="0" size-x2="148" size-y="0" size-y2="59"/>
+    <entity uuid="0935da16-1ed5-48ac-b4bc-16b04799f560" bg-color="4294967295" hdr-color="4292006610" position-x="15" position-y="50" size-x="0" size-x2="120" size-y="0" size-y2="73"/>
+    <entity uuid="124be203-cd78-4b96-bc03-210c1f0db117" bg-color="4294967295" hdr-color="4292006610" position-x="529" position-y="475" size-x="0" size-x2="149" size-y="0" size-y2="129"/>
+    <entity uuid="1421f0f1-e591-42f7-b63c-2a522d14a937" bg-color="4294967295" hdr-color="4292006610" position-x="-355" position-y="154" size-x="0" size-x2="139" size-y="0" size-y2="115"/>
+    <region uuid="17dd8f17-8eed-4535-bda3-bdcca80b4d95" bg-color="4292728527" position-x="1222" position-y="67" size-x="384" size-x2="66" size-y="13" size-y2="287"/>
+    <module uuid="1b76a8f1-70bf-4d0d-9efe-09cd274f555f" bg-color="4288857856" size-x="62" size-x2="1338" size-y="-4" size-y2="1104"/>
+    <entity uuid="239c27b0-2883-46e8-bcbd-010fd9235aaf" bg-color="4294967295" hdr-color="4292006610" position-x="-219" position-y="9" size-x="0" size-x2="130" size-y="0" size-y2="115"/>
+    <comment uuid="31e5d310-b878-484f-93c4-d5282873c3af" bg-color="4294948765" position-x="-66" position-y="22" size-x="-4" size-x2="204" size-y="0" size-y2="368" txt-color="4278190080"/>
+    <region uuid="3449791f-06a3-4081-a8c0-4ea5cf36f46e" bg-color="4292728527" position-x="716" position-y="445" size-x="-22" size-x2="572" size-y="-9" size-y2="309"/>
+    <entity uuid="37003f2f-c374-4082-855d-b3cf8a3206a7" bg-color="4294967295" hdr-color="4292006610" position-x="60" position-y="25" size-x="0" size-x2="142" size-y="0" size-y2="101"/>
+    <region uuid="40ef7a91-816f-4c6e-a580-0f01d93f36ee" bg-color="4292728527" position-x="488" position-y="54" size-x="0" size-x2="300" size-y="0" size-y2="250"/>
+    <region uuid="440e5af7-ace6-4cec-b07e-2c516be0d5d1" bg-color="4292728527" position-x="-12" position-y="804" size-x="0" size-x2="250" size-y="0" size-y2="250"/>
+    <entity uuid="51ec9be8-4890-4887-addd-6819fa8f6fb7" bg-color="4294967295" hdr-color="4292006610" position-x="80" position-y="159" size-x="0" size-x2="156" size-y="0" size-y2="87"/>
+    <entity uuid="52633a6e-346a-4e12-b99e-0f492b048a4c" bg-color="4294967295" hdr-color="4292006610" position-x="338" position-y="354" size-x="0" size-x2="145" size-y="0" size-y2="227"/>
+    <entity uuid="595454de-6d7b-4a1d-a72b-786544a330a3" bg-color="4294967295" hdr-color="4292006610" position-x="59" position-y="161" size-x="0" size-x2="154" size-y="0" size-y2="59"/>
+    <entity uuid="5caac17f-21c3-4d96-ad7e-e5c9c46f3072" bg-color="4294967295" hdr-color="4292006610" position-x="172" position-y="59" size-x="0" size-x2="131" size-y="0" size-y2="73"/>
+    <entity uuid="7a06efe4-87ce-4810-9039-1e1c8ffb811f" bg-color="4294967295" hdr-color="4292006610" position-x="83" position-y="-12" size-x="0" size-x2="137" size-y="0" size-y2="185"/>
+    <region uuid="8513c45d-b4e7-413f-b7c6-4d58b3c53d3b" bg-color="4292728527" position-x="1088" position-y="804" size-x="0" size-x2="209" size-y="0" size-y2="200"/>
+    <region uuid="a0a3337a-6806-4eb6-9695-0a1051ae2e7e" bg-color="4292728527" position-x="188" position-y="54" size-x="0" size-x2="250" size-y="0" size-y2="150"/>
+    <entity uuid="a70427d3-c8e0-4829-93e3-de66bb9c9c61" bg-color="4294967295" hdr-color="4292006610" position-x="23" position-y="70" size-x="0" size-x2="118" size-y="0" size-y2="87"/>
+    <entity uuid="a89cf5c8-aa5d-42ec-bbba-163c5a014c3d" bg-color="4294967295" hdr-color="4292006610" position-x="422" position-y="45" size-x="0" size-x2="129" size-y="0" size-y2="101"/>
+    <entity uuid="a8ac4769-debb-43f7-a155-857b0534ef04" bg-color="4294967295" hdr-color="4292006610" position-x="-78" position-y="7" size-x="0" size-x2="120" size-y="0" size-y2="73"/>
+    <region uuid="b0c195a4-e41b-4486-9231-7fe07d88781c" bg-color="4292728527" position-x="755" position-y="866" size-x="17" size-x2="283" size-y="62" size-y2="188"/>
+    <entity uuid="c04d3548-e6b1-452c-b622-8f3986a8e693" bg-color="4294967295" hdr-color="4292006610" position-x="50" position-y="50" size-x="0" size-x2="129" size-y="0" size-y2="59"/>
+    <entity uuid="c221008d-3462-4c58-b3b3-b4d027b70afc" bg-color="4294967295" hdr-color="4292006610" position-x="138" position-y="604" size-x="0" size-x2="129" size-y="0" size-y2="87"/>
+    <entity uuid="d01f6c43-64e1-452e-991f-036c673ac11c" bg-color="4294967295" hdr-color="4292006610" position-x="174" position-y="42" size-x="0" size-x2="118" size-y="0" size-y2="87"/>
+    <entity uuid="d33e0252-193b-4ad3-a4bd-535b22a4dd54" bg-color="4294967295" hdr-color="4292006610" position-x="50" position-y="49" size-x="0" size-x2="133" size-y="0" size-y2="101"/>
+    <entity uuid="d8535833-d214-46a5-a12e-bd11539eb18b" bg-color="4294967295" hdr-color="4292006610" position-x="122" position-y="159" size-x="0" size-x2="92" size-y="0" size-y2="20"/>
+    <region uuid="f59a7b6b-4543-40a0-a981-f13549bf4f23" bg-color="4292728527" position-x="488" position-y="804" size-x="0" size-x2="202" size-y="0" size-y2="250"/>
+    <entity uuid="f6d679d7-c495-4963-9006-98a851a54798" bg-color="4294967295" hdr-color="4292006610" position-x="139" position-y="404" size-x="0" size-x2="149" size-y="0" size-y2="115"/>
+    <region uuid="f7210e58-9166-4aba-8f79-e0e996a741d7" bg-color="4292728527" position-x="288" position-y="804" size-x="0" size-x2="150" size-y="0" size-y2="250"/>
+  </visual-data>
+</skipper>
