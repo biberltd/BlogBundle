@@ -81,16 +81,6 @@ class Blog extends CoreLocalizableEntity
     private $blog_posts;
 
     /** 
-     * 
-     */
-    private $blog_post_fields;
-
-    /** 
-     * 
-     */
-    private $blog_post_field_contents;
-
-    /** 
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\SiteManagementBundle\Entity\Site")
      * @ORM\JoinColumn(name="site", referencedColumnName="id", onDelete="CASCADE")
      */

@@ -13,8 +13,8 @@
  *
  * @copyright   Biber Ltd. (www.biberltd.com)
  *
- * @version     1.0.5
- * @date        02.02.2014
+ * @version     1.0.6
+ * @date        13.10.2014
  *
  * =============================================================================================================
  * !! INSTRUCTIONS ON IMPORTANT ASPECTS OF MODEL METHODS !!!
@@ -481,7 +481,7 @@ class BlogModel extends CoreModel
                         break;
                 }
                 if ($response['error']) {
-                    $this->createException('EntryDoesNotExist', $entry, 'err.invalid.entry');
+                    $this->createException('EntityDoesNotExist', $entry, 'err.invalid.entry');
                 }
                 $entry = $response['result']['set'];
                 $this->em->remove($entry);
@@ -532,7 +532,7 @@ class BlogModel extends CoreModel
      *                  Deletes provided blog posts from database.
      *
      * @since           1.0.2
-     * @version         1.0.2
+     * @version         1.0.6
      * @author          Can Berkol
      *
      * @use             $this->createException()
@@ -556,14 +556,14 @@ class BlogModel extends CoreModel
             } else {
                 switch ($entry) {
                     case is_numeric($entry):
-                        $response = $this->getBloBlogPostg($entry, 'id');
+                        $response = $this->getBlogPost($entry, 'id');
                         break;
                     case is_string($entry):
-                        $response = $this->getBloBlogPostg($entry, 'url_key');
+                        $response = $this->getBlogPost($entry, 'url_key');
                         break;
                 }
                 if ($response['error']) {
-                    $this->createException('EntryDoesNotExist', $entry, 'err.invalid.entry');
+                    $this->createException('EntityDoesNotExist', $entry, 'err.invalid.entry');
                 }
                 $entry = $response['result']['set'];
                 $this->em->remove($entry);
@@ -645,7 +645,7 @@ class BlogModel extends CoreModel
                         break;
                 }
                 if ($response['error']) {
-                    $this->createException('EntryDoesNotExist', $entry, 'err.invalid.entry');
+                    $this->createException('EntityDoesNotExist', $entry, 'err.invalid.entry');
                 }
                 $entry = $response['result']['set'];
                 $this->em->remove($entry);
@@ -3742,7 +3742,7 @@ class BlogModel extends CoreModel
      * @return          array           $response
      */
     public function listPostsInBlogByPublishDate($blog, $filter = null, $sortorder = null, $limit = null)
-    {        
+    {
         /**
          * Prepare date_published filter
          */
@@ -3959,7 +3959,13 @@ class BlogModel extends CoreModel
 /**
  * Change Log
  * **************************************
- * v1.0.5                      Said İmamoğlu
+ * v1.0.6                      Can Berkol
+ * 13.10.2014
+ * **************************************
+ * A deleteBlogPosts()
+ *
+ * **************************************
+ * v1.0.5                   Said İmamoğlu
  * 02.04.2014
  * **************************************
  * A listPublishedPosts()
@@ -3980,6 +3986,7 @@ class BlogModel extends CoreModel
  * A getPreviousPostInBlogByPublishDate()
  * A getFirstPostInBlogByPublishDate()
  * A getLastPostInBlogByPublishDate()
+ *
  * **************************************
  * v1.0.4                      Can Berkol
  * 31.03.2014
