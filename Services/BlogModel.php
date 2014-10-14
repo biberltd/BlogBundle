@@ -4,17 +4,17 @@
  *
  * This class acts as a database proxy model for Blog functionalities.
  *
- * @vendor      BiberLtd
- * @package        Core\Bundles\BlogBundle
- * @subpackage    Services
- * @name        BlogBundle
+ * @vendor          BiberLtd
+ * @package         Core\Bundles\BlogBundle
+ * @subpackage      Services
+ * @name            BlogBundle
  *
  * @author        Can Berkol
  *
  * @copyright   Biber Ltd. (www.biberltd.com)
  *
  * @version     1.0.6
- * @date        13.10.2014
+ * @date        14.10.2014
  *
  * =============================================================================================================
  * !! INSTRUCTIONS ON IMPORTANT ASPECTS OF MODEL METHODS !!!
@@ -481,7 +481,7 @@ class BlogModel extends CoreModel
                         break;
                 }
                 if ($response['error']) {
-                    $this->createException('EntityDoesNotExist', $entry, 'err.invalid.entry');
+                    $this->createException('EntryDoesNotExist', $entry, 'err.invalid.entry');
                 }
                 $entry = $response['result']['set'];
                 $this->em->remove($entry);
@@ -532,7 +532,7 @@ class BlogModel extends CoreModel
      *                  Deletes provided blog posts from database.
      *
      * @since           1.0.2
-     * @version         1.0.6
+     * @version         1.0.2
      * @author          Can Berkol
      *
      * @use             $this->createException()
@@ -556,14 +556,14 @@ class BlogModel extends CoreModel
             } else {
                 switch ($entry) {
                     case is_numeric($entry):
-                        $response = $this->getBlogPost($entry, 'id');
+                        $response = $this->getBloBlogPostg($entry, 'id');
                         break;
                     case is_string($entry):
-                        $response = $this->getBlogPost($entry, 'url_key');
+                        $response = $this->getBloBlogPostg($entry, 'url_key');
                         break;
                 }
                 if ($response['error']) {
-                    $this->createException('EntityDoesNotExist', $entry, 'err.invalid.entry');
+                    $this->createException('EntryDoesNotExist', $entry, 'err.invalid.entry');
                 }
                 $entry = $response['result']['set'];
                 $this->em->remove($entry);
@@ -645,7 +645,7 @@ class BlogModel extends CoreModel
                         break;
                 }
                 if ($response['error']) {
-                    $this->createException('EntityDoesNotExist', $entry, 'err.invalid.entry');
+                    $this->createException('EntryDoesNotExist', $entry, 'err.invalid.entry');
                 }
                 $entry = $response['result']['set'];
                 $this->em->remove($entry);
@@ -1203,7 +1203,7 @@ class BlogModel extends CoreModel
      *                  Inserts one or more localizations into database.
      *
      * @since           1.0.2
-     * @version         1.0.2
+     * @version         1.0.6
      * @author          Can Berkol
      *
      * @use             $this->createException()
@@ -1347,6 +1347,18 @@ class BlogModel extends CoreModel
                                 $this->createException('EntityDoesNotExist', 'Array', 'err.invalid.entity');
                             }
                             unset($response);
+                            break;
+                        case 'file':
+                        case 'preview_image':
+                        case 'previewImage':
+                            $fModel = $this->kernel->getContainer()->get('filemanagement.model');
+                            $response = $fModel->getFile($value, 'id');
+                            if (!$response['error']) {
+                                $entity->$set($response['result']['set']);
+                            } else {
+                                $this->createException('EntityDoesNotExist', 'File', 'err.invalid.entity');
+                            }
+                            unset($response, $sModel);
                             break;
                         case 'site':
                             $sModel = $this->kernel->getContainer()->get('sitemanagement.model');
@@ -3069,6 +3081,18 @@ class BlogModel extends CoreModel
                             }
                             unset($response, $sModel);
                             break;
+                        case 'file':
+                        case 'preview_image':
+                        case 'previewImage':
+                            $fModel = $this->kernel->getContainer()->get('filemanagement.model');
+                            $response = $fModel->getFile($value, 'id');
+                            if (!$response['error']) {
+                                $oldEntity->$set($response['result']['set']);
+                            } else {
+                                $this->createException('EntityDoesNotExist', 'File', 'err.invalid.entity');
+                            }
+                            unset($response, $sModel);
+                            break;
                         case 'site':
                             $sModel = $this->kernel->getContainer()->get('sitemanagement.model');
                             $response = $sModel->getSite($value, 'id');
@@ -3960,9 +3984,10 @@ class BlogModel extends CoreModel
  * Change Log
  * **************************************
  * v1.0.6                      Can Berkol
- * 13.10.2014
+ * 14.10.2014
  * **************************************
- * A deleteBlogPosts()
+ * U insertBlogPosts()
+ * U updateBlogPosts()
  *
  * **************************************
  * v1.0.5                   Said İmamoğlu
