@@ -59,7 +59,7 @@ class BlogPostCategoryLocalization extends CoreEntity
      *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory",
      *     inversedBy="localizations"
      * )
-     * @ORM\JoinColumn(name="category", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="post_category", referencedColumnName="id", nullable=false)
      */
     private $post_category;
 
