@@ -28,29 +28,37 @@ use BiberLtd\Bundle\CoreBundle\CoreEntity;
  */
 class FilesOfBlogPost extends CoreEntity
 {
-    /** 
+    /**
      * @ORM\Column(type="datetime", nullable=false)
      */
     public $date_added;
 
-    /** 
+    /**
      * @ORM\Column(type="integer", length=10, nullable=false)
      */
     private $sort_order;
 
-    /** 
+    /**
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\BlogBundle\Entity\BlogPost")
      * @ORM\JoinColumn(name="post", referencedColumnName="id", nullable=false)
      */
     private $post;
 
-    /** 
+    /**
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\FileManagementBundle\Entity\File")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Core\Bundles\FileManagementBundle\Entity\File")
      * @ORM\JoinColumn(name="file", referencedColumnName="id", nullable=false)
      */
     private $file;
+    /**
+     * @ORM\Column(type="string", length=1, nullable=false)
+     */
+    private $type;
+    /**
+     * @ORM\Column(type="integer", nullable=false)
+     */
+    private $count_view;
 
     /**
      * @name            setPost ()
@@ -72,8 +80,8 @@ class FilesOfBlogPost extends CoreEntity
         if(!$this->setModified('post', $post)->isModified()) {
             return $this;
         }
-		$this->post = $post;
-		return $this;
+        $this->post = $post;
+        return $this;
     }
 
     /**
@@ -111,8 +119,8 @@ class FilesOfBlogPost extends CoreEntity
         if(!$this->setModified('file', $file)->isModified()) {
             return $this;
         }
-		$this->file = $file;
-		return $this;
+        $this->file = $file;
+        return $this;
     }
 
     /**
@@ -150,8 +158,8 @@ class FilesOfBlogPost extends CoreEntity
         if(!$this->setModified('sort_order', $sort_order)->isModified()) {
             return $this;
         }
-		$this->sort_order = $sort_order;
-		return $this;
+        $this->sort_order = $sort_order;
+        return $this;
     }
 
     /**
@@ -168,6 +176,78 @@ class FilesOfBlogPost extends CoreEntity
     public function getSortOrder() {
         return $this->sort_order;
     }
+
+    /**
+     * @name        getCountView ()
+     *
+     * @author      Said İmamoğlu
+     *
+     * @since       1.0.0
+     * @version     1.0.0
+     *
+     * @return      mixed
+     */
+    public function getCountView()
+    {
+        return $this->count_view;
+    }
+
+    /**
+     * @name        setCountView ()
+     *
+     * @author      Said İmamoğlu
+     *
+     * @since       1.0.0
+     * @version     1.0.0
+     *
+     * @param       mixed $count_view
+     *
+     * @return      $this
+     */
+    public function setCountView($count_view)
+    {
+        if (!$this->setModifiled('count_view', $count_view)->isModified()) {
+            return $this;
+        }
+        $this->count_view = $count_view;
+        return $this;
+    }
+
+    /**
+     * @name        getType ()
+     *
+     * @author      Said İmamoğlu
+     *
+     * @since       1.0.0
+     * @version     1.0.0
+     *
+     * @return      mixed
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @name        setType ()
+     *
+     * @author      Said İmamoğlu
+     *
+     * @since       1.0.0
+     * @version     1.0.0
+     *
+     * @param       mixed $type
+     *
+     * @return      $this
+     */
+    public function setType($type)
+    {
+        if (!$this->setModifiled('type', $type)->isModified()) {
+            return $this;
+        }
+        $this->type = $type;
+        return $this;
+    }
     /******************************************************************
      * PUBLIC SET AND GET FUNCTIONS                                   *
      ******************************************************************/
@@ -175,6 +255,16 @@ class FilesOfBlogPost extends CoreEntity
 }
 /**
  * Change Log:
+ * **************************************
+ * v1.0.1                      Said İmamoğlu
+ * 15.01.2015
+ *
+ * **************************************
+ * A getType()
+ * A setType()
+ * A getCountView()
+ * A setCountView()
+ *
  * **************************************
  * v1.0.0                      Murat Ünal
  * 15.09.2013
