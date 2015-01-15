@@ -13,8 +13,8 @@
  *
  * @copyright   Biber Ltd. (www.biberltd.com)
  *
- * @version     1.0.6
- * @date        14.10.2014
+ * @version     1.0.7
+ * @date        15.01.2015
  *
  * =============================================================================================================
  * !! INSTRUCTIONS ON IMPORTANT ASPECTS OF MODEL METHODS !!!
@@ -2193,7 +2193,88 @@ class BlogModel extends CoreModel
         );
         return $this->listBlogPostCategories($filter, $sortorder, $limit);
     }
+    /**
+     * @name            listMediaOfBlogPost()
+     *                  Lists one ore more random media from gallery
+     *
+     * @since           1.0.7
+     * @version         1.0.7
+     *
+     * @author          Said İmamoğlu
+     *
+     * @use             $this->createException()
+     *
+     * @param           mixed       $post
+     * @param           string      $mediaType      all, i, a, v, f, d, p, s
+     * @param           array       $sortorder
+     * @param           array       $limit
+     * @param           array       $filter
+     *
+     * @return          array           $response
+     */
+    public function listFilesOfBlogPost($post, $mediaType = 'all', $sortorder = null, $limit = null, $filter = null){
+        $this->resetResponse();
+        $allowedTypes = array('i', 'a', 'v', 'f', 'd', 'p', 's');
+        if(!$post instanceof BundleEntity\BlogPost && !is_numeric($post)){
+            return $this->createException('InvalidParameterValueException', 'BlogPost entity or integer  representing row id', 'err.invalid.parameter.gallery');
+        }
+        if($mediaType != 'all' && !in_array($mediaType, $allowedTypes)){
+            return $this->createException('InvalidParameterValueException', 'i, a, v, f, d, p, or s', 'err.invalid.parameter.mediaType');
+        }
+        if(is_numeric($post)){
+            $response = $this->getBlogPost($post);
+            if($response['error']){
+                return $this->createException('InvalidParameterValueException', 'BlogPost entity or integer  representing row id', 'err.invalid.parameter.gallery');
+            }
+            $post = $response['result']['set'];
+        }
+        $qStr = 'SELECT '.$this->entity['files_of_blog_post']['alias']
+            .' FROM '.$this->entity['files_of_blog_post']['name'].' '.$this->entity['files_of_blog_post']['alias']
+            .' WHERE '.$this->entity['files_of_blog_post']['alias'].'.post = '.$post->getId();
+        unset($response, $post);
+        $whereStr = '';
+        if($mediaType != 'all'){
+            $whereStr = ' AND '.$this->entity['files_of_blog_post']['alias'].".type = '".$mediaType."'";
+        }
+        $qStr .= $whereStr;
 
+        $query = $this->em->createQuery($qStr);
+
+        $result = $query->getResult();
+
+        $fileIds = array();
+        $totalRows = count($result);
+
+        if($totalRows > 0){
+            foreach($result as $gm){
+                $fileIds[] = $gm->getFile()->getId();
+            }
+        }
+        else{
+            $this->response = array(
+                'result' => array(
+                    'set' => null,
+                    'total_rows' => 0,
+                    'last_insert_id' => null,
+                ),
+                'error' => true,
+                'code' => 'err.db.entry.notexist',
+            );
+            return $this->response;
+        }
+
+        $fileFilter[] = array('glue' => 'and',
+            'condition' => array(
+                array(
+                    'glue' => 'and',
+                    'condition' => array('column' => 'f.id', 'comparison' => 'in', 'value' => $fileIds),
+                )
+            )
+        );
+        $fModel = $this->kernel->getContainer()->get('filemanagement.model');
+
+        return $fModel->listFiles($fileFilter, $sortorder, $limit);
+    }
     /**
      * @name            listPostsInCategory ()
      *                  List posts in a given category
@@ -3982,6 +4063,11 @@ class BlogModel extends CoreModel
 
 /**
  * Change Log
+ * **************************************
+ * v1.0.6                      Said İmamoğlu
+ * 15.01.2015
+ * **************************************
+ * A listFilesOfBlogPost()
  * **************************************
  * v1.0.6                      Can Berkol
  * 14.10.2014
