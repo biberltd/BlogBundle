@@ -1,12 +1,13 @@
 <?php
 /**
  * @name        BlogPostCategoryLocalization
- * @package		BiberLtd\Bundle\CoreBundle\BlogBundle
+ * @package		BiberLtd\Core\BlogBundle
  *
+ * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.0
- * @date        13.09.2013
+ * @version     1.0.4
+ * @date        26.04.2015
  *
  * @copyright   Biber Ltd. (http://www.biberltd.com)
  * @license     GPL v3.0
@@ -16,7 +17,7 @@
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
-use BiberLtd\Bundle\CoreBundle\CoreEntity;
+use BiberLtd\Core\CoreEntity;
 
 /** 
  * @ORM\Entity
@@ -24,8 +25,8 @@ use BiberLtd\Bundle\CoreBundle\CoreEntity;
  *     name="blog_post_category_localization",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
  *     uniqueConstraints={
- *         @ORM\UniqueConstraint(name="idx_u_blog_post_localization", columns={"category","language"}),
- *         @ORM\UniqueConstraint(name="idx_u_blog_post_localization_url_key", columns={"language","url_key"})
+ *         @ORM\UniqueConstraint(name="idxUBlogPostLocalization", columns={"category","language"}),
+ *         @ORM\UniqueConstraint(name="idxUBlogPostUrlKey", columns={"language","url_key"})
  *     }
  * )
  */
@@ -53,25 +54,23 @@ class BlogPostCategoryLocalization extends CoreEntity
      */
     private $language;
 
-    /** 
+    /**
      * @ORM\Id
      * @ORM\ManyToOne(
      *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory",
      *     inversedBy="localizations"
      * )
-     * @ORM\JoinColumn(name="post_category", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="category", referencedColumnName="id", nullable=false)
      */
-    private $post_category;
+    private $category;
 
     /**
-     * @name                  setBlogPostCategory ()
-     *                                            Sets the blog_post_category property.
-     *                                            Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setCategory ()
+	 *
      * @author          Can Berkol
      *
-     * @since           1.0.0
-     * @version         1.0.0
+     * @since           1.0.1
+     * @version         1.0.1
      *
      * @use             $this->setModified()
      *
@@ -79,34 +78,32 @@ class BlogPostCategoryLocalization extends CoreEntity
      *
      * @return          object                $this
      */
-    public function setBlogPostCategory($blog_post_category) {
-        if(!$this->setModified('post_category', $blog_post_category)->isModified()) {
+    public function setCategory($blog_post_category) {
+        if(!$this->setModified('category', $blog_post_category)->isModified()) {
             return $this;
         }
-		$this->post_category = $blog_post_category;
+		$this->category = $blog_post_category;
 		return $this;
     }
 
     /**
-     * @name            getBlogPostCategory ()
-     *                                      Returns the value of blog_post_category property.
+     * @name            getCategory()
+     *                  Returns the value of blog_post_category property.
      *
      * @author          Can Berkol
      *
-     * @since           1.0.0
-     * @version         1.0.0
+     * @since           1.0.1
+     * @version         1.0.1
      *
-     * @return          mixed           $this->blog_post_category
+     * @return          mixed           $this->category
      */
-    public function getBlogPostCategory() {
-        return $this->post_category;
+    public function getCategory() {
+        return $this->category;
     }
 
     /**
-     * @name                  setDescription ()
-     *                                       Sets the description property.
-     *                                       Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setDescription ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -128,8 +125,7 @@ class BlogPostCategoryLocalization extends CoreEntity
 
     /**
      * @name            getDescription ()
-     *                                 Returns the value of description property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -142,9 +138,7 @@ class BlogPostCategoryLocalization extends CoreEntity
     }
 
     /**
-     * @name                  setLanguage ()
-     *                                    Sets the language property.
-     *                                    Updates the data only if stored value and value to be set are different.
+     * @name            setLanguage ()
      *
      * @author          Can Berkol
      *
@@ -167,7 +161,7 @@ class BlogPostCategoryLocalization extends CoreEntity
 
     /**
      * @name            getLanguage ()
-     *                              Returns the value of language property.
+     *                  Returns the value of language property.
      *
      * @author          Can Berkol
      *
@@ -181,10 +175,8 @@ class BlogPostCategoryLocalization extends CoreEntity
     }
 
     /**
-     * @name                  setName ()
-     *                                Sets the name property.
-     *                                Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setName ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -205,8 +197,8 @@ class BlogPostCategoryLocalization extends CoreEntity
     }
 
     /**
-     * @name            getName ()
-     *                          Returns the value of name property.
+	 * @name            getName ()
+	 *                  Returns the value of name property.
      *
      * @author          Can Berkol
      *
@@ -220,10 +212,8 @@ class BlogPostCategoryLocalization extends CoreEntity
     }
 
     /**
-     * @name                  setUrlKey ()
-     *                                  Sets the url_key property.
-     *                                  Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setUrlKey ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -245,8 +235,7 @@ class BlogPostCategoryLocalization extends CoreEntity
 
     /**
      * @name            getUrlKey ()
-     *                            Returns the value of url_key property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -257,13 +246,17 @@ class BlogPostCategoryLocalization extends CoreEntity
     public function getUrlKey() {
         return $this->url_key;
     }
-    /******************************************************************
-     * PUBLIC SET AND GET FUNCTIONS                                   *
-     ******************************************************************/
-
 }
 /**
  * Change Log:
+ * **************************************
+ * v1.0.1  					   26.04.2015
+ * TW #3568845
+ * Can Berkol
+ * **************************************
+ * A getCategory()
+ * A setCategory()
+ *
  * **************************************
  * v1.0.0                      Murat Ünal
  * 13.09.2013

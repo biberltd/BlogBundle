@@ -1,12 +1,13 @@
 <?php
 /**
  * @name        BlogModerator
- * @package		BiberLtd\Bundle\CoreBundle\BlogBundle
+ * @package		BiberLtd\Core\BlogBundle
  *
+ * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.0
- * @date        13.09.2013
+ * @version     1.0.1
+ * @date        25.04.2015
  *
  * @copyright   Biber Ltd. (http://www.biberltd.com)
  * @license     GPL v3.0
@@ -16,51 +17,48 @@
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
-use BiberLtd\Bundle\CoreBundle\CoreEntity;
+use BiberLtd\Core\CoreEntity;
 
 /** 
  * @ORM\Entity
  * @ORM\Table(
  *     name="blog_moderator",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
- *     indexes={@ORM\Index(name="idx_n_blog_moderator_date_added", columns={"date_added"})},
- *     uniqueConstraints={@ORM\UniqueConstraint(name="idx_u_blog_moderator", columns={"moderator","blog","category"})}
+ *     indexes={@ORM\Index(name="idxNBlogModeratorDateAdded", columns={"date_added"})},
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="idxUBlogModerator", columns={"moderator","blog","category"})}
  * )
  */
 class BlogModerator extends CoreEntity
 {
-    /** 
+    /**
      * @ORM\Column(type="datetime", nullable=false)
      */
     public $date_added;
 
-    /** 
+    /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MemberManagementBundle\Entity\Member")
      * @ORM\JoinColumn(name="moderator", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $member;
 
-    /** 
+    /**
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\Blog", inversedBy="blog_moderators")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\Blog", inversedBy="moderators")
      * @ORM\JoinColumn(name="blog", referencedColumnName="id", nullable=false)
      */
     private $blog;
 
-    /** 
-     * @ORM\ManyToOne(
-     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory",
-     *     inversedBy="blog_moderators"
-     * )
+    /**
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory", inversedBy="moderators")
      * @ORM\JoinColumn(name="category", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
-    private $blog_post_category;
+    private $category;
 
     /**
-     * @name                  setBlog ()
-     *                                Sets the blog property.
-     *                                Updates the data only if stored value and value to be set are different.
+     * @name            setBlog ()
+     *                  Sets the blog property.
+     *                  Updates the data only if stored value and value to be set are different.
      *
      * @author          Can Berkol
      *
@@ -83,7 +81,7 @@ class BlogModerator extends CoreEntity
 
     /**
      * @name            getBlog ()
-     *                          Returns the value of blog property.
+     *                  Returns the value of blog property.
      *
      * @author          Can Berkol
      *
@@ -97,48 +95,48 @@ class BlogModerator extends CoreEntity
     }
 
     /**
-     * @name                  setBlogPostCategory ()
-     *                                            Sets the blog_post_category property.
-     *                                            Updates the data only if stored value and value to be set are different.
+     * @name            setCategory()
+     *                  Sets the blog_post_category property.
+     *                  Updates the data only if stored value and value to be set are different.
      *
      * @author          Can Berkol
      *
-     * @since           1.0.0
-     * @version         1.0.0
+     * @since           1.0.1
+     * @version         1.0.1
      *
      * @use             $this->setModified()
      *
-     * @param           mixed $blog_post_category
+     * @param           mixed 				$category
      *
-     * @return          object                $this
+     * @return          object              $this
      */
-    public function setBlogPostCategory($blog_post_category) {
-        if(!$this->setModified('blog_post_category', $blog_post_category)->isModified()) {
+    public function setCategory($category) {
+        if(!$this->setModified('category', $category)->isModified()) {
             return $this;
         }
-		$this->blog_post_category = $blog_post_category;
+		$this->category = $category;
 		return $this;
     }
 
     /**
-     * @name            getBlogPostCategory ()
-     *                                      Returns the value of blog_post_category property.
+     * @name            getCategory()
+     *                  Returns the value of blog_post_category property.
      *
      * @author          Can Berkol
      *
-     * @since           1.0.0
-     * @version         1.0.0
+     * @since           1.0.1
+     * @version         1.0.1
      *
      * @return          mixed           $this->blog_post_category
      */
-    public function getBlogPostCategory() {
-        return $this->blog_post_category;
+    public function getCategory() {
+        return $this->category;
     }
 
     /**
-     * @name                  setMember ()
-     *                                  Sets the member property.
-     *                                  Updates the data only if stored value and value to be set are different.
+     * @name            setMember ()
+     *                  Sets the member property.
+     *                  Updates the data only if stored value and value to be set are different.
      *
      * @author          Can Berkol
      *
@@ -161,7 +159,7 @@ class BlogModerator extends CoreEntity
 
     /**
      * @name            getMember ()
-     *                            Returns the value of member property.
+     *                  Returns the value of member property.
      *
      * @author          Can Berkol
      *
@@ -173,13 +171,19 @@ class BlogModerator extends CoreEntity
     public function getMember() {
         return $this->member;
     }
-    /******************************************************************
-     * PUBLIC SET AND GET FUNCTIONS                                   *
-     ******************************************************************/
-
 }
 /**
  * Change Log:
+ * **************************************
+ * v1.0.1                      25.04.2015
+ * TW #3568845
+ * Can Berkol
+ * **************************************
+ * A getCategory()
+ * A setCategory()
+ * D getBlogPostCategory()
+ * D setBlogPostCategory()
+ *
  * **************************************
  * v1.0.0                      Murat Ünal
  * 13.09.2013

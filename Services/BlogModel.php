@@ -9,33 +9,12 @@
  * @subpackage      Services
  * @name            BlogBundle
  *
- * @author        Can Berkol
+ * @author        	Can Berkol
  *
- * @copyright   Biber Ltd. (www.biberltd.com)
+ * @copyright   	Biber Ltd. (www.biberltd.com)
  *
- * @version     1.0.7
- * @date        15.01.2015
- *
- * =============================================================================================================
- * !! INSTRUCTIONS ON IMPORTANT ASPECTS OF MODEL METHODS !!!
- *
- * Each model function must return a $response ARRAY.
- * The array must contain the following keys and corresponding values.
- *
- * $response = array(
- *              'result'    =>   An array that contains the following keys:
- *                               'set'         Actual result set returned from ORM or null
- *                               'total_rows'  0 or number of total rows
- *                               'last_insert_id' The id of the item that is added last (if insert action)
- *              'error'     =>   true if there is an error; false if there is none.
- *              'code'      =>   null or a semantic and short English string that defines the error concanated
- *                               with dots, prefixed with err and the initials of the name of model class.
- *                               EXAMPLE: err.amm.action.not.found success messages have a prefix called scc..
- *
- *                               NOTE: DO NOT FORGET TO ADD AN ENTRY FOR ERROR CODE IN BUNDLE'S
- *                               RESOURCES/TRANSLATIONS FOLDER FOR EACH LANGUAGE.
- * =============================================================================================================
- * TODOs:
+ * @version     	1.0.8
+ * @date        	26.04.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Services;
 
@@ -671,6 +650,69 @@ class BlogModel extends CoreModel
         );
         return $this->response;
     }
+	/**
+	 * @name            deleteBlogPostRevision()
+	 *
+	 * @since           1.0.8
+	 * @version         1.0.8
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->deleteBlogPostRevisions()
+	 *
+	 * @param           mixed 			$revision
+	 * @param           string 			$by
+	 *
+	 * @return          mixed           $response
+	 */
+	public function deleteBlogPostRevision($revision, $by = 'entity'){
+		return $this->deleteBlogPostRevisions(array($revision), $by);
+	}
+
+	/**
+	 * @name            deleteBlogPostRevisions()
+	 *
+	 * @since           1.0.8
+	 * @version         1.0.8
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 *
+	 * @param           array           $collection             Collection consists one of the following: PageRevision
+	 *
+	 * @return          array           $response
+	 */
+	public function deleteBlogPostRevisions($collection){
+		$this->resetResponse();
+		/** Parameter must be an array */
+		if (!is_array($collection)) {
+			return $this->createException('InvalidCollection', 'The $collection parameter must be an array collection.', 'msg.error.invalid.collection.array');
+		}
+		$countDeleted = 0;
+		foreach ($collection as $entry){
+			if($entry instanceof BundleEntity\BlogPostRevision){
+				$this->em->remove($entry);
+				$countDeleted++;
+			}
+		}
+		if ($countDeleted < 1) {
+			$this->response['error'] = true;
+			$this->response['code'] = 'msg.error.db.delete.failed';
+
+			return $this->response;
+		}
+		$this->em->flush();
+		$this->response = array(
+			'rowCount' => 0,
+			'result' => array(
+				'set' => null,
+				'total_rows' => $countDeleted,
+				'last_insert_id' => null,
+			),
+			'error' => false,
+			'code' => 'msg.success.db.delete',
+		);
+		return $this->response;
+	}
 
     /**
      * @name            getBlog ()
@@ -921,6 +963,141 @@ class BlogModel extends CoreModel
         );
         return $this->response;
     }
+	/**
+	 * @name            getBlogPostRevision()
+	 *
+	 * @since           1.0.8
+	 * @version         1.0.8
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 * @use             $this->listBlogPostRevisions()
+	 * @use             $this->resetResponse()
+	 *
+	 * @param           mixed           $post
+	 * @param			mixed			$language
+	 * @param			integer			$revisionNumber
+	 *
+	 * @return          mixed           $response
+	 */
+	public function getBlogPostRevision($post, $language, $revisionNumber){
+		$this->resetResponse();
+
+		if (!$post instanceof BundleEntity\BlogPost && !is_numeric($post) && !is_string($post)) {
+			return $this->createException('InvalidParameter', '$post parameter must hold BiberLtd\\Core\\Bundles\\BlogBundle\\Entity\\BlogPost entity, a string representing url_key, or an integer representing database row id.', 'msg.error.invalid.parameter.page');
+		}
+
+		if (is_object($post)) {
+			$postId = $post->getId();
+		}
+		elseif(is_numeric($post)){
+			$postId = $post;
+		}
+		elseif(is_string($post)){
+			$response = $this->getBlogPost($post, 'url_key');
+			if($response['error']){
+				return $this->createException('InvalidParameter', '$page parameter must hold BiberLtd\\Core\\Bundles\\BlogBundle\\Entity\\BlogPost entity, a string representing url_key, or an integer representing database row id.', 'msg.error.invalid.parameter.page');
+			}
+			$postId = $response['result']['set'];
+		}
+
+		$mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+		if (!$language instanceof MLSEntity\Language && !is_integer($language) && !is_string($language)) {
+			return $this->createException('InvalidParameter', 'Language', 'err.invalid.parameter.language');
+		}
+
+		if (is_object($language)) {
+			$languageId = $language->getId();
+		}
+		elseif(is_numeric($language)){
+			$languageId = $language;
+		}
+		elseif(is_string($language)){
+			$response = $mlsModel->getLanguage($language, 'iso_code');
+			if($response['error']){
+				return $this->createException('InvalidParameter', '$page parameter must hold BiberLtd\\Core\\Bundles\\ContentManagementBundle\\Entity\\Page entity, a string representing url_key, or an integer representing database row id.', 'msg.error.invalid.parameter.page');
+			}
+			$blogId = $response['result']['set'];
+		}
+
+		$q = 'SELECT '.$this->entity['blog_post_revision']['alias']
+			.' FROM '.$this->entity['blog_post_revision']['name'].' '.$this->entity['blog_post_revision']['alias']
+			.' WHERE '.$this->entity['blog_post_revision']['name'].'.blog_post = '.$postId
+			.' AND '.$this->entity['blog_post_revision']['name'].'.language = '.$languageId
+			.' AND '.$this->entity['blog_post_revision']['name'].'.revision_number = '.$revisionNumber;
+
+		$query = $this->em->createQuery($q);
+
+		$result = $query->getResult();
+
+		/**
+		 * Prepare & Return Response
+		 */
+		$this->response = array(
+			'rowCount' => $this->response['rowCount'],
+			'result' => array(
+				'set' => $result,
+				'total_rows' => 1,
+				'last_insert_id' => null,
+			),
+			'error' => false,
+			'code' => 'msg.success.db.entry.exists',
+		);
+		return $this->response;
+	}
+	/**
+	 * @name            getLastRevisionOfBlogPost()
+	 *
+	 * @since           1.0.8
+	 * @version         1.0.8
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @page			mixed			$post
+	 * @return          mixed           $response
+	 */
+	public function getLastRevisionOfBlogPost($post){
+		if(is_object($post) && $post instanceof BundleEntity\BlogPost){
+			$blogId = $post->getId();
+		}
+		elseif(is_numeric($post)){
+			$response = $this->getBlogPost($post, 'id');
+			if(!$response['error']){
+				$blogId = $response['result']['set']->getId();
+			}
+		}
+		elseif(is_string($post)){
+			$response = $this->getBlogPost($post, 'url_key');
+			if(!$response['error']){
+				$blogId = $response['result']['set']->getId();
+			}
+		}
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array(
+				array(
+					'glue' => 'and',
+					'condition' => array('column' =>$this->entity['blog_post_revision']['alias']. '.page', 'comparison' => '=', 'value' => $blogId),
+				)
+			)
+		);
+		$response = $this->listBlogPostRevisions($filter, array('date_added' => 'desc'), array('start' => 0, 'count' => 1));
+		/**
+		 * Prepare & Return Response
+		 */
+		$this->response = array(
+			'rowCount' => $this->response['rowCount'],
+			'result' => array(
+				'set' => $response['result']['set'][0],
+				'total_rows' => 1,
+				'last_insert_id' => null,
+			),
+			'error' => false,
+			'code' => 'scc.db.entity.exist',
+		);
+		return $this->response;
+	}
 
     /**
      * @name            getMaxSortOrderOfBlogPostFile ()
@@ -938,7 +1115,7 @@ class BlogModel extends CoreModel
      */
     public function getMaxSortOrderOfBlogPostFile($post, $bypass = false)
     {
-        $this->resetResponse();;
+        $this->resetResponse();
         if (!is_object($post) && !is_numeric($post) && !is_string($post)) {
             return $this->createException('InvalidParameter', 'BlogPost', 'err.invalid.parameter.blog_post');
         }
@@ -1263,7 +1440,111 @@ class BlogModel extends CoreModel
         );
         return $this->response;
     }
+	/**
+	 * @name            insertBlogPostRevision()
+	 *
+	 * @since           1.0.8
+	 * @version         1.0.8
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->insertBlogPostRevisions()
+	 *
+	 * @param           mixed			$revision
+	 *
+	 * @return          array           $response
+	 */
+	public function insertBlogPostRevision($revision) {
+		return $this->insertBlogPostRevisions(array($revision));
+	}
 
+	/**
+	 * @name            insertBlogPostRevisions()
+	 *
+	 * @since           1.0.8
+	 * @version         1.0.8
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 *
+	 * @param           array 			$collection
+	 *
+	 * @return          array           $response
+	 */
+	public function insertBlogPostRevisions($collection) {
+		$this->resetResponse();
+		/** Parameter must be an array */
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameter', 'Array', 'err.invalid.parameter.collection');
+		}
+		$countInserts = 0;
+		$insertedItems = array();
+		foreach ($collection as $data) {
+			if ($data instanceof BundleEntity\BlogPostRevision) {
+				$entity = $data;
+				$this->em->persist($entity);
+				$insertedItems[] = $entity;
+				$countInserts++;
+			}
+			else if (is_object($data)) {
+				$entity = new BundleEntity\BlogPostRevision();
+				foreach ($data as $column => $value) {
+					$set = 'set' . $this->translateColumnName($column);
+					switch ($column) {
+						case 'language':
+							$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+							$response = $lModel->getLanguage($value, 'id');
+							if (!$response['error']) {
+								$entity->$set($response['result']['set']);
+							} else {
+								$response = $lModel->getLanguage($value, 'iso_code');
+								if (!$response['error']) {
+									$entity->$set($response['result']['set']);
+								} else {
+									new CoreExceptions\EntityDoesNotExist($this->kernel, $value);
+								}
+							}
+							unset($response, $sModel);
+							break;
+						case 'post':
+							$response = $this->getBlogPost($value, 'id');
+							if (!$response['error']) {
+								$entity->$set($response['result']['set']);
+							} else {
+								new CoreExceptions\EntityDoesNotExist($this->kernel, $value);
+							}
+							unset($response, $sModel);
+							break;
+						default:
+							$entity->$set($value);
+							break;
+					}
+				}
+				$this->em->persist($entity);
+				$insertedItems[] = $entity;
+
+				$countInserts++;
+			} else {
+				new CoreExceptions\InvalidDataException($this->kernel);
+			}
+		}
+		if ($countInserts > 0) {
+			$this->em->flush();
+		}
+		/**
+		 * Prepare & Return Response
+		 */
+		$this->response = array(
+			'rowCount' => $this->response['rowCount'],
+			'result' => array(
+				'set' => $insertedItems,
+				'total_rows' => $countInserts,
+				'last_insert_id' => $entity->getId(),
+			),
+			'error' => false,
+			'code' => 'scc.db.insert.done',
+		);
+		return $this->response;
+	}
     /**
      * @name            insertBlogPosts ()
      *                  Inserts one or more blog posts into database.
@@ -1887,7 +2168,79 @@ class BlogModel extends CoreModel
         );
         return $this->response;
     }
+	/**
+	 * @name            listBlogPostRevisions()
+	 *
+	 * @since           1.0.8
+	 * @version         1.0.8
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @param           array 			$filter
+	 * @param			array			$sortOrder
+	 * @param			array			$limit
+	 * @param			integer			$site
+	 * @param			string			$queryStr
+	 *
+	 * @return          array           $response
+	 */
+	public function listBlogPostRevisions($filter = null, $sortOrder = null, $limit = null, $site = 1, $queryStr = null){
+		$this->resetResponse();
+		if (!is_array($sortOrder) && !is_null($sortOrder)) {
+			return $this->createException('InvalidSortOrderException', '', 'err.invalid.parameter.sortorder');
+		}
 
+		$orderStr = '';
+		$whereStr = '';
+		$groupStr = '';
+		$filterStr = '';
+
+		$queryStr = 'SELECT '.$this->entity['blog_post_revision']['alias']
+			.' FROM '.$this->entity['blog_post_revision']['alias']['name'].' '.$this->entity['blog_post_revision']['alias'];
+
+		if ($sortOrder != null) {
+			foreach ($sortOrder as $column => $direction) {
+				switch ($column) {
+					default:
+						$column = $this->entity['blog_post_revision']['alias'].'.'.$column;
+						break;
+				}
+				$orderStr .= ' '.$column.' '.strtoupper($direction).', ';
+			}
+			$orderStr = rtrim($orderStr, ', ');
+			$orderStr = ' ORDER BY '.$orderStr.' ';
+		}
+
+		/**
+		 * Prepare WHERE section of query.
+		 */
+		if ($filter != null) {
+			$filter_str = $this->prepareWhere($filter);
+			$whereStr .= ' WHERE ' . $filter_str;
+		}
+
+		$queryStr .= $whereStr.$groupStr.$orderStr;
+
+		$query = $this->em->createQuery($queryStr);
+
+		$query = $this->addLimit($query, $limit);
+		/**
+		 * Prepare & Return Response
+		 */
+		$result = $query->getResult();
+
+		$this->response = array(
+			'rowCount' => $this->response['rowCount'],
+			'result' => array(
+				'set' => $result,
+				'total_rows' => count($result),
+				'last_insert_id' => null,
+			),
+			'error' => false,
+			'code' => 'scc.db.entry.exist',
+		);
+		return $this->response;
+	}
     /**
      * @name            listBlogPostss ()
      *                  List blog posts.
@@ -3369,7 +3722,117 @@ class BlogModel extends CoreModel
         );
         return $this->response;
     }
+	/**
+	 * @name            updateBlogPostRevision()
+	 *
+	 * @since           1.0.8
+	 * @version         1.0.8
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->updatePageRevisions()
+	 *
+	 * @param           mixed 			$revision
+	 *
+	 * @return          mixed           $response
+	 */
+	public function updateBlogPostRevision($revision){
+		return $this->updateBlogPostRevisions(array($revision));
+	}
+	/**
+	 * @name            updateBlogPostRevisions()
+	 *
+	 * @since           1.0.8
+	 * @version         1.0.8
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 *
+	 * @param           array 			$collection
+	 *
+	 * @return          array           $response
+	 */
+	public function updateBlogPostRevisions($collection) {
+		$this->resetResponse();
+		/** Parameter must be an array */
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameter', 'Array', 'err.invalid.parameter.collection');
+		}
+		$countUpdates = 0;
+		$updatedItems = array();
+		foreach ($collection as $data) {
+			if ($data instanceof BundleEntity\BlogPostRevision) {
+				$entity = $data;
+				$this->em->persist($entity);
+				$updatedItems[] = $entity;
+				$countUpdates++;
+			}
+			else if (is_object($data)) {
+				if (!property_exists($data, 'date_updated')) {
+					$data->date_updated = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
+				}
+				if (property_exists($data, 'date_added')) {
+					unset($data->date_added);
+				}
+				$response = $this->getBlogPostRevision($data->page, $data->language, $data->revision_number);
+				if ($response['error']) {
+					return $this->createException('EntityDoesNotExist', 'BlogPostRevision', 'err.invalid.entity');
+				}
+				$oldEntity = $response['result']['set'];
 
+				foreach ($data as $column => $value) {
+					$set = 'set' . $this->translateColumnName($column);
+					switch ($column) {
+						case 'post':
+							$response = $this->getBlogPost($value, 'id');
+							if (!$response['error']) {
+								$oldEntity->$set($response['result']['set']);
+							} else {
+								new CoreExceptions\EntityDoesNotExistException($this->kernel, $value);
+							}
+							unset($response, $pModel);
+							break;
+						case 'language':
+							$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+							$response = $lModel->getLanguage($value, 'id');
+							if (!$response['error']) {
+								$oldEntity->$set($response['result']['set']);
+							} else {
+								new CoreExceptions\EntityDoesNotExistException($this->kernel, $value);
+							}
+							unset($response, $lModel);
+							break;
+						default:
+							$oldEntity->$set($value);
+							break;
+					}
+					if ($oldEntity->isModified()) {
+						$this->em->persist($oldEntity);
+						$countUpdates++;
+						$updatedItems[] = $oldEntity;
+					}
+				}
+			} else {
+				new CoreExceptions\InvalidDataException($this->kernel);
+			}
+		}
+		if ($countUpdates > 0) {
+			$this->em->flush();
+		}
+		/**
+		 * Prepare & Return Response
+		 */
+		$this->response = array(
+			'rowCount' => $this->response['rowCount'],
+			'result' => array(
+				'set' => $updatedItems,
+				'total_rows' => $countUpdates,
+				'last_insert_id' => null,
+			),
+			'error' => false,
+			'code' => 'scc.db.update.done',
+		);
+		return $this->response;
+	}
     /**
      * @name            listPublishedPostsOfBlog ()
      *                  List published posts of a blog that between given dates.
@@ -4064,10 +4527,26 @@ class BlogModel extends CoreModel
 /**
  * Change Log
  * **************************************
- * v1.0.6                      Said İmamoğlu
+ * v1.0.8                      24.04.2015
+ * TW #3568873
+ * Can Berkol
+ * **************************************
+ * A deleteBlogPostRevision()
+ * A deleteBlogPostRevisions()
+ * A getBlogPostRevision()
+ * A getLastRevisionOfPage()
+ * A insertBlogPostRevision()
+ * A insertBlogPostRevisions()
+ * A listBlogPostRevisions()
+ * A updateBlogPostRevision()
+ * A updateBlogPostRevisions()
+ *
+ * **************************************
+ * v1.0.7                   Said İmamoğlu
  * 15.01.2015
  * **************************************
  * A listFilesOfBlogPost()
+ *
  * **************************************
  * v1.0.6                      Can Berkol
  * 14.10.2014

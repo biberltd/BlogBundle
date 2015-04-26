@@ -1,7 +1,7 @@
 <?php
 /**
  * @name        BlogPostPostlocalization
- * @package		BiberLtd\Bundle\CoreBundle\BlogBundle
+ * @package		BiberLtd\Core\BlogBundle
  *
  * @author		Murat Ünal
  *
@@ -16,16 +16,16 @@
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
-use BiberLtd\Bundle\CoreBundle\CoreEntity;
+use BiberLtd\Core\CoreEntity;
 
 /** 
  * @ORM\Entity
  * @ORM\Table(
  *     name="blog_post_localization",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
- *     indexes={
- *         @ORM\Index(name="idx_u_blog_post_localization", columns={"post","language"}),
- *         @ORM\Index(name="idx_u_blog_post_localization_url_key", columns={"language","url_key"})
+ *     uniqueConstraints={
+ *         @ORM\UniqueConstraint(name="idxUBlogPostLocalization", columns={"post","language"}),
+ *         @ORM\UniqueConstraint(name="idxUBlogPostUrlKey", columns={"language","url_key"})
  *     }
  * )
  */

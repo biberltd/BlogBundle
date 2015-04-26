@@ -1,7 +1,7 @@
 <?php
 /**
  * @name        BlogPostTag
- * @package		BiberLtd\Bundle\CoreBundle\BlogBundle
+ * @package		BiberLtd\Core\BlogBundle
  *
  * @author		Murat Ünal
  *
@@ -16,15 +16,19 @@
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
-use BiberLtd\Bundle\CoreBundle\CoreEntity;
+use BiberLtd\Core\CoreEntity;
 
 /** 
  * @ORM\Entity
  * @ORM\Table(
  *     name="blog_post_tag",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
- *     indexes={@ORM\Index(name="idx_n_blog_post_tag_date_added", columns={"date_added"})},
- *     uniqueConstraints={@ORM\UniqueConstraint(name="idx_u_blog_post_tag_id", columns={"id"})}
+ *     indexes={
+ *         @ORM\Index(name="idxNBlogPostTagAdded", columns={"date_added"}),
+ *         @ORM\Index(name="idxNBlogPostTagUpdated", columns={"date_updated"}),
+ *         @ORM\Index(name="idxNBlogPostTagRemoved", columns={"date_removed"})
+ *     },
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="idxUBlogPostTagId", columns={"id"})}
  * )
  */
 class BlogPostTag extends  CoreEntity
@@ -42,15 +46,22 @@ class BlogPostTag extends  CoreEntity
     public $date_added;
 
     /** 
-     * @ORM\Column(type="integer", length=10, nullable=false)
+     * @ORM\Column(type="integer", length=10, nullable=false, options={"default":0})
      */
     private $count_posts;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=false)
+     */
+    public $date_updated;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+	public $date_removed;
+
     /** 
-     * @ORM\OneToMany(
-     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostTagLocalization",
-     *     mappedBy="blog_post_tag"
-     * )
+     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostTagLocalization", mappedBy="tag")
      */
     protected $localizations;
 
@@ -61,7 +72,7 @@ class BlogPostTag extends  CoreEntity
     private $site;
 
     /** 
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\Blog", inversedBy="blog_post_tags")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\Blog")
      * @ORM\JoinColumn(name="blog", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $blog;

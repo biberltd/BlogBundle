@@ -1,12 +1,13 @@
 <?php
 /**
  * @name        BlogPostTagLocalization
- * @package		BiberLtd\Bundle\CoreBundle\BlogBundle
+ * @package		BiberLtd\Core\BlogBundle
  *
+ * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.0
- * @date        15.09.2013
+ * @version     1.0.1
+ * @date        26.04.2015
  *
  * @copyright   Biber Ltd. (http://www.biberltd.com)
  * @license     GPL v3.0
@@ -16,7 +17,7 @@
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
-use BiberLtd\Bundle\CoreBundle\CoreEntity;
+use BiberLtd\Core\CoreEntity;
 
 
 /** 
@@ -24,12 +25,13 @@ use BiberLtd\Bundle\CoreBundle\CoreEntity;
  * @ORM\Table(
  *     name="blog_post_tag_localization",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
- *     indexes={@ORM\Index(name="idx_u_blog_post_tag_localization", columns={"tag","language"})},
- *     uniqueConstraints={@ORM\UniqueConstraint(name="idx_u_blog_post_tag_localization_url_key", columns={"language","url_key"})}
+ *     uniqueConstraints={
+ *         @ORM\UniqueConstraint(name="idxUBlogPostTagLocalization", columns={"tag","language"}),
+ *         @ORM\UniqueConstraint(name="idxUBlogPostTagUrlKey", columns={"language","url_key"})
+ *     }
  * )
  */
-class BlogPostTagLocalization extends CoreEntity
-{
+class BlogPostTagLocalization extends CoreEntity{
     /** 
      * @ORM\Column(type="string", length=155, nullable=false)
      */
@@ -42,13 +44,6 @@ class BlogPostTagLocalization extends CoreEntity
 
     /** 
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag", inversedBy="localizations")
-     * @ORM\JoinColumn(name="tag", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    private $blog_post_tag;
-
-    /** 
-     * @ORM\Id
      * @ORM\OneToOne(targetEntity="BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language")
      * 
      * @ORM\JoinColumn(name="language", referencedColumnName="id", nullable=false, unique=true, onDelete="CASCADE")
@@ -56,49 +51,51 @@ class BlogPostTagLocalization extends CoreEntity
     private $language;
 
     /**
-     * @name                  setBlogPostTag ()
-     *                                       Sets the blog_post_tag property.
-     *                                       Updates the data only if stored value and value to be set are different.
-     *
+     * @ORM\Id
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag", inversedBy="localizations")
+     * @ORM\JoinColumn(name="tag", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     */
+    private $tag;
+
+    /**
+     * @name            setTag()
+	 *
      * @author          Can Berkol
      *
-     * @since           1.0.0
-     * @version         1.0.0
+     * @since           1.0.1
+     * @version         1.0.1
      *
      * @use             $this->setModified()
      *
-     * @param           mixed $blog_post_tag
+     * @param           mixed 			$tag
      *
-     * @return          object                $this
+     * @return          object          $this
      */
-    public function setBlogPostTag($blog_post_tag) {
-        if(!$this->setModified('blog_post_tag', $blog_post_tag)->isModified()) {
+    public function setTag($tag) {
+        if(!$this->setModified('tag', $tag)->isModified()) {
             return $this;
         }
-		$this->blog_post_tag = $blog_post_tag;
+		$this->tag = $tag;
 		return $this;
     }
 
     /**
-     * @name            getBlogPostTag ()
-     *                                 Returns the value of blog_post_tag property.
-     *
+     * @name            getTag()
+	 *
      * @author          Can Berkol
      *
-     * @since           1.0.0
-     * @version         1.0.0
+     * @since           1.0.1
+     * @version         1.0.1
      *
-     * @return          mixed           $this->blog_post_tag
+     * @return          mixed           $this->tag
      */
-    public function getBlogPostTag() {
-        return $this->blog_post_tag;
+    public function getTag() {
+        return $this->tag;
     }
 
     /**
-     * @name                  setLanguage ()
-     *                                    Sets the language property.
-     *                                    Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setLanguage ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -120,8 +117,7 @@ class BlogPostTagLocalization extends CoreEntity
 
     /**
      * @name            getLanguage ()
-     *                              Returns the value of language property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -134,10 +130,8 @@ class BlogPostTagLocalization extends CoreEntity
     }
 
     /**
-     * @name                  setName ()
-     *                                Sets the name property.
-     *                                Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setName ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -159,8 +153,7 @@ class BlogPostTagLocalization extends CoreEntity
 
     /**
      * @name            getName ()
-     *                          Returns the value of name property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -173,10 +166,8 @@ class BlogPostTagLocalization extends CoreEntity
     }
 
     /**
-     * @name                  setUrlKey ()
-     *                                  Sets the url_key property.
-     *                                  Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setUrlKey ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -198,8 +189,7 @@ class BlogPostTagLocalization extends CoreEntity
 
     /**
      * @name            getUrlKey ()
-     *                            Returns the value of url_key property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -210,14 +200,16 @@ class BlogPostTagLocalization extends CoreEntity
     public function getUrlKey() {
         return $this->url_key;
     }
-    /******************************************************************
-     * PUBLIC SET AND GET FUNCTIONS                                   *
-     ******************************************************************/
-
-
 }
 /**
  * Change Log:
+ * **************************************
+ * v1.0.1  					   26.04.2015
+ * TW #3568845
+ * Can Berkol
+ * **************************************
+ * Major changes!!
+ *
  * **************************************
  * v1.0.0                      Murat Ünal
  * 15.09.2013
