@@ -1,9 +1,5 @@
 <?php
 /**
- * BlogModel Class
- *
- * This class acts as a database proxy model for Blog functionalities.
- *
  * @vendor          BiberLtd
  * @package         Core\Bundles\BlogBundle
  * @subpackage      Services
@@ -13,8 +9,8 @@
  *
  * @copyright   	Biber Ltd. (www.biberltd.com)
  *
- * @version     	1.0.8
- * @date        	26.04.2015
+ * @version     	1.0.9
+ * @date        	09.05.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Services;
 
@@ -23,6 +19,7 @@ use BiberLtd\Bundle\CoreBundle\CoreModel;
 
 /** Entities to be used */
 use BiberLtd\Bundle\BlogBundle\Entity as BundleEntity;
+use BiberLtd\Bundle\CoreBundle\Responses\ModelResponse;
 use BiberLtd\Bundle\FileManagementBundle\Entity as FileEntity;
 
 /** Helper Models */
@@ -46,64 +43,112 @@ class BlogModel extends CoreModel
      * @param           string $db_connection Database connection key as set in app/config.yml
      * @param           string $orm ORM that is used.
      */
-    public function __construct($kernel, $db_connection = 'default', $orm = 'doctrine')
-    {
+    public function __construct($kernel, $db_connection = 'default', $orm = 'doctrine')    {
         parent::__construct($kernel, $db_connection, $orm);
 
-        /**
-         * Register entity names for easy reference.
-         */
         $this->entity = array(
-            'blog' => array('name' => 'BlogBundle:Blog', 'alias' => 'b'),
-            'blog_localization' => array('name' => 'BlogBundle:BlogLocalization', 'alias' => 'bl'),
-            'blog_moderator' => array('name' => 'BlogBundle:BlogModerator', 'alias' => 'bm'),
-            'blog_post' => array('name' => 'BlogBundle:BlogPost', 'alias' => 'bp'),
-            'blog_post_action' => array('name' => 'BlogBundle:BlogPostAction', 'alias' => 'bpa'),
-            'blog_post_category' => array('name' => 'BlogBundle:BlogPostCategory', 'alias' => 'bpcat'),
-            'blog_post_category_localization' => array('name' => 'BlogBundle:BlogPostCategoryLocalization', 'alias' => 'bpcl'),
-            'blog_post_comment' => array('name' => 'BlogBundle:BlogPostComment', 'alias' => 'bpcom'),
-            'blog_post_comment_action' => array('name' => 'BlogBundle:BlogPostCommentAction', 'alias' => 'bpca'),
-            'blog_post_field' => array('name' => 'BlogBundle:BlogPostField', 'alias' => 'bpf'),
-            'blog_post_field_content' => array('name' => 'BlogBundle:BlogPostFieldContent', 'alias' => 'bpfc'),
-            'blog_post_field_localization' => array('name' => 'BlogBundle:BlogPostFieldLocalization', 'alias' => 'bpfl'),
-            'blog_post_localization' => array('name' => 'BlogBundle:BlogPostLocalization', 'alias' => 'bpl'),
-            'blog_post_moderation' => array('name' => 'BlogBundle:BlogPostModeration', 'alias' => 'bpmo'),
-            'blog_post_moderation_reply' => array('name' => 'BlogBundle:BlogPostModerationReply', 'alias' => 'bpmor'),
-            'blog_post_tag' => array('name' => 'BlogBundle:BlogPostTag', 'alias' => 'bpt'),
-            'blog_post_tag_localization' => array('name' => 'BlogBundle:BlogPostTagLocalzation', 'alias' => 'bptl'),
-            'categories_of_blog_post' => array('name' => 'BlogBundle:CategoriesOfBlogPost', 'alias' => 'cobp'),
-            'favorite_blog_posts_of_member' => array('name' => 'BlogBundle:FavroiteBlogPostsOfMember', 'alias' => 'fbpom'),
-            'featured_blog_post' => array('name' => 'BlogBundle:FeaturedBlogPost', 'alias' => 'fpğ'),
-            'files_of_blog_post' => array('name' => 'BlogBundle:FilesOfBlogPost', 'alias' => 'fobp'),
-            'related_blog_post' => array('name' => 'BlogBundle:RelatedBlogPost', 'alias' => 'rblp'),
-            'tags_of_blog_post' => array('name' => 'BlogBundle:TagsOfBlogPost', 'alias' => 'tobp'),
-
+            'b' 		=> array('name' => 'BlogBundle:Blog', 'alias' => 'b'),
+            'bl'		=> array('name' => 'BlogBundle:BlogLocalization', 'alias' => 'bl'),
+            'bm' 		=> array('name' => 'BlogBundle:BlogModerator', 'alias' => 'bm'),
+            'bp' 		=> array('name' => 'BlogBundle:BlogPost', 'alias' => 'bp'),
+            'bpa' 		=> array('name' => 'BlogBundle:BlogPostAction', 'alias' => 'bpa'),
+            'bpcat' 	=> array('name' => 'BlogBundle:BlogPostCategory', 'alias' => 'bpcat'),
+            'bpcl' 		=> array('name' => 'BlogBundle:BlogPostCategoryLocalization', 'alias' => 'bpcl'),
+            'bpcom' 	=> array('name' => 'BlogBundle:BlogPostComment', 'alias' => 'bpcom'),
+            'bpca' 		=> array('name' => 'BlogBundle:BlogPostCommentAction', 'alias' => 'bpca'),
+            'bpl' 		=> array('name' => 'BlogBundle:BlogPostLocalization', 'alias' => 'bpl'),
+            'bpm' 		=> array('name' => 'BlogBundle:BlogPostModeration', 'alias' => 'bpmo'),
+            'bpmr' 		=> array('name' => 'BlogBundle:BlogPostModerationReply', 'alias' => 'bpmor'),
+            'bpt' 		=> array('name' => 'BlogBundle:BlogPostTag', 'alias' => 'bpt'),
+            'bptl' 		=> array('name' => 'BlogBundle:BlogPostTagLocalization', 'alias' => 'bptl'),
+            'cobp' 		=> array('name' => 'BlogBundle:CategoriesOfBlogPost', 'alias' => 'cobp'),
+            'fbpom' 	=> array('name' => 'BlogBundle:FavoriteBlogPostsOfMember', 'alias' => 'fbpom'),
+            'fbp' 		=> array('name' => 'BlogBundle:FeaturedBlogPost', 'alias' => 'fpp'),
+            'fobp' 		=> array('name' => 'BlogBundle:FilesOfBlogPost', 'alias' => 'fobp'),
+            'rbp' 		=> array('name' => 'BlogBundle:RelatedBlogPost', 'alias' => 'rbp'),
+            'tobp' 		=> array('name' => 'BlogBundle:TagsOfBlogPost', 'alias' => 'tobp'),
         );
     }
 
     /**
-     * @name            __destruct ()
-     *                  Destructor.
+     * @name            __destruct()
      *
      * @author          Can Berkol
      *
      * @since           1.0.0
-     * @version         1.0.0
+     * @version         1.0.9
      *
      */
-    public function __destruct()
-    {
+    public function __destruct(){
         foreach ($this as $property => $value) {
             $this->$property = null;
         }
     }
 
+	/**
+	 * @name            addCategoriesToPost()
+	 *
+	 * @since           1.0.2
+	 * @version         1.0.9
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 * @use             $this->isPostAssociatedWithCategory()
+	 *
+	 * @param           array 			$categories
+	 * @param           mixed			$post
+	 * @param           string 			$isPrimary
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function addCategoriesToPost(array $categories, $post, $isPrimary = 'n'){
+		$timeStamp = time();
+		$response = $this->getBlogPost($post);
+		if($response->error->exist){
+			return $response;
+		}
+		$post = $response->result->set;
+		/** issue an error only if there is no valid file entries */
+		if (count($categories) < 1) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. $categories parameter must be an array collection', 'E:S:001');
+		}
+		unset($count);
+		$collection = array();
+		$count = 0;
+		/** Start persisting files */
+		$now = new \DateTime('now', new \DateTimezone($this->kernel->getContainer()->getParameter('app_timezone')));
+		foreach ($categories as $category) {
+			$response = $this->getBlogPostCategory($category);
+			if($response->error->exist){
+				break;
+			}
+			$category = $response->result->set;
+
+			/** Check if association exists */
+			if ($this->isPostAssociatedWithCategory($post, $category, true)) {
+				break;
+			}
+			/** prepare object */
+			$assoc = new BundleEntity\CategoriesOfBlogPost();
+			$assoc->setPost($post)->setCategory($category)->setDateAdded($now);
+			$assoc->setIsPrimary($isPrimary);
+			/** persist entry */
+			$this->em->persist($assoc);
+			$collection[] = $assoc;
+			$count++;
+		}
+		/** flush all into database */
+		if ($count > 0) {
+			$this->em->flush();
+			return new ModelResponse($collection, $count, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+	}
     /**
-     * @name            addFilesToBlogPost ()
-     *                  Associates files with a given blog post by creating new row in files_of_blog_psot table.
+     * @name            addFilesToBlogPost()
      *
      * @since           1.0.2
-     * @version         1.0.3
+     * @version         1.0.9
      * @author          Can Berkol
      *
      * @use             $this->createException()
@@ -113,861 +158,586 @@ class BlogModel extends CoreModel
      * @param           array $files
      * @param           mixed $post
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function addFilesToBlogPost($files, $post)
-    {
-        $this->resetResponse();
-        /**
-         * Validate Parameters
-         */
-        $count = 0;
-        /** remove invalid file entries */
-        foreach ($files as $file) {
-            if (!is_numeric($file['file']) && !$file['file'] instanceof FileEntity\File) {
-                unset($files[$count]);
-            }
-            $count++;
-        }
-        /** issue an error only if there is no valid file entries */
-        if (count($files) < 1) {
-            return $this->createException('InvalidParameter', '$files', 'err.invalid.parameter.files');
-        }
-        unset($count);
-        if (!is_numeric($post) && !$post instanceof BundleEntity\BlogPost) {
-            return $this->createException('InvalidParameter', 'BlogPost', 'err.invalid.parameter.post');
-        }
-        /** If no entity is provided as post we need to check if it does exist */
-        if (is_numeric($post)) {
-            $response = $this->getBlogPost($post, 'id');
-            if ($response['error']) {
-                return $this->createException('EntityDoesNotExist', 'BlogPost', 'err.db.entry.notexist');
-            }
-            $post = $response['result']['set'];
-        }
-        $fModel = $this->kernel->getContainer()->get('filemanagement.model');
+	public function addFilesToBlogPost(array $files, $post) {
+		$timeStamp = time();
+		$response = $this->getBlogPost($post);
+		if($response->error->exist){
+			return $response;
+		}
+		$post = $response->result->set;
+		if (!is_array($files)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. $files parameter must be an array collection', 'E:S:001');
+		}
+		$toAdd = array();
+		$fModel = $this->kernel->getContainer()->get('filemanagement.model');
+		foreach ($files as $file) {
+			$response = $fModel->getFile($file);
+			if($response->error->exist){
+				break;
+			}
+			$file = $response->result->set;
+			if (!$this->isFileAssociatedWithBlogPost($file, $post, true)) {
+				$toAdd[] = $file;
+			}
+		}
+		$now = new \DateTime('now', new \DateTimezone($this->kernel->getContainer()->getParameter('app_timezone')));
+		$insertedItems = array();
+		foreach ($toAdd as $file) {
+			$entity = new BundleEntity\FilesOfBlogPost();
+			$entity->setFile($file)->setPost($post)->setDateAdded($now);
+			$this->em->persist($entity);
+			$insertedItems[] = $entity;
+		}
+		$countInserts = count($toAdd);
+		if($countInserts > 0){
+			$this->em->flush();
+			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+	}
+	/**
+	 * @name            addPostsToCategory()
+	 *
+	 * @since           1.0.2
+	 * @version         1.0.9
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 * @use             $this->isPostAssociatedWithCategory()
+	 *
+	 * @param           array 			$posts
+	 * @param           mixed			$category
+	 * @param           string 			$isPrimary
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function addPostsToCategory(array $posts, $category, $isPrimary = 'n'){
+		$timeStamp = time();
+		$response = $this->getBlogPostCategory($category);
+		if($response->error->exist){
+			return $response;
+		}
+		$category = $response->result->set;
+		/** issue an error only if there is no valid file entries */
+		if (count($posts) < 1) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. $posts parameter must be an array collection', 'E:S:001');
+		}
+		unset($count);
+		$collection = array();
+		$count = 0;
+		/** Start persisting files */
+		$now = new \DateTime('now', new \DateTimezone($this->kernel->getContainer()->getParameter('app_timezone')));
+		foreach ($posts as $post) {
+			$response = $this->getBlogPost($post);
+			if($response->error->exist){
+				break;
+			}
+			$post = $response->result->set;
 
-        $fop_collection = array();
-        $count = 0;
-        /** Start persisting files */
-        foreach ($files as $file) {
-            /** If no entity s provided as file we need to check if it does exist */
-            if (is_numeric($file['file'])) {
-                $response = $fModel->getFile($file['file'], 'id');
-                if ($response['error']) {
-                    return $this->createException('EntityDoesNotExist', 'File', 'err.db.file.notexist');
-                }
-                $file['file'] = $response['result']['set'];
-            }
-            /** Check if association exists */
-            if ($this->isFileAssociatedWithBlogPost($file['file'], $post, true)) {
-                $this->createException('DuplicateAssociation', 'File => BlogPost', 'err.db.entry.notexist');
-                /** If file association already exist move silently to next file */
-                break;
-            }
-            $fop = new BundleEntity\FilesOfBlogPost();
-            $now = new \DateTime('now', new \DateTimezone($this->kernel->getContainer()->getParameter('app_timezone')));
-            $fop->setFile($file['file'])->setPost($post)->setDateAdded($now);
-            if (!is_null($file['sort_order'])) {
-                $fop->setSortOrder($file['sort_order']);
-            } else {
-                $fop->setSortOrder($this->getMaxSortOrderOfBlogPostFile($post, true) + 1);
-            }
-            /** persist entry */
-            $this->em->persist($fop);
-            $fop_collection[] = $fop;
-            $count++;
-        }
-        /** flush all into database */
-        if ($count > 0) {
-            $this->em->flush();
-        } else {
-            $this->response['code'] = 'err.db.insert.failed';
-        }
-
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $fop_collection,
-                'total_rows' => $count,
-                'last_insert_id' => -1,
-            ),
-            'error' => false,
-            'code' => 'scc.db.insert.done',
-        );
-        unset($count, $aplCollection);
-        return $this->response;
-    }
-
-    /**
-     * @name            addCategoriesToPost ()
-     *                  Associates categories with post
-     *
-     * @since           1.0.2
-     * @version         1.0.2
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->isPostAssociatedWithCategory()
-     *
-     * @param           array $posts mixed array collection
-     * @param           mixed $category 'entity' or 'entity' id.
-     *
-     * @return          array           $response
-     */
-    public function addCategoriesToPost($categories, $post, $primary = 'n')
-    {
-        $this->resetResponse();
-        /**
-         * Validate Parameters
-         */
-        $count = 0;
-        /** remove invalid entries */
-        foreach ($categories as $cat) {
-            if (!is_numeric($cat) && !is_string($cat) && !$cat instanceof BundleEntity\BlogPostCategory) {
-                unset($categories[$count]);
-            }
-            $count++;
-        }
-        /** issue an error only if there is no valid file entries */
-        if (count($categories) < 1) {
-            return $this->createException('InvalidParameter', 'Array of BlogPostCategory', 'err.invalid.parameter.categories');
-        }
-        unset($count);
-        if (!is_numeric($post) && !$post instanceof BundleEntity\BlogPost) {
-            return $this->createException('InvalidParameter', 'BlogpOST or integer', 'err.invalid.parameter.POST');
-        }
-        /** If no entity is provided as category we need to check if it does exist */
-        if (is_numeric($post)) {
-            $response = $this->getBlogPost($post, 'id');
-            if ($response['error']) {
-                return $this->createException('EntityDoesNotExist', 'Blog', 'err.db.entry.notexist');
-            }
-            $category = $response['result']['set'];
-        }
-        $collection = array();
-        $count = 0;
-        /** Start persisting files */
-        foreach ($categories as $category) {
-            /** If no entity is provided we need to check if it does exist */
-            if (is_numeric($category)) {
-                $category = $category->getBlogPostCategory($category, 'id');
-                if ($response['error']) {
-                    return $this->createException('EntityDoesNotExist', 'BlogPostCategory', 'err.db.entity.notexist');
-                }
-                $post = $response['result']['set'];
-            } else if (is_string($post)) {
-                $response = $this->getBlogPostCaetgory($post, 'url_key');
-                if ($response['error']) {
-                    return $this->createException('EntityDoesNotExist', 'BlogPost', 'err.db.entity.notexist');
-                }
-                $post = $response['result']['set'];
-            }
-
-            /** Check if association exists */
-            if ($this->isPostAssociatedWithCategory($post, $category, true)) {
-                $this->createException('DuplicateAssociationException', 'Product => Category', 'err.db.duplicate.entity');
-                $this->response['code'] = 'err.db.entry.exist';
-                /** If file association already exist move silently to next file */
-                break;
-            }
-            /** prepare object */
-            $assoc = new BundleEntity\CategoriesOfBlogPost();
-            $now = new \DateTime('now', new \DateTimezone($this->kernel->getContainer()->getParameter('app_timezone')));
-            $assoc->setBlogPost($post)->setCategory($category)->setDateAdded($now);
-            $assoc->setIsPrimary($primary);
-            /** persist entry */
-            $this->em->persist($assoc);
-            $collection[] = $assoc;
-            $count++;
-        }
-        /** flush all into database */
-        if ($count > 0) {
-            $this->em->flush();
-        } else {
-            $this->response['code'] = 'err.db.insert.failed';
-        }
-
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $collection,
-                'total_rows' => $count,
-                'last_insert_id' => -1,
-            ),
-            'error' => false,
-            'code' => 'scc.db.insert.done',
-        );
-        unset($count, $collection);
-        return $this->response;
-    }
-
-    /**
-     * @name            addPostsToCategory ()
-     *                  Associates posts with categıry
-     *
-     * @since           1.0.2
-     * @version         1.0.2
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->isPostAssociatedWithCategory()
-     *
-     * @param           array $posts mixed array collection
-     * @param           mixed $category 'entity' or 'entity' id.
-     *
-     * @return          array           $response
-     */
-    public function addPostsToCategory($posts, $category, $primary = 'n')
-    {
-        $this->resetResponse();
-        /**
-         * Validate Parameters
-         */
-        $count = 0;
-        /** remove invalid entries */
-        foreach ($posts as $post) {
-            if (!is_numeric($post) && !is_string($post) && !$post instanceof BundleEntity\BlogPost) {
-                unset($posts[$count]);
-            }
-            $count++;
-        }
-        /** issue an error only if there is no valid file entries */
-        if (count($posts) < 1) {
-            return $this->createException('InvalidParameter', 'Array of BlogPost', 'err.invalid.parameter.posts');
-        }
-        unset($count);
-        if (!is_numeric($category) && !$category instanceof BundleEntity\BlogPostCategory) {
-            return $this->createException('InvalidParameter', 'BlogPostCategory or integer', 'err.invalid.parameter.post_category');
-        }
-        /** If no entity is provided as category we need to check if it does exist */
-        if (is_numeric($category)) {
-            $response = $this->getBlogPostCategory($category, 'id');
-            if ($response['error']) {
-                return $this->createException('EntityDoesNotExist', 'BlogPostCategory', 'err.db.entry.notexist');
-            }
-            $category = $response['result']['set'];
-        }
-        $collection = array();
-        $count = 0;
-        /** Start persisting files */
-        foreach ($posts as $post) {
-            /** If no entity is provided we need to check if it does exist */
-            if (is_numeric($post)) {
-                $response = $this->getBlogPost($post, 'id');
-                if ($response['error']) {
-                    return $this->createException('EntityDoesNotExist', 'BlogPost', 'err.db.entity.notexist');
-                }
-                $post = $response['result']['set'];
-            } else if (is_string($post)) {
-                $response = $this->getBlogPost($post, 'url_key');
-                if ($response['error']) {
-                    return $this->createException('EntityDoesNotExist', 'Product', 'err.db.entry.notexist');
-                }
-                $post = $response['result']['set'];
-            }
-
-            /** Check if association exists */
-            if ($this->isPostAssociatedWithCategory($post, $category, true)) {
-//                $this->createException('DuplicateAssociationException', 'Post => Category', 'err.db.duplicate.entity');
-//                $this->response['code'] = 'err.db.entry.exist';
-                /** If file association already exist move silently to next file */
-                break;
-            }
-            /** prepare object */
-            $assoc = new BundleEntity\CategoriesOfBlogPost();
-            $now = new \DateTime('now', new \DateTimezone($this->kernel->getContainer()->getParameter('app_timezone')));
-            $assoc->setPost($post)->setCategory($category)->setDateAdded($now);
-            $assoc->setIsPrimary($primary);
-            /** persist entry */
-            $this->em->persist($assoc);
-            $collection[] = $assoc;
-            $count++;
-        }
-        /** flush all into database */
-        if ($count > 0) {
-            $this->em->flush();
-        } else {
-            $this->response['code'] = 'err.db.insert.failed';
-        }
-
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $collection,
-                'total_rows' => $count,
-                'last_insert_id' => -1,
-            ),
-            'error' => false,
-            'code' => 'scc.db.insert.done',
-        );
-        unset($count, $collection);
-        return $this->response;
-    }
+			/** Check if association exists */
+			if ($this->isPostAssociatedWithCategory($post, $category, true)) {
+				break;
+			}
+			/** prepare object */
+			$assoc = new BundleEntity\CategoriesOfBlogPost();
+			$assoc->setPost($post)->setCategory($category)->setDateAdded($now);
+			$assoc->setIsPrimary($isPrimary);
+			/** persist entry */
+			$this->em->persist($assoc);
+			$collection[] = $assoc;
+			$count++;
+		}
+		/** flush all into database */
+		if ($count > 0) {
+			$this->em->flush();
+			return new ModelResponse($collection, $count, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+	}
 
     /**
      * @name            deleteBlog ()
-     *                  Deletes provided blog from database.
      *
      * @since           1.0.2
-     * @version         1.0.2
+     * @version         1.0.9
      * @author          Can Berkol
      *
-     * @use             $this->createException()
+	 * @use				$this->deleteBlogs()
+     * @param           array 			$blog
      *
-     * @param           array $blog
-     *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function deleteBlog($blog)
-    {
+    public function deleteBlog($blog){
         return $this->deleteBlogs(array($blog));
     }
 
-    /**
-     * @name            deleteBlogs ()
-     *                  Deletes provided blogs from database.
-     *
-     * @since           1.0.2
-     * @version         1.0.2
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     *
-     * @param           array $collection
-     *
-     * @return          array           $response
-     */
-    public function deleteBlogs($collection)
-    {
-        $this->resetResponse();
-        /** Parameter must be an array */
-        if (!is_array($collection)) {
-            return $this->createException('InvalidParameterValue', 'Array', 'err.invalid.parameter.collection');
-        }
-        $countDeleted = 0;
-        foreach ($collection as $entry) {
-            if ($entry instanceof BundleEntity\Blog) {
-                $this->em->remove($entry);
-                $countDeleted++;
-            } else {
-                switch ($entry) {
-                    case is_numeric($entry):
-                        $response = $this->getBlog($entry, 'id');
-                        break;
-                    case is_string($entry):
-                        $response = $this->getBlog($entry, 'url_key');
-                        break;
-                }
-                if ($response['error']) {
-                    $this->createException('EntryDoesNotExist', $entry, 'err.invalid.entry');
-                }
-                $entry = $response['result']['set'];
-                $this->em->remove($entry);
-                $countDeleted++;
-            }
-        }
-        if ($countDeleted < 0) {
-            $this->response['error'] = true;
-            $this->response['code'] = 'err.db.fail.delete';
+	/**
+	 * @name            deleteBlogs()
+	 *
+	 * @since           1.0.2
+	 * @version         1.0.9
+	 *
+	 * @use             $this->createException()
+	 *
+	 * @param           array 			$collection
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function deleteBlogs($collection){
+		$timeStamp = time();
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
+		$countDeleted = 0;
+		foreach($collection as $entry){
+			if($entry instanceof BundleEntity\Blog){
+				$this->em->remove($entry);
+				$countDeleted++;
+			}
+			else{
+				$response = $this->getBlog($entry);
+				if(!$response->error->exists){
+					$this->em->remove($response->result->set);
+					$countDeleted++;
+				}
+			}
+		}
+		if($countDeleted < 0){
+			return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
+		}
+		$this->em->flush();
 
-            return $this->response;
-        }
-        $this->em->flush();
-        $this->response = array(
-            'rowCount' => 0,
-            'result' => array(
-                'set' => null,
-                'total_rows' => $countDeleted,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.deleted',
-        );
-        return $this->response;
-    }
+		return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+	}
+	/**
+	 * @name            deleteBlogPost()
+	 *
+	 * @since           1.0.2
+	 * @version         1.0.9
+	 * @author          Can Berkol
+	 *
+	 * @use				$this->deleteBlogPosts()
+	 * @param           array 			$post
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function deleteBlogPost($post){
+		return $this->deleteBlogPosts(array($post));
+	}
 
-    /**
-     * @name            deleteBlogPost ()
-     *                  Deletes provided blog post from database.
-     *
-     * @since           1.0.2
-     * @version         1.0.2
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     *
-     * @param           array $post
-     *
-     * @return          array           $response
-     */
-    public function deleteBlogPost($post)
-    {
-        return $this->deleteBlogPosts(array($post));
-    }
+	/**
+	 * @name            deleteBlogPosts()
+	 *
+	 * @since           1.0.2
+	 * @version         1.0.9
+	 *
+	 * @use             $this->createException()
+	 *
+	 * @param           array 			$collection
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function deleteBlogPosts($collection){
+		$timeStamp = time();
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
+		$countDeleted = 0;
+		foreach($collection as $entry){
+			if($entry instanceof BundleEntity\BlogPost){
+				$this->em->remove($entry);
+				$countDeleted++;
+			}
+			else{
+				$response = $this->getBlogPost($entry);
+				if(!$response->error->exists){
+					$this->em->remove($response->result->set);
+					$countDeleted++;
+				}
+			}
+		}
+		if($countDeleted < 0){
+			return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
+		}
+		$this->em->flush();
 
-    /**
-     * @name            deleteBlogPosts ()
-     *                  Deletes provided blog posts from database.
-     *
-     * @since           1.0.2
-     * @version         1.0.2
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     *
-     * @param           array $collection
-     *
-     * @return          array           $response
-     */
-    public function deleteBlogPosts($collection)
-    {
-        $this->resetResponse();
-        /** Parameter must be an array */
-        if (!is_array($collection)) {
-            return $this->createException('InvalidParameterValue', 'Array', 'err.invalid.parameter.collection');
-        }
-        $countDeleted = 0;
-        foreach ($collection as $entry) {
-            if ($entry instanceof BundleEntity\BlogPost) {
-                $this->em->remove($entry);
-                $countDeleted++;
-            } else {
-                switch ($entry) {
-                    case is_numeric($entry):
-                        $response = $this->getBloBlogPostg($entry, 'id');
-                        break;
-                    case is_string($entry):
-                        $response = $this->getBloBlogPostg($entry, 'url_key');
-                        break;
-                }
-                if ($response['error']) {
-                    $this->createException('EntryDoesNotExist', $entry, 'err.invalid.entry');
-                }
-                $entry = $response['result']['set'];
-                $this->em->remove($entry);
-                $countDeleted++;
-            }
-        }
-        if ($countDeleted < 0) {
-            $this->response['error'] = true;
-            $this->response['code'] = 'err.db.fail.delete';
+		return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+	}
 
-            return $this->response;
-        }
-        $this->em->flush();
-        $this->response = array(
-            'rowCount' => 0,
-            'result' => array(
-                'set' => null,
-                'total_rows' => $countDeleted,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.deleted',
-        );
-        return $this->response;
-    }
+	/**
+	 * @name            deleteBlogPostCategory()
+	 *
+	 * @since           1.0.2
+	 * @version         1.0.9
+	 * @author          Can Berkol
+	 *
+	 * @use				$this->deleteBlogPostCategories()
+	 * @param           array 			$category
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function deleteBlogPostCategory($category){
+		return $this->deleteBlogPostCategories(array($category));
+	}
 
-    /**
-     * @name            deleteBlogPostCategory ()
-     *                  Deletes provided blog post from database.
-     *
-     * @since           1.0.2
-     * @version         1.0.2
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     *
-     * @param           array $category
-     *
-     * @return          array           $response
-     */
-    public function deleteBlogPostCategory($category)
-    {
-        return $this->deleteBlogPostCategories(array($category));
-    }
+	/**
+	 * @name            deleteBlogPostCategories()
+	 *
+	 * @since           1.0.2
+	 * @version         1.0.9
+	 *
+	 * @use             $this->createException()
+	 *
+	 * @param           array 			$collection
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function deleteBlogPostCategories($collection){
+		$timeStamp = time();
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
+		$countDeleted = 0;
+		foreach($collection as $entry){
+			if($entry instanceof BundleEntity\BlogPostCategory){
+				$this->em->remove($entry);
+				$countDeleted++;
+			}
+			else{
+				$response = $this->getBlogPostCategory($entry);
+				if(!$response->error->exists){
+					$this->em->remove($response->result->set);
+					$countDeleted++;
+				}
+			}
+		}
+		if($countDeleted < 0){
+			return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
+		}
+		$this->em->flush();
 
-    /**
-     * @name            deleteBlogPostCategories ()
-     *                  Deletes provided blog post ccategories from database.
-     *
-     * @since           1.0.2
-     * @version         1.0.2
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     *
-     * @param           array $collection
-     *
-     * @return          array           $response
-     */
-    public function deleteBlogPostCategories($collection)
-    {
-        $this->resetResponse();
-        /** Parameter must be an array */
-        if (!is_array($collection)) {
-            return $this->createException('InvalidParameterValue', 'Array', 'err.invalid.parameter.collection');
-        }
-        $countDeleted = 0;
-        foreach ($collection as $entry) {
-            if ($entry instanceof BundleEntity\BlogPostCategory) {
-                $this->em->remove($entry);
-                $countDeleted++;
-            } else {
-                switch ($entry) {
-                    case is_numeric($entry):
-                        $response = $this->getBloBlogPostCategory($entry, 'id');
-                        break;
-                    case is_string($entry):
-                        $response = $this->getBloBlogPostCategory($entry, 'url_key');
-                        break;
-                }
-                if ($response['error']) {
-                    $this->createException('EntryDoesNotExist', $entry, 'err.invalid.entry');
-                }
-                $entry = $response['result']['set'];
-                $this->em->remove($entry);
-                $countDeleted++;
-            }
-        }
-        if ($countDeleted < 0) {
-            $this->response['error'] = true;
-            $this->response['code'] = 'err.db.fail.delete';
-
-            return $this->response;
-        }
-        $this->em->flush();
-        $this->response = array(
-            'rowCount' => 0,
-            'result' => array(
-                'set' => null,
-                'total_rows' => $countDeleted,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.deleted',
-        );
-        return $this->response;
-    }
+		return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+	}
 	/**
 	 * @name            deleteBlogPostRevision()
 	 *
 	 * @since           1.0.8
-	 * @version         1.0.8
+	 * @version         1.0.9
 	 * @author          Can Berkol
 	 *
-	 * @use             $this->deleteBlogPostRevisions()
+	 * @use				$this->deleteBlogPostCategories()
+	 * @param           array 			$revision
 	 *
-	 * @param           mixed 			$revision
-	 * @param           string 			$by
-	 *
-	 * @return          mixed           $response
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function deleteBlogPostRevision($revision, $by = 'entity'){
-		return $this->deleteBlogPostRevisions(array($revision), $by);
+	public function deleteBlogPostRevision($revision){
+		return $this->deleteBlogPostRevisions(array($revision));
 	}
 
 	/**
 	 * @name            deleteBlogPostRevisions()
 	 *
 	 * @since           1.0.8
-	 * @version         1.0.8
-	 * @author          Can Berkol
+	 * @version         1.0.9
 	 *
 	 * @use             $this->createException()
 	 *
-	 * @param           array           $collection             Collection consists one of the following: PageRevision
+	 * @param           array 			$collection
 	 *
-	 * @return          array           $response
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function deleteBlogPostRevisions($collection){
-		$this->resetResponse();
-		/** Parameter must be an array */
+		$timeStamp = time();
 		if (!is_array($collection)) {
-			return $this->createException('InvalidCollection', 'The $collection parameter must be an array collection.', 'msg.error.invalid.collection.array');
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
 		}
 		$countDeleted = 0;
-		foreach ($collection as $entry){
+		foreach($collection as $entry){
 			if($entry instanceof BundleEntity\BlogPostRevision){
 				$this->em->remove($entry);
 				$countDeleted++;
 			}
+			else{
+				$response = $this->getBlogPostRevision($entry);
+				if(!$response->error->exists){
+					$this->em->remove($response->result->set);
+					$countDeleted++;
+				}
+			}
 		}
-		if ($countDeleted < 1) {
-			$this->response['error'] = true;
-			$this->response['code'] = 'msg.error.db.delete.failed';
-
-			return $this->response;
+		if($countDeleted < 0){
+			return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
 		}
 		$this->em->flush();
-		$this->response = array(
-			'rowCount' => 0,
-			'result' => array(
-				'set' => null,
-				'total_rows' => $countDeleted,
-				'last_insert_id' => null,
-			),
-			'error' => false,
-			'code' => 'msg.success.db.delete',
+
+		return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+	}
+	/**
+	 * @name 			getBlog()
+	 *
+	 * @since			1.0.1
+	 * @version         1.0.9
+	 * @author          Can Berkol
+	 *
+	 * @param           mixed           $blog
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function getBlog($blog) {
+		$timeStamp = time();
+		if($blog instanceof BundleEntity\Blog){
+			return new ModelResponse($blog, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+		}
+		$result = null;
+		switch($blog){
+			case is_numeric($blog):
+				$result = $this->em->getRepository($this->entity['b']['name'])->findOneBy(array('id' => $blog));
+				break;
+			case is_string($blog):
+				$response = $this->getBlogByUrlKey($blog);
+				if(!$response->error->exist){
+					$result = $response->result->set;
+				}
+				unset($response);
+				break;
+		}
+		if(is_null($result)){
+			return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, time());
+		}
+
+		return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+	}
+	/**
+	 * @name            getBlogByUrlKey ()
+	 *
+	 * @since           1.0.9
+	 * @version         1.0.9
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->listBlogs()
+	 * @use             $this->createException()
+	 *
+	 * @param           mixed 			$urlKey
+	 * @param			mixed			$language
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function getBlogByUrlKey($urlKey, $language = null){
+		$timeStamp = time();
+		if(!is_string($urlKey)){
+			return $this->createException('InvalidParameterValueException', '$urlKey must be a string.', 'E:S:007');
+		}
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array(
+				array(
+					'glue' => 'and',
+					'condition' => array('column' => $this->entity['bl']['alias'].'.url_key', 'comparison' => '=', 'value' => $urlKey),
+				)
+			)
 		);
-		return $this->response;
+		if(!is_null($language)){
+			$mModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+			$response = $mModel->getLanguage($language);
+			if(!$response->error->exists){
+				$filter[] = array(
+					'glue' => 'and',
+					'condition' => array(
+						array(
+							'glue' => 'and',
+							'condition' => array('column' => $this->entity['bl']['alias'].'.language', 'comparison' => '=', 'value' => $response->result->set->getId()),
+						)
+					)
+				);
+			}
+		}
+		$response = $this->listBlogs($filter, null, array('start' => 0, 'count' => 1));
+
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+
+		return $response;
+	}
+	/**
+	 * @name 			getBlogPost()
+	 *
+	 * @since			1.0.1
+	 * @version         1.0.9
+	 * @author          Can Berkol
+	 *
+	 * @param           mixed           $post
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function getBlogPost($post) {
+		$timeStamp = time();
+		if($post instanceof BundleEntity\BlogPost){
+			return new ModelResponse($post, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+		}
+		$result = null;
+		switch($post){
+			case is_numeric($post):
+				$result = $this->em->getRepository($this->entity['bp']['name'])->findOneBy(array('id' => $post));
+				break;
+			case is_string($post):
+				$response = $this->getBlogPostByUrlKey($post);
+				if(!$response->error->exist){
+					$result = $response->result->set;
+				}
+				unset($response);
+				break;
+		}
+		if(is_null($result)){
+			return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, time());
+		}
+
+		return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+	}
+	/**
+	 * @name            getBlogPostByUrlKey ()
+	 *
+	 * @since           1.0.9
+	 * @version         1.0.9
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->listBlogPostss()
+	 * @use             $this->createException()
+	 *
+	 * @param           mixed 			$urlKey
+	 * @param			mixed			$language
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function getBlogPostByUrlKey($urlKey, $language = null){
+		$timeStamp = time();
+		if(!is_string($urlKey)){
+			return $this->createException('InvalidParameterValueException', '$urlKey must be a string.', 'E:S:007');
+		}
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array(
+				array(
+					'glue' => 'and',
+					'condition' => array('column' => $this->entity['bpl']['alias'].'.url_key', 'comparison' => '=', 'value' => $urlKey),
+				)
+			)
+		);
+		if(!is_null($language)){
+			$mModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+			$response = $mModel->getLanguage($language);
+			if(!$response->error->exists){
+				$filter[] = array(
+					'glue' => 'and',
+					'condition' => array(
+						array(
+							'glue' => 'and',
+							'condition' => array('column' => $this->entity['bl']['alias'].'.language', 'comparison' => '=', 'value' => $response->result->set->getId()),
+						)
+					)
+				);
+			}
+		}
+		$response = $this->listBlogPosts($filter, null, array('start' => 0, 'count' => 1));
+
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+
+		return $response;
 	}
 
-    /**
-     * @name            getBlog ()
-     *                  Returns details of a blog.
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->listBlogs()
-     *
-     * @param           mixed $blog
-     * @param           string $by entity, id, url_key
-     *
-     * @return          mixed           $response
-     */
-    public function getBlog($blog, $by = 'id')
-    {
-        $this->resetResponse();
-        $by_opts = array('id', 'url_key', 'entity');
-        if (!in_array($by, $by_opts)) {
-            return $this->createException('InvalidParameterValue', implode(',', $by_opts), 'err.invalid.parameter.by');
-        }
-        if (!is_object($blog) && !is_numeric($blog) && !is_string($blog)) {
-            return $this->createException('InvalidParameter', 'Blog', 'err.invalid.parameter.blog');
-        }
-        if (is_object($blog)) {
-            if (!$blog instanceof BundleEntity\Blog) {
-                return $this->createException('InvalidParameter', 'Blog', 'err.invalid.parameter.blog');
-            }
-            /**
-             * Prepare & Return Response
-             */
-            $this->response = array(
-                'rowCount' => $this->response['rowCount'],
-                'result' => array(
-                    'set' => $blog,
-                    'total_rows' => 1,
-                    'last_insert_id' => null,
-                ),
-                'error' => false,
-                'code' => 'scc.db.entry.exist',
-            );
-            return $this->response;
-        }
-        switch($by){
-            case 'url_key':
-                $column = $this->entity['blog_localization']['alias'] . '.' . $by;
-                break;
-            default:
-                $column = $this->entity['blog']['alias'] . '.' . $by;
-                break;
-        }
-        $filter[] = array(
-            'glue' => 'and',
-            'condition' => array(
-                array(
-                    'glue' => 'and',
-                    'condition' => array('column' => $column, 'comparison' => '=', 'value' => $blog),
-                )
-            )
-        );
-        $response = $this->listBlogs($filter);
-        if ($response['error']) {
-            return $response;
-        }
-        $collection = $response['result']['set'];
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $collection[0],
-                'total_rows' => 1,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.entry.exist',
-        );
-        return $this->response;
-    }
+	/**
+	 * @name 			getBlogPostCategory()
+	 *
+	 * @since			1.0.1
+	 * @version         1.0.9
+	 * @author          Can Berkol
+	 *
+	 * @param           mixed           $category
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function getBlogPostCategory($category) {
+		$timeStamp = time();
+		if($category instanceof BundleEntity\BlogPostCategory){
+			return new ModelResponse($category, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+		}
+		$result = null;
+		switch($category){
+			case is_numeric($category):
+				$result = $this->em->getRepository($this->entity['bpc']['name'])->findOneBy(array('id' => $category));
+				break;
+			case is_string($category):
+				$response = $this->getBlogPostCategoryByUrlKey($category);
+				if(!$response->error->exist){
+					$result = $response->result->set;
+				}
+				unset($response);
+				break;
+		}
+		if(is_null($result)){
+			return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, time());
+		}
 
-    /**
-     * @name            getBlogPost ()
-     *                  Returns details of a blog post.
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->listBlogs()
-     *
-     * @param           mixed $post
-     * @param           string $by entity, id, url_key
-     *
-     * @return          mixed           $response
-     */
-    public function getBlogPost($post, $by = 'id')
-    {
-        $this->resetResponse();
-        $by_opts = array('id', 'url_key', 'entity');
-        if (!in_array($by, $by_opts)) {
-            return $this->createException('InvalidParameterValue', implode(',', $by_opts), 'err.invalid.parameter.by');
-        }
-        if (!is_object($post) && !is_numeric($post) && !is_string($post)) {
-            return $this->createException('InvalidParameter', 'BlogPost', 'err.invalid.parameter.post');
-        }
-        if (is_object($post)) {
-            if (!$post instanceof BundleEntity\BlogPost) {
-                return $this->createException('InvalidParameter', 'BlogPost', 'err.invalid.parameter.post');
-            }
-            /**
-             * Prepare & Return Response
-             */
-            $this->response = array(
-                'rowCount' => $this->response['rowCount'],
-                'result' => array(
-                    'set' => $post,
-                    'total_rows' => 1,
-                    'last_insert_id' => null,
-                ),
-                'error' => false,
-                'code' => 'scc.db.entry.exist',
-            );
-            return $this->response;
-        }
-        switch($by){
-            case 'url_key':
-                $column = $this->entity['blog_post_localization']['alias'] . '.' . $by;
-                break;
-            default:
-                $column = $this->entity['blog_post']['alias'] . '.' . $by;
-                break;
-        }
-        $filter[] = array(
-            'glue' => 'and',
-            'condition' => array(
-                array(
-                    'glue' => 'and',
-                    'condition' => array('column' => $column, 'comparison' => '=', 'value' => $post),
-                )
-            )
-        );
-        $response = $this->listBlogPosts($filter);
-        if ($response['error']) {
-            return $response;
-        }
-        $collection = $response['result']['set'];
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $collection[0],
-                'total_rows' => 1,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.entry.exist',
-        );
-        return $this->response;
-    }
+		return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+	}
+	/**
+	 * @name            getBlogPostCategoryByUrlKey ()
+	 *
+	 * @since           1.0.9
+	 * @version         1.0.9
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->listBlogPostss()
+	 * @use             $this->createException()
+	 *
+	 * @param           mixed 			$urlKey
+	 * @param			mixed			$language
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function getBlogPostCategoryByUrlKey($urlKey, $language = null){
+		$timeStamp = time();
+		if(!is_string($urlKey)){
+			return $this->createException('InvalidParameterValueException', '$urlKey must be a string.', 'E:S:007');
+		}
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array(
+				array(
+					'glue' => 'and',
+					'condition' => array('column' => $this->entity['bpcl']['alias'].'.url_key', 'comparison' => '=', 'value' => $urlKey),
+				)
+			)
+		);
+		if(!is_null($language)){
+			$mModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+			$response = $mModel->getLanguage($language);
+			if(!$response->error->exists){
+				$filter[] = array(
+					'glue' => 'and',
+					'condition' => array(
+						array(
+							'glue' => 'and',
+							'condition' => array('column' => $this->entity['bpcl']['alias'].'.language', 'comparison' => '=', 'value' => $response->result->set->getId()),
+						)
+					)
+				);
+			}
+		}
+		$response = $this->listBlogPostCategories($filter, null, array('start' => 0, 'count' => 1));
 
-    /**
-     * @name            getBlogPostCategory ()
-     *                  Returns details of a blog post category.
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->listBlogs()
-     *
-     * @param           mixed $category
-     * @param           string $by entity, id, url_key
-     *
-     * @return          mixed           $response
-     */
-    public function getBlogPostCategory($category, $by = 'id')
-    {
-        $this->resetResponse();
-        $by_opts = array('id', 'url_key', 'entity');
-        if (!in_array($by, $by_opts)) {
-            return $this->createException('InvalidParameterValue', implode(',', $by_opts), 'err.invalid.parameter.by');
-        }
-        if (!is_object($category) && !is_numeric($category) && !is_string($category)) {
-            return $this->createException('InvalidParameter', 'BlogPostCategory', 'err.invalid.parameter.category');
-        }
-        if (is_object($category)) {
-            if (!$category instanceof BundleEntity\BlogPostCategory) {
-                return $this->createException('InvalidParameter', 'BlogPostCategory', 'err.invalid.parameter.category');
-            }
-            /**
-             * Prepare & Return Response
-             */
-            $this->response = array(
-                'rowCount' => $this->response['rowCount'],
-                'result' => array(
-                    'set' => $category,
-                    'total_rows' => 1,
-                    'last_insert_id' => null,
-                ),
-                'error' => false,
-                'code' => 'scc.db.entry.exist',
-            );
-            return $this->response;
-        }
-        switch($by){
-            case 'url_key':
-                $column = $this->entity['blog_post_category_localization']['alias'] . '.' . $by;
-                break;
-            default:
-                $column = $this->entity['blog_post_category']['alias'] . '.' . $by;
-                break;
-        }
-        $filter = array();
-        $filter[] = array(
-            'glue' => 'and',
-            'condition' => array(
-                array(
-                    'glue' => 'and',
-                    'condition' => array('column' => $column, 'comparison' => '=', 'value' => $category),
-                )
-            )
-        );
-        $response = $this->listBlogPostCategories($filter);
-        if ($response['error']) {
-            return $response;
-        }
-        $collection = $response['result']['set'];
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $collection[0],
-                'total_rows' => 1,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.entry.exist',
-        );
-        return $this->response;
-    }
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+
+		return $response;
+	}
 	/**
 	 * @name            getBlogPostRevision()
 	 *
 	 * @since           1.0.8
-	 * @version         1.0.8
+	 * @version         1.0.9
 	 *
 	 * @author          Can Berkol
 	 *
@@ -982,469 +752,364 @@ class BlogModel extends CoreModel
 	 * @return          mixed           $response
 	 */
 	public function getBlogPostRevision($post, $language, $revisionNumber){
-		$this->resetResponse();
+		$timeStamp = time();
 
-		if (!$post instanceof BundleEntity\BlogPost && !is_numeric($post) && !is_string($post)) {
-			return $this->createException('InvalidParameter', '$post parameter must hold BiberLtd\\Core\\Bundles\\BlogBundle\\Entity\\BlogPost entity, a string representing url_key, or an integer representing database row id.', 'msg.error.invalid.parameter.page');
+		$response = $this->getBlogPost($post);
+		if($response->error->exist){
+			return $response;
 		}
-
-		if (is_object($post)) {
-			$postId = $post->getId();
-		}
-		elseif(is_numeric($post)){
-			$postId = $post;
-		}
-		elseif(is_string($post)){
-			$response = $this->getBlogPost($post, 'url_key');
-			if($response['error']){
-				return $this->createException('InvalidParameter', '$page parameter must hold BiberLtd\\Core\\Bundles\\BlogBundle\\Entity\\BlogPost entity, a string representing url_key, or an integer representing database row id.', 'msg.error.invalid.parameter.page');
-			}
-			$postId = $response['result']['set'];
-		}
+		$post = $response->result->set;
 
 		$mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
-		if (!$language instanceof MLSEntity\Language && !is_integer($language) && !is_string($language)) {
-			return $this->createException('InvalidParameter', 'Language', 'err.invalid.parameter.language');
+		$response = $mlsModel->getLanguage($language);
+		if($response->error->exist){
+			return $response;
+		}
+		$language = $response->result->set;
+
+		$qStr = 'SELECT '.$this->entity['bpr']['alias']
+			.' FROM '.$this->entity['bpr']['name'].' '.$this->entity['bpr']['alias']
+			.' WHERE '.$this->entity['bpr']['alias'].'.post = '.$post->getId()
+			.' AND '.$this->entity['bpr']['alias'].'.language = '.$language->getId()
+			.' AND '.$this->entity['bpr']['alias'].'.revision_number = '.$revisionNumber;
+
+		$q = $this->em->createQuery($qStr);
+
+		$result = $q->getResult();
+
+		if(is_null($result)){
+			return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, time());
 		}
 
-		if (is_object($language)) {
-			$languageId = $language->getId();
-		}
-		elseif(is_numeric($language)){
-			$languageId = $language;
-		}
-		elseif(is_string($language)){
-			$response = $mlsModel->getLanguage($language, 'iso_code');
-			if($response['error']){
-				return $this->createException('InvalidParameter', '$page parameter must hold BiberLtd\\Core\\Bundles\\ContentManagementBundle\\Entity\\Page entity, a string representing url_key, or an integer representing database row id.', 'msg.error.invalid.parameter.page');
-			}
-			$blogId = $response['result']['set'];
-		}
-
-		$q = 'SELECT '.$this->entity['blog_post_revision']['alias']
-			.' FROM '.$this->entity['blog_post_revision']['name'].' '.$this->entity['blog_post_revision']['alias']
-			.' WHERE '.$this->entity['blog_post_revision']['name'].'.blog_post = '.$postId
-			.' AND '.$this->entity['blog_post_revision']['name'].'.language = '.$languageId
-			.' AND '.$this->entity['blog_post_revision']['name'].'.revision_number = '.$revisionNumber;
-
-		$query = $this->em->createQuery($q);
-
-		$result = $query->getResult();
-
-		/**
-		 * Prepare & Return Response
-		 */
-		$this->response = array(
-			'rowCount' => $this->response['rowCount'],
-			'result' => array(
-				'set' => $result,
-				'total_rows' => 1,
-				'last_insert_id' => null,
-			),
-			'error' => false,
-			'code' => 'msg.success.db.entry.exists',
-		);
-		return $this->response;
+		return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
 	}
 	/**
 	 * @name            getLastRevisionOfBlogPost()
 	 *
 	 * @since           1.0.8
-	 * @version         1.0.8
+	 * @version         1.0.9
 	 *
 	 * @author          Can Berkol
 	 *
 	 * @page			mixed			$post
-	 * @return          mixed           $response
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function getLastRevisionOfBlogPost($post){
-		if(is_object($post) && $post instanceof BundleEntity\BlogPost){
-			$blogId = $post->getId();
+		$timeStamp = time();
+		$response = $this->getBlogPost($post);
+		if($response->error->exist){
+			return $response;
 		}
-		elseif(is_numeric($post)){
-			$response = $this->getBlogPost($post, 'id');
-			if(!$response['error']){
-				$blogId = $response['result']['set']->getId();
-			}
-		}
-		elseif(is_string($post)){
-			$response = $this->getBlogPost($post, 'url_key');
-			if(!$response['error']){
-				$blogId = $response['result']['set']->getId();
-			}
-		}
+		$page = $response->result->set;
+
 		$filter[] = array(
 			'glue' => 'and',
 			'condition' => array(
 				array(
 					'glue' => 'and',
-					'condition' => array('column' =>$this->entity['blog_post_revision']['alias']. '.page', 'comparison' => '=', 'value' => $blogId),
+					'condition' => array('column' =>$this->entity['bpr']['alias']. '.post', 'comparison' => '=', 'value' => $page->getId()),
 				)
 			)
 		);
-		$response = $this->listBlogPostRevisions($filter, array('date_added' => 'desc'), array('start' => 0, 'count' => 1));
-		/**
-		 * Prepare & Return Response
-		 */
-		$this->response = array(
-			'rowCount' => $this->response['rowCount'],
-			'result' => array(
-				'set' => $response['result']['set'][0],
-				'total_rows' => 1,
-				'last_insert_id' => null,
-			),
-			'error' => false,
-			'code' => 'scc.db.entity.exist',
-		);
-		return $this->response;
+		$response = $this->listPageRevisions($filter, array('date_added' => 'desc'), array('start' => 0, 'count' => 1));
+
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+
+		return $response;
 	}
 
     /**
-     * @name            getMaxSortOrderOfBlogPostFile ()
-     *                  Returns the largest sort order value for a given post from files_of_blog table.
+     * @name            getMaxSortOrderOfBlogPostFile()
      *
      * @since           1.0.4
-     * @version         1.0.4
+     * @version         1.0.9
      * @author          Can Berkol
      *
      *
-     * @param           mixed $post entity, id, sku
-     * @param           bool $bypass if set to true return bool instead of response
+     * @param           mixed 			$post
+     * @param           bool 			$bypass
      *
      * @return          mixed           bool | $response
      */
-    public function getMaxSortOrderOfBlogPostFile($post, $bypass = false)
-    {
-        $this->resetResponse();
-        if (!is_object($post) && !is_numeric($post) && !is_string($post)) {
-            return $this->createException('InvalidParameter', 'BlogPost', 'err.invalid.parameter.blog_post');
-        }
-        if (is_object($post)) {
-            if (!$post instanceof BundleEntity\BlogPost) {
-                return $this->createException('InvalidParameter', 'BlogPost', 'err.invalid.parameter.blog_post');
-            }
-        } else {
-            /** if numeric value given check if category exists */
-            switch ($post) {
-                case is_numeric($post):
-                    $response = $this->getBlogPost($post, 'id');
-                    break;
-                case is_string($post):
-                    $response = $this->getBlogPost($post, 'sku');
-                    if ($response['error']) {
-                        $response = $this->getBlogPost($post, 'url_key');
-                    }
-                    break;
-            }
-            if ($response['error']) {
-                return $this->createException('InvalidParameter', 'BlogPost', 'err.invalid.parameter.post');
-            }
-            $post = $response['result']['set'];
-        }
-        $q_str = 'SELECT MAX(' . $this->entity['files_of_blog_post']['alias'] . '.sort_order) FROM ' . $this->entity['files_of_blog_post']['name'] . ' ' . $this->entity['files_of_blog_post']['alias']
-            . ' WHERE ' . $this->entity['files_of_blog_post']['alias'] . '.post  = ' . $post->getId();
+	public function getMaxSortOrderOfBlogPostFile($post, $bypass = false){
+		$timeStamp = time();
+		$response = $this->getBlogPost($post);
+		if($response->error->exist){
+			return $response;
+		}
+		$qStr = 'SELECT MAX('.$this->entity['fobp']['alias'].'.sort_order) FROM '.$this->entity['fobp']['name'].' '.$this->entity['fobp']['alias']
+			.' WHERE '.$this->entity['fobp']['alias'].'.post = '.$post->getId();
 
-        $query = $this->em->createQuery($q_str);
-        $result = $query->getSingleScalarResult();
+		$q = $this->em->createQuery($qStr);
+		$result = $q->getSingleScalarResult();
 
-        if ($bypass) {
-            return $result;
-        }
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $result,
-                'total_rows' => 1,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.entry.exist',
-        );
-        return $this->response;
-    }
+		if ($bypass) {
+			return $result;
+		}
+		return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+	}
 
-    /**
-     * @name            insertBlog ()
-     *                  Inserts one blog entry.
-     *
-     * @since           1.0.2
-     * @version         1.0.2
-     * @author          Can Berkol
-     *
-     * @use             $this->insertBlogs()
-     *
-     * @param           mixed $blog
-     * @param           mixed $by entity, or, post
-     *
-     * @return          array           $response
-     */
-    public function insertBlog($blog)
-    {
-        return $this->insertBlogs(array($blog));
-    }
+	/**
+	 * @name            insertBlog()
+	 *
+	 * @since           1.0.2
+	 * @version         1.0.9
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->insertBlogs()
+	 *
+	 * @param           mixed			 $blog
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function insertBlog($blog){
+		return $this->insertBlogs(array($blog));
+	}
 
-    /**
-     * @name            insertBlogLocalizations ()
-     *                  Inserts one or more localizations into database.
-     *
-     * @since           1.0.2
-     * @version         1.0.2
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     *
-     * @param           array $collection Collection of entities or post data.
-     *
-     * @return          array           $response
-     */
-    public function insertBlogLocalizations($collection)
-    {
-        $this->resetResponse();
-        /** Parameter must be an array */
-        if (!is_array($collection)) {
-            return $this->createException('InvalidParameter', 'Array', 'err.invalid.parameter.collection');
-        }
-        $countInserts = 0;
-        $insertedItems = array();
-        foreach ($collection as $item) {
-            if ($item instanceof BundleEntity\BlogLocalization) {
-                $entity = $item;
-                $this->em->persist($entity);
-                $insertedItems[] = $entity;
-                $countInserts++;
-            } else {
-                foreach ($item['localizations'] as $language => $data) {
-                    $entity = new BundleEntity\BlogLocalization;
-                    $entity->setBlog($item['entity']);
-                    $mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
-                    $response = $mlsModel->getLanguage($language, 'iso_code');
-                    if (!$response['error']) {
-                        $entity->setLanguage($response['result']['set']);
-                    } else {
-                        break 1;
-                    }
-                    foreach ($data as $column => $value) {
-                        $set = 'set' . $this->translateColumnName($column);
-                        $entity->$set($value);
-                    }
-                    $this->em->persist($entity);
-                }
-                $insertedItems[] = $entity;
-                $countInserts++;
-            }
-        }
-        if ($countInserts > 0) {
-            $this->em->flush();
-        }
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $insertedItems,
-                'total_rows' => $countInserts,
-                'last_insert_id' => -1,
-            ),
-            'error' => false,
-            'code' => 'scc.db.insert.done',
-        );
-        return $this->response;
-    }
+	/**
+	 * @name            insertBlogLocalizations()
+	 *
+	 * @since           1.0.2
+	 * @version         1.0.9
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 *
+	 * @param           array 			$collection
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function insertBlogLocalizations($collection) {
+		$timeStamp = time();
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
+		$countInserts = 0;
+		$insertedItems = array();
+		foreach($collection as $data){
+			if($data instanceof BundleEntity\BlogLocalization){
+				$entity = $data;
+				$this->em->persist($entity);
+				$insertedItems[] = $entity;
+				$countInserts++;
+			}
+			else if(is_object($data)){
+				$entity = new BundleEntity\BlogLocalization();
+				foreach($data as $column => $value){
+					$set = 'set'.$this->translateColumnName($column);
+					switch($column){
+						case 'language':
+							$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+							$response = $lModel->getLanguage($value);
+							if(!$response->error->exists){
+								$entity->$set($response->result->set);
+							}
+							unset($response, $lModel);
+							break;
+						case 'blog':
+							$response = $this->getBlog($value);
+							if(!$response->error->exists){
+								$entity->$set($response->result->set);
+							}
+							unset($response, $lModel);
+							break;
+						default:
+							$entity->$set($value);
+							break;
+					}
+				}
+				$this->em->persist($entity);
+				$insertedItems[] = $entity;
+				$countInserts++;
+			}
+		}
+		if($countInserts > 0){
+			$this->em->flush();
+			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+	}
 
     /**
-     * @name            insertBlogs ()
-     *                  Inserts one or more pblogs into database.
+     * @name            insertBlogs()
      *
      * @since           1.0.2
-     * @version         1.0.2
+     * @version         1.0.9
      * @author          Can Berkol
      *
      * @use             $this->createException()
      * @use             $this->insertBlogLocalization()
      *
-     * @param           array $collection Collection of entities or post data.
+     * @param           array 			$collection
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function insertBlogs($collection)
-    {
-        $this->resetResponse();
-        /** Parameter must be an array */
-        if (!is_array($collection)) {
-            return $this->createException('InvalidParameter', 'Array', 'err.invalid.parameter.collection');
-        }
+    public function insertBlogs($collection){
+		$timeStamp = time();
+		/** Parameter must be an array */
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
         $countInserts = 0;
         $countLocalizations = 0;
         $insertedItems = array();
         foreach ($collection as $data) {
-            if ($data instanceof BundleEntity\Blog) {
-                $entity = $data;
-                $this->em->persist($entity);
-                $insertedItems[] = $entity;
-                $countInserts++;
-            } else if (is_object($data)) {
-                $localizations = array();
-                $entity = new BundleEntity\Blog;
-                if (!property_exists($data, 'date_created')) {
-                    $data->date_created = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
-                }
-                if (!property_exists($data, 'date_updated')) {
-                    $data->date_updated = $data->date_created;
-                }
-                if (!property_exists($data, 'site')) {
-                    $data->site = 1;
-                }
-                if (!property_exists($data, 'count_posts')) {
-                    $data->count_posts = 0;
-                }
-                foreach ($data as $column => $value) {
-                    $localeSet = false;
-                    $set = 'set' . $this->translateColumnName($column);
-                    switch ($column) {
-                        case 'local':
-                            $localizations[$countInserts]['localizations'] = $value;
-                            $localeSet = true;
-                            $countLocalizations++;
-                            break;
-                        case 'site':
-                            $sModel = $this->kernel->getContainer()->get('sitemanagement.model');
-                            $response = $sModel->getSite($value, 'id');
-                            if (!$response['error']) {
-                                $entity->$set($response['result']['set']);
-                            } else {
-                                $this->createException('EntityDoesNotExist', 'Array', 'err.invalid.entity');
-                            }
-                            unset($response, $sModel);
-                            break;
-                        default:
-                            $entity->$set($value);
-                            break;
-                    }
-                    if ($localeSet) {
-                        $localizations[$countInserts]['entity'] = $entity;
-                    }
-                }
-                $this->em->persist($entity);
-                $insertedItems[] = $entity;
+			if ($data instanceof BundleEntity\Blog) {
+				$entity = $data;
+				$this->em->persist($entity);
+				$insertedItems[] = $entity;
+				$countInserts++;
+			}
+			else if (is_object($data)) {
+				$localizations = array();
+				$entity = new BundleEntity\Blog;
+				if (!property_exists($data, 'date_created')) {
+					$data->date_created = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
+				}
+				if (!property_exists($data, 'date_updated')) {
+					$data->date_updated = $data->date_created;
+				}
+				if (!property_exists($data, 'site')) {
+					$data->site = 1;
+				}
+				if (!property_exists($data, 'count_posts')) {
+					$data->count_posts = 0;
+				}
+				foreach ($data as $column => $value) {
+					$localeSet = false;
+					$set = 'set' . $this->translateColumnName($column);
+					switch ($column) {
+						case 'local':
+							$localizations[$countInserts]['localizations'] = $value;
+							$localeSet = true;
+							$countLocalizations++;
+							break;
+						case 'site':
+							$sModel = $this->kernel->getContainer()->get('sitemanagement.model');
+							$response = $sModel->getSite($value);
+							if (!$response->error->exist) {
+								$entity->$set($response->result->set);
+							}
+							else {
+								return $this->createException('EntityDoesNotExist', 'The site with the id / key / domain "'.$value.'" does not exist in database.', 'E:D:002');
+							}
+							unset($response, $sModel);
+							break;
+						default:
+							$entity->$set($value);
+							break;
+					}
+					if ($localeSet) {
+						$localizations[$countInserts]['entity'] = $entity;
+					}
+				}
+				$this->em->persist($entity);
+				$insertedItems[] = $entity;
 
-                $countInserts++;
-            } else {
-                $this->createException('InvalidDataException', '$data', 'err.invalid.data');
-            }
-        }
+				$countInserts++;
+			}
+		}
         if ($countInserts > 0) {
             $this->em->flush();
         }
         /** Now handle localizations */
-        if ($countInserts > 0 && $countLocalizations > 0) {
-            $this->insertBlogLocalizations($localizations);
-        }
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $insertedItems,
-                'total_rows' => $countInserts,
-                'last_insert_id' => $entity->getId(),
-            ),
-            'error' => false,
-            'code' => 'scc.db.insert.done',
-        );
-        return $this->response;
-    }
+		if ($countInserts > 0 && $countLocalizations > 0) {
+			$response = $this->insertPageLocalizations($localizations);
+		}
+		if($countInserts > 0){
+			$this->em->flush();
+			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+	}
 
     /**
-     * @name            insertBlogPost ()
-     *                  Inserts one blog post entry.
+     * @name            insertBlogPost()
      *
      * @since           1.0.2
-     * @version         1.0.2
+     * @version         1.0.9
      * @author          Can Berkol
      *
      * @use             $this->insertBlogPosts()
      *
      * @param           mixed $post
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function insertBlogPost($post)
-    {
+    public function insertBlogPost($post){
         return $this->insertBlogPosts(array($post));
     }
 
     /**
-     * @name            insertBlogPostLocalizations ()
-     *                  Inserts one or more localizations into database.
+     * @name            insertBlogPostLocalizations()
      *
      * @since           1.0.2
-     * @version         1.0.6
+     * @version         1.0.9
      * @author          Can Berkol
      *
      * @use             $this->createException()
      *
      * @param           array $collection Collection of entities or post data.
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function insertBlogPostLocalizations($collection)
-    {
-        $this->resetResponse();
-        /** Parameter must be an array */
-        if (!is_array($collection)) {
-            return $this->createException('InvalidParameter', 'Array', 'err.invalid.parameter.collection');
-        }
-        $countInserts = 0;
-        $insertedItems = array();
-        foreach ($collection as $item) {
-            if ($item instanceof BundleEntity\BlogPostLocalization) {
-                $entity = $item;
-                $this->em->persist($entity);
-                $insertedItems[] = $entity;
-                $countInserts++;
-            } else {
-                foreach ($item['localizations'] as $language => $data) {
-                    $entity = new BundleEntity\BlogPostLocalization;
-                    $entity->setBlogPost($item['entity']);
-                    $mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
-                    $response = $mlsModel->getLanguage($language, 'iso_code');
-                    if (!$response['error']) {
-                        $entity->setLanguage($response['result']['set']);
-                    } else {
-                        break 1;
-                    }
-                    foreach ($data as $column => $value) {
-                        $set = 'set' . $this->translateColumnName($column);
-                        $entity->$set($value);
-                    }
-                    $this->em->persist($entity);
-                }
-                $insertedItems[] = $entity;
-                $countInserts++;
-            }
-        }
-        if ($countInserts > 0) {
-            $this->em->flush();
-        }
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $insertedItems,
-                'total_rows' => $countInserts,
-                'last_insert_id' => -1,
-            ),
-            'error' => false,
-            'code' => 'scc.db.insert.done',
-        );
-        return $this->response;
+    public function insertBlogPostLocalizations($collection){
+		$timeStamp = time();
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
+		$countInserts = 0;
+		$insertedItems = array();
+		foreach($collection as $data){
+			if($data instanceof BundleEntity\BlogPostLocalization){
+				$entity = $data;
+				$this->em->persist($entity);
+				$insertedItems[] = $entity;
+				$countInserts++;
+			}
+			else if(is_object($data)){
+				$entity = new BundleEntity\BlogPostLocalization();
+				foreach($data as $column => $value){
+					$set = 'set'.$this->translateColumnName($column);
+					switch($column){
+						case 'language':
+							$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+							$response = $lModel->getLanguage($value);
+							if(!$response->error->exists){
+								$entity->$set($response->result->set);
+							}
+							unset($response, $lModel);
+							break;
+						case 'post':
+							$response = $this->getBlogPost($value);
+							if(!$response->error->exists){
+								$entity->$set($response->result->set);
+							}
+							unset($response, $lModel);
+							break;
+						default:
+							$entity->$set($value);
+							break;
+					}
+				}
+				$this->em->persist($entity);
+				$insertedItems[] = $entity;
+				$countInserts++;
+			}
+		}
+		if($countInserts > 0){
+			$this->em->flush();
+			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
     }
 	/**
 	 * @name            insertBlogPostRevision()
 	 *
 	 * @since           1.0.8
-	 * @version         1.0.8
+	 * @version         1.0.9
 	 * @author          Can Berkol
 	 *
 	 * @use             $this->insertBlogPostRevisions()
@@ -1453,7 +1118,7 @@ class BlogModel extends CoreModel
 	 *
 	 * @return          array           $response
 	 */
-	public function insertBlogPostRevision($revision) {
+	public function insertBlogPostRevision($revision){
 		return $this->insertBlogPostRevisions(array($revision));
 	}
 
@@ -1471,10 +1136,10 @@ class BlogModel extends CoreModel
 	 * @return          array           $response
 	 */
 	public function insertBlogPostRevisions($collection) {
-		$this->resetResponse();
+		$timeStamp = time();
 		/** Parameter must be an array */
 		if (!is_array($collection)) {
-			return $this->createException('InvalidParameter', 'Array', 'err.invalid.parameter.collection');
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
 		}
 		$countInserts = 0;
 		$insertedItems = array();
@@ -1492,27 +1157,18 @@ class BlogModel extends CoreModel
 					switch ($column) {
 						case 'language':
 							$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
-							$response = $lModel->getLanguage($value, 'id');
-							if (!$response['error']) {
-								$entity->$set($response['result']['set']);
-							} else {
-								$response = $lModel->getLanguage($value, 'iso_code');
-								if (!$response['error']) {
-									$entity->$set($response['result']['set']);
-								} else {
-									new CoreExceptions\EntityDoesNotExist($this->kernel, $value);
-								}
+							$response = $lModel->getLanguage($value);
+							if (!$response->error->exists) {
+								$entity->$set($response->result->set);
 							}
-							unset($response, $sModel);
+							unset($response, $lModel);
 							break;
 						case 'post':
-							$response = $this->getBlogPost($value, 'id');
-							if (!$response['error']) {
-								$entity->$set($response['result']['set']);
-							} else {
-								new CoreExceptions\EntityDoesNotExist($this->kernel, $value);
+							$response = $this->getBlogPost($value);
+							if (!$response->error->exist) {
+								$entity->$set($response->result->Set);
 							}
-							unset($response, $sModel);
+							unset($response);
 							break;
 						default:
 							$entity->$set($value);
@@ -1527,56 +1183,42 @@ class BlogModel extends CoreModel
 				new CoreExceptions\InvalidDataException($this->kernel);
 			}
 		}
-		if ($countInserts > 0) {
+		if($countInserts > 0){
 			$this->em->flush();
+			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
 		}
-		/**
-		 * Prepare & Return Response
-		 */
-		$this->response = array(
-			'rowCount' => $this->response['rowCount'],
-			'result' => array(
-				'set' => $insertedItems,
-				'total_rows' => $countInserts,
-				'last_insert_id' => $entity->getId(),
-			),
-			'error' => false,
-			'code' => 'scc.db.insert.done',
-		);
-		return $this->response;
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
 	}
     /**
-     * @name            insertBlogPosts ()
-     *                  Inserts one or more blog posts into database.
-     *
+     * @name            insertBlogPosts()
+	 *
      * @since           1.0.2
-     * @version         1.0.2
+     * @version         1.0.9
      * @author          Can Berkol
      *
      * @use             $this->createException()
-     * @use             $this->insertBlogLocalization()
+     * @use             $this->insertBlogPostLocalizations()
      *
-     * @param           array $collection Collection of entities or post data.
+     * @param           array 			$collection
      *
      * @return          array           $response
      */
-    public function insertBlogPosts($collection)
-    {
-        $this->resetResponse();
-        /** Parameter must be an array */
-        if (!is_array($collection)) {
-            return $this->createException('InvalidParameter', 'Array', 'err.invalid.parameter.collection');
-        }
+    public function insertBlogPosts($collection){
+		$timeStamp = time();
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
         $countInserts = 0;
         $countLocalizations = 0;
         $insertedItems = array();
         foreach ($collection as $data) {
-            if ($data instanceof BundleEntity\BlogPosts) {
+            if ($data instanceof BundleEntity\BlogPost) {
                 $entity = $data;
                 $this->em->persist($entity);
                 $insertedItems[] = $entity;
                 $countInserts++;
-            } else if (is_object($data)) {
+            }
+			else if (is_object($data)) {
                 $localizations = array();
                 $entity = new BundleEntity\BlogPost();
                 if (!property_exists($data, 'date_added')) {
@@ -1610,22 +1252,24 @@ class BlogModel extends CoreModel
                             $countLocalizations++;
                             break;
                         case 'blog':
-                            $response = $this->getBlog($value, 'id');
-                            if (!$response['error']) {
-                                $entity->$set($response['result']['set']);
-                            } else {
-                                $this->createException('EntityDoesNotExist', 'Array', 'err.invalid.entity');
+                            $response = $this->getBlog($value);
+                            if (!$response->error->exist) {
+                                $entity->$set($response->result->set);
+                            }
+							else {
+								return $this->createException('EntityDoesNotExist', 'The blog with the id / url_key  "'.$value.'" does not exist in database.', 'E:D:002');
                             }
                             unset($response);
                             break;
                         case 'author':
                         case 'member':
                             $mModel = $this->kernel->getContainer()->get('membermanagement.model');
-                            $response = $mModel->getMember($value, 'id');
-                            if (!$response['error']) {
-                                $entity->$set($response['result']['set']);
-                            } else {
-                                $this->createException('EntityDoesNotExist', 'Array', 'err.invalid.entity');
+                            $response = $mModel->getMember($value);
+                            if (!$response->error->exist) {
+                                $entity->$set($response->result->set);
+                            }
+							else {
+								return $this->createException('EntityDoesNotExist', 'The member with the id / username / e-mail  "'.$value.'" does not exist in database.', 'E:D:002');
                             }
                             unset($response);
                             break;
@@ -1633,21 +1277,22 @@ class BlogModel extends CoreModel
                         case 'preview_image':
                         case 'previewImage':
                             $fModel = $this->kernel->getContainer()->get('filemanagement.model');
-                            $response = $fModel->getFile($value, 'id');
-                            if (!$response['error']) {
-                                $entity->$set($response['result']['set']);
-                            } else {
-                                $this->createException('EntityDoesNotExist', 'File', 'err.invalid.entity');
+                            $response = $fModel->getFile($value);
+                            if (!$response->error->exist) {
+                                $entity->$set($response->result->set);
+                            }
+							else {
+								return $this->createException('EntityDoesNotExist', 'The file with the id / url_key  "'.$value.'" does not exist in database.', 'E:D:002');
                             }
                             unset($response, $sModel);
                             break;
                         case 'site':
                             $sModel = $this->kernel->getContainer()->get('sitemanagement.model');
-                            $response = $sModel->getSite($value, 'id');
-                            if (!$response['error']) {
-                                $entity->$set($response['result']['set']);
+                            $response = $sModel->getSite($value);
+                            if (!$response->error->exist) {
+                                $entity->$set($response->result->set);
                             } else {
-                                $this->createException('EntityDoesNotExist', 'Array', 'err.invalid.entity');
+								return $this->createException('EntityDoesNotExist', 'The site with the id / key / domain "'.$value.'" does not exist in database.', 'E:D:002');
                             }
                             unset($response, $sModel);
                             break;
@@ -1663,150 +1308,128 @@ class BlogModel extends CoreModel
                 $insertedItems[] = $entity;
 
                 $countInserts++;
-            } else {
-                $this->createException('InvalidDataException', '$data', 'err.invalid.data');
             }
         }
-        if ($countInserts > 0) {
-            $this->em->flush();
-        }
-        /** Now handle localizations */
-        if ($countInserts > 0 && $countLocalizations > 0) {
-            $this->insertBlogPostLocalizations($localizations);
-        }
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $insertedItems,
-                'total_rows' => $countInserts,
-                'last_insert_id' => $entity->getId(),
-            ),
-            'error' => false,
-            'code' => 'scc.db.insert.done',
-        );
-        return $this->response;
-    }
+		if($countInserts > 0){
+			$this->em->flush();
+			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+	}
 
     /**
      * @name            insertBlogPostCategory ()
-     *                  Inserts one blog  category entry.
      *
      * @since           1.0.2
-     * @version         1.0.2
+     * @version         1.0.9
      * @author          Can Berkol
      *
-     * @use             $this->insertBlogCaetgories()
+     * @use             $this->insertBlogPostCategories()
      *
-     * @param           mixed $category
+     * @param           mixed 			$category
      *
      * @return          array           $response
      */
-    public function insertBlogPostCategory($category)
-    {
-        return $this->insertBlogCategories(array($category));
+    public function insertBlogPostCategory($category){
+        return $this->insertBlogPostCategories(array($category));
     }
 
     /**
-     * @name            insertBlogPostCategoryLocalizations ()
-     *                  Inserts one or more localizations into database.
+     * @name            insertBlogPostCategoryLocalizations()
      *
      * @since           1.0.2
-     * @version         1.0.2
+     * @version         1.0.9
      * @author          Can Berkol
      *
      * @use             $this->createException()
      *
-     * @param           array $collection Collection of entities or post data.
+     * @param           array 			$collection
      *
      * @return          array           $response
      */
-    public function insertBlogPostCategoryLocalizations($collection)
-    {
-        $this->resetResponse();
-        /** Parameter must be an array */
-        if (!is_array($collection)) {
-            return $this->createException('InvalidParameter', 'Array', 'err.invalid.parameter.collection');
-        }
-        $countInserts = 0;
-        $insertedItems = array();
-        foreach ($collection as $item) {
-            if ($item instanceof BundleEntity\BlogPostCategoryLocalization) {
-                $entity = $item;
-                $this->em->persist($entity);
-                $insertedItems[] = $entity;
-                $countInserts++;
-            } else {
-                foreach ($item['localizations'] as $language => $data) {
-                    $entity = new BundleEntity\BlogPostCategoryLocalization;
-                    $entity->setBlogPostCategory($item['entity']);
-                    $mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
-                    $response = $mlsModel->getLanguage($language, 'iso_code');
-                    if (!$response['error']) {
-                        $entity->setLanguage($response['result']['set']);
-                    } else {
-                        break 1;
-                    }
-                    foreach ($data as $column => $value) {
-                        $set = 'set' . $this->translateColumnName($column);
-                        $entity->$set($value);
-                    }
-                    $this->em->persist($entity);
-                }
-                $insertedItems[] = $entity;
-                $countInserts++;
-            }
-        }
-        if ($countInserts > 0) {
-            $this->em->flush();
-        }
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $insertedItems,
-                'total_rows' => $countInserts,
-                'last_insert_id' => -1,
-            ),
-            'error' => false,
-            'code' => 'scc.db.insert.done',
-        );
-        return $this->response;
+    public function insertBlogPostCategoryLocalizations($collection) {
+		$timeStamp = time();
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
+		$countInserts = 0;
+		$insertedItems = array();
+		foreach($collection as $data){
+			if($data instanceof BundleEntity\BlogPostCategoryLocalization){
+				$entity = $data;
+				$this->em->persist($entity);
+				$insertedItems[] = $entity;
+				$countInserts++;
+			}
+			else if(is_object($data)){
+				$entity = new BundleEntity\BlogPostCategoryLocalization();
+				foreach($data as $column => $value){
+					$set = 'set'.$this->translateColumnName($column);
+					switch($column){
+						case 'language':
+							$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+							$response = $lModel->getLanguage($value);
+							if(!$response->error->exists){
+								$entity->$set($response->result->set);
+							}
+							unset($response, $lModel);
+							break;
+						case 'category':
+							$response = $this->getBlogPostCategory($value);
+							if(!$response->error->exists){
+								$entity->$set($response->result->set);
+							}
+							unset($response, $lModel);
+							break;
+						default:
+							$entity->$set($value);
+							break;
+					}
+				}
+				$this->em->persist($entity);
+				$insertedItems[] = $entity;
+				$countInserts++;
+			}
+		}
+		if($countInserts > 0){
+			$this->em->flush();
+			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
     }
 
     /**
      * @name            insertBlogPostCategories ()
-     *                  Inserts one or more pblogs into database.
      *
      * @since           1.0.2
-     * @version         1.0.2
+     * @version         1.0.9
      * @author          Can Berkol
      *
      * @use             $this->createException()
-     * @use             $this->insertBlogLocalization()
+     * @use             $this->insertBlogLocalizations()
      *
-     * @param           array $collection Collection of entities or post data.
+     * @param           array 			$collection
      *
      * @return          array           $response
      */
-    public function insertBlogPostCategories($collection)
-    {
-        $this->resetResponse();
-        /** Parameter must be an array */
-        if (!is_array($collection)) {
-            return $this->createException('InvalidParameter', 'Array', 'err.invalid.parameter.collection');
-        }
+    public function insertBlogPostCategories($collection){
+		$timeStamp = time();
+		/** Parameter must be an array */
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
         $countInserts = 0;
         $countLocalizations = 0;
         $insertedItems = array();
+		$localizations = array();
         foreach ($collection as $data) {
             if ($data instanceof BundleEntity\BlogPostCategory) {
                 $entity = $data;
                 $this->em->persist($entity);
                 $insertedItems[] = $entity;
                 $countInserts++;
-            } else if (is_object($data)) {
+            }
+			else if (is_object($data)) {
                 $localizations = array();
                 $entity = new BundleEntity\BlogPostCategory();
                 if (!property_exists($data, 'date_added')) {
@@ -1828,30 +1451,32 @@ class BlogModel extends CoreModel
                             $countLocalizations++;
                             break;
                         case 'blog':
-                            $response = $this->getBlog($value, 'id');
-                            if (!$response['error']) {
-                                $entity->$set($response['result']['set']);
-                            } else {
-                                $this->createException('EntityDoesNotExist', 'Array', 'err.invalid.entity');
+                            $response = $this->getBlog($value);
+                            if (!$response->error->exist) {
+                                $entity->$set($response->result->set);
+                            }
+							else {
+								return $this->createException('EntityDoesNotExist', 'The blog with the id / url_key '.$value.'" does not exist in database.', 'E:D:002');
                             }
                             unset($response);
                             break;
                         case 'parent':
-                            $response = $this->getBlogPostCategory($value, 'id');
-                            if (!$response['error']) {
-                                $entity->$set($response['result']['set']);
+                            $response = $this->getBlogPostCategory($value);
+                            if (!$response->error->exist) {
+                                $entity->$set($response->result->set);
                             } else {
-                                $this->createException('EntityDoesNotExist', 'Array', 'err.invalid.entity');
+								return $this->createException('EntityDoesNotExist', 'The blog post category with the id / url_key '.$value.'" does not exist in database.', 'E:D:002');
                             }
                             unset($response);
                             break;
                         case 'site':
                             $sModel = $this->kernel->getContainer()->get('sitemanagement.model');
-                            $response = $sModel->getSite($value, 'id');
-                            if (!$response['error']) {
-                                $entity->$set($response['result']['set']);
-                            } else {
-                                $this->createException('EntityDoesNotExist', 'Array', 'err.invalid.entity');
+                            $response = $sModel->getSite($value);
+                            if (!$response->error->exist) {
+                                $entity->$set($response->result->set);
+                            }
+							else {
+								return $this->createException('EntityDoesNotExist', 'The site with the id / key / domain "'.$value.'" does not exist in database.', 'E:D:002');
                             }
                             unset($response, $sModel);
                             break;
@@ -1867,306 +1492,198 @@ class BlogModel extends CoreModel
                 $insertedItems[] = $entity;
 
                 $countInserts++;
-            } else {
-                $this->createException('InvalidDataException', '$data', 'err.invalid.data');
             }
         }
         if ($countInserts > 0) {
             $this->em->flush();
         }
-        /** Now handle localizations */
-        if ($countInserts > 0 && $countLocalizations > 0) {
-            $this->insertBlogPostCategoryLocalizations($localizations);
-        }
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $insertedItems,
-                'total_rows' => $countInserts,
-                'last_insert_id' => $entity->getId(),
-            ),
-            'error' => false,
-            'code' => 'scc.db.insert.done',
-        );
-        return $this->response;
-    }
+		/** Now handle localizations */
+		if ($countInserts > 0 && $countLocalizations > 0) {
+			$response = $this->insertPageLocalizations($localizations);
+		}
+		if($countInserts > 0){
+			$this->em->flush();
+			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+	}
 
     /**
-     * @name            isFileAssociatedWithBlogPost ()
-     *                  Checks if the file is already associated with the blog post.
+     * @name            isFileAssociatedWithBlogPost()
      *
      * @since           1.0.4
-     * @version         1.0.4
+     * @version         1.0.9
+     * @author          Can Berkol
+     *
+     * @use             $this->createException()
+	 *
+	 * @param           mixed       $file
+	 * @param           mixed       $post
+	 * @param           bool        $bypass     true or false
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     */
+    public function isFileAssociatedWithBlogPost($file, $post, $bypass = false){
+		$timeStamp = time();
+		$fModel = new FileService\FileManagementModel($this->kernel, $this->db_connection, $this->orm);
+
+		$response = $fModel->getFile($file);
+		if($response->error->exist){
+			return $response;
+		}
+		$post = $response->result->set;
+
+		$response = $this->getBlogPost($post);
+
+		if($response->error->exist){
+			return $response;
+		}
+		$post = $response->result->set;
+
+		$found = false;
+
+		$qStr = 'SELECT COUNT(' . $this->entity['fobp']['alias'] . ')'
+			. ' FROM ' . $this->entity['fobp']['name'] . ' ' . $this->entity['fobp']['alias']
+			. ' WHERE ' . $this->entity['fobp']['alias'] . '.file = ' . $file->getId()
+			. ' AND ' . $this->entity['fobp']['alias'] . '.post = ' . $post->getId();
+		$query = $this->em->createQuery($qStr);
+
+		$result = $query->getSingleScalarResult();
+
+		/** flush all into database */
+		if ($result > 0) {
+			$found = true;
+		}
+		if ($bypass) {
+			return $found;
+		}
+
+		return new ModelResponse($found, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+	}
+
+    /**
+     * @name            isPostAssociatedWithCategory()
+     *
+     * @since           1.0.4
+     * @version         1.0.9
      * @author          Can Berkol
      *
      * @use             $this->createException()
      *
-     * @param           mixed $file 'entity' or 'entity' id
-     * @param           mixed $post 'entity' or 'entity' id.
-     * @param           bool $bypass true or false
+     * @param           mixed 			$post
+     * @param           mixed 			$category
+     * @param           bool 			$bypass
      *
-     * @return          mixed                    bool or $response
+     * @return          mixed           bool or $response
      */
-    public function isFileAssociatedWithBlogPost($file, $post, $bypass = false)
-    {
-        $this->resetResponse();
-        /**
-         * Validate Parameters
-         */
-        if (!is_numeric($file) && !$file instanceof FileEntity\File) {
-            return $this->createException('InvalidParameter', 'File', 'err.invalid.parameter.file');
-        }
+    public function isPostAssociatedWithCategory($post, $category, $bypass = false){
+		$timeStamp = time();
+		$response = $this->getBlogPost($post);
+		if($response->error->exist){
+			return $response;
+		}
+		$post = $response->result->set;
 
-        if (!is_numeric($post) && !$post instanceof BundleEntity\BlogPost) {
-            return $this->createException('InvalidParameter', 'BlogPost', 'err.invalid.parameter.post');
-        }
-        $fModel = $this->kernel->getContainer()->get('filemanagement.model');
-        /** If no entity is provided as file we need to check if it does exist */
-        if (is_numeric($file)) {
-            $response = $fModel->getFile($file, 'id');
-            if ($response['error']) {
-                return $this->createException('EntityDoesNotExist', 'File', 'err.db.file.notexist');
-            }
-            $file = $response['result']['set'];
-        }
-        /** If no entity is provided as entry we need to check if it does exist */
-        if (is_numeric($post)) {
-            $response = $this->getBlogPost($post, 'id');
-            if ($response['error']) {
-                return $this->createException('EntityDoesNotExist', 'Product', 'err.db.entry.notexist');
-            }
-            $post = $response['result']['set'];
-        }
-        $found = false;
+		$response = $this->getBlogPostCategory($category);
 
-        $q_str = 'SELECT COUNT(' . $this->entity['files_of_blog_post']['alias'] . ')'
-            . ' FROM ' . $this->entity['files_of_blog_post']['name'] . ' ' . $this->entity['files_of_blog_post']['alias']
-            . ' WHERE ' . $this->entity['files_of_blog_post']['alias'] . '.file = ' . $file->getId()
-            . ' AND ' . $this->entity['files_of_blog_post']['alias'] . '.post = ' . $post->getId();
-        $query = $this->em->createQuery($q_str);
+		if($response->error->exist){
+			return $response;
+		}
+		$category = $response->result->set;
 
-        $result = $query->getSingleScalarResult();
+		$found = false;
 
-        /** flush all into database */
-        if ($result > 0) {
-            $found = true;
-            $code = 'scc.db.entry.exist';
-        } else {
-            $code = 'scc.db.entry.noexist';
-        }
+		$qStr = 'SELECT COUNT(' . $this->entity['cobp']['alias'] . ')'
+			. ' FROM ' . $this->entity['cobp']['name'] . ' ' . $this->entity['cobp']['alias']
+			. ' WHERE ' . $this->entity['cobp']['alias'] . '.post = ' . $post->getId()
+			. ' AND ' . $this->entity['cobp']['alias'] . '.category = ' . $category->getId();
+		$query = $this->em->createQuery($qStr);
 
-        if ($bypass) {
-            return $found;
-        }
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $found,
-                'total_rows' => $result,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => $code,
-        );
-        return $this->response;
-    }
+		$result = $query->getSingleScalarResult();
 
-    /**
-     * @name            isPostAssociatedWithCategory ()
-     *                  Checks if the category is already associated with the blog post.
-     *
-     * @since           1.0.4
-     * @version         1.0.4
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     *
-     * @param           mixed $file 'entity' or 'entity' id
-     * @param           mixed $post 'entity' or 'entity' id.
-     * @param           bool $bypass true or false
-     *
-     * @return          mixed                    bool or $response
-     */
-    public function isPostAssociatedWithCategory($post, $category, $bypass = false)
-    {
-        $this->resetResponse();
-        /**
-         * Validate Parameters
-         */
-        if (!is_numeric($category) && !$category instanceof BundleEntity\BlogPostCategory) {
-            return $this->createException('InvalidParameter', 'BlogPostCategory', 'err.invalid.parameter.category');
-        }
-
-        if (!is_numeric($post) && !$post instanceof BundleEntity\BlogPost) {
-            return $this->createException('InvalidParameter', 'BlogPost', 'err.invalid.parameter.post');
-        }
-        /** If no entity is provided as file we need to check if it does exist */
-        if (is_numeric($category)) {
-            $response = $this->getBlogPostCategory($category, 'id');
-            if ($response['error']) {
-                return $this->createException('EntityDoesNotExist', 'BlogPostCategory', 'err.db.category.notexist');
-            }
-            $file = $response['result']['set'];
-        }
-        /** If no entity is provided as entry we need to check if it does exist */
-        if (is_numeric($post)) {
-            $response = $this->getBlogPost($post, 'id');
-            if ($response['error']) {
-                return $this->createException('EntityDoesNotExist', 'Product', 'err.db.entry.notexist');
-            }
-            $post = $response['result']['set'];
-        }
-        $found = false;
-
-        $q_str = 'SELECT COUNT(' . $this->entity['categories_of_blog_post']['alias'] . ')'
-            . ' FROM ' . $this->entity['categories_of_blog_post']['name'] . ' ' . $this->entity['categories_of_blog_post']['alias']
-            . ' WHERE ' . $this->entity['categories_of_blog_post']['alias'] . '.category = ' . $category->getId()
-            . ' AND ' . $this->entity['categories_of_blog_post']['alias'] . '.post = ' . $post->getId();
-        $query = $this->em->createQuery($q_str);
-
-        $result = $query->getSingleScalarResult();
-
-        /** flush all into database */
-        if ($result > 0) {
-            $found = true;
-            $code = 'scc.db.entry.exist';
-        } else {
-            $code = 'scc.db.entry.noexist';
-        }
-
-        if ($bypass) {
-            return $found;
-        }
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $found,
-                'total_rows' => $result,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => $code,
-        );
-        return $this->response;
-    }
+		/** flush all into database */
+		if ($result > 0) {
+			$found = true;
+		}
+		if ($bypass) {
+			return $found;
+		}
+		return new ModelResponse($found, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+	}
 
     /**
      * @name            listBlogPostCategories ()
      *                  List blog posts.
      *
      * @since           1.0.1
-     * @version         1.0.1
+     * @version         1.0.9
      * @author          Can Berkol
      *
      * @use             $this->createException()
      *
-     * @param           array $filter Multi-dimensional array
-     * @param           array $sortorder key => order
-     * @param           array $limit start,count
-     * @param           string $query_str If a custom query string needs to be defined.
-     *
-     * @return          array           $response
+	 * @param           array 			$filter
+	 * @param           array 			$sortOrder
+	 * @param           array 			$limit
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listBlogPostCategories($filter = null, $sortorder = null, $limit = null, $query_str = null)
-    {
-        $this->resetResponse();
-        if (!is_array($sortorder) && !is_null($sortorder)) {
-            return $this->createException('InvalidSortOrder', '', 'err.invalid.parameter.sortorder');
-        }
+    public function listBlogPostCategories($filter = null, $sortOrder = null, $limit = null){
+		$timeStamp = time();
+		if(!is_array($sortOrder) && !is_null($sortOrder)){
+			return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
+		}
+		$oStr = $wStr = $gStr = $fStr = '';
 
-        $order_str = '';
-        $where_str = '';
-        $group_str = '';
-        $filter_str = '';
-        if (is_null($query_str)) {
-            $query_str = 'SELECT ' . $this->entity['blog_post_category_localization']['alias'] . ', ' . $this->entity['blog_post_category']['alias']
-                . ' FROM ' . $this->entity['blog_post_category_localization']['name'] . ' ' . $this->entity['blog_post_category_localization']['alias']
-                . ' JOIN ' . $this->entity['blog_post_category_localization']['alias'] . '.post_category ' . $this->entity['blog_post_category']['alias'];
-        }
-        /**
-         * Prepare ORDER BY section of query.
-         */
-        if ($sortorder != null) {
-            foreach ($sortorder as $column => $direction) {
-                switch ($column) {
-                    case 'date_added':
-                    case 'date_approved':
-                    case 'date_published':
-                    case 'count_view':
-                    case 'count_like':
-                    case 'count_dislike':
-                    case 'count_comment':
-                        $column = $this->entity['blog_post_category']['alias'] . '.' . $column;
-                        break;
-                    case 'name':
-                    case 'url_key':
-                        $column = $this->entity['blog_post_category_localization']['alias'] . '.' . $column;
-                        break;
-                }
-                $order_str .= ' ' . $column . ' ' . strtoupper($direction) . ', ';
-            }
-            $order_str = rtrim($order_str, ', ');
-            $order_str = ' ORDER BY ' . $order_str . ' ';
-        }
+		$qStr = 'SELECT '.$this->entity['bpc']['alias'].', '.$this->entity['bpc']['alias']
+			.' FROM '.$this->entity['bpcl']['name'].' '.$this->entity['bpcl']['alias']
+			.' JOIN '.$this->entity['bpcl']['alias'].'.category '.$this->entity['bpc']['alias'];
 
-        /**
-         * Prepare WHERE section of query.
-         */
-        if ($filter != null) {
-            $filter_str = $this->prepareWhere($filter);
-            $where_str .= ' WHERE ' . $filter_str;
-        }
+		if(!is_null($sortOrder)){
+			foreach($sortOrder as $column => $direction){
+				switch($column){
+					case 'id':
+					case 'parent':
+					case 'blog':
+					case 'date_added':
+					case 'date_updated':
+					case 'date_removed':
+					case 'site':
+						$column = $this->entity['bpc']['alias'].'.'.$column;
+						break;
+					case 'name':
+					case 'url_key':
+						$column = $this->entity['bpcl']['alias'].'.'.$column;
+						break;
+				}
+				$oStr .= ' '.$column.' '.strtoupper($direction).', ';
+			}
+			$oStr = rtrim($oStr, ', ');
+			$oStr = ' ORDER BY '.$oStr.' ';
+		}
 
-        if ($limit != null) {
-            $lqStr = 'SELECT ' . $this->entity['blog_post_category']['alias'] . ' FROM ' . $this->entity['blog_post_category']['name'] . ' ' . $this->entity['blog_post_category']['alias'];
-            $lqStr .= $where_str . $group_str . $order_str;
-            $lQuery = $this->em->createQuery($lqStr);
-            $lQuery = $this->addLimit($lQuery, $limit);
-            $result = $lQuery->getResult();
-            $selectedIds = array();
-            foreach ($result as $entry) {
-                $selectedIds[] = $entry->getId();
-            }
-            $where_str .= ' AND ' . $this->entity['blog_post_category_localization']['alias'] . '.category IN(' . implode(',', $selectedIds) . ')';
-        }
+		if(!is_null($filter)){
+			$fStr = $this->prepareWhere($filter);
+			$wStr .= ' WHERE '.$fStr;
+		}
 
-        $query_str .= $where_str . $group_str . $order_str;
-        $query = $this->em->createQuery($query_str);
+		$qStr .= $wStr.$gStr.$oStr;
+		$q = $this->em->createQuery($qStr);
+		$q = $this->addLimit($q, $limit);
 
-        /**
-         * Prepare & Return Response
-         */
-        $result = $query->getResult();
+		$result = $q->getResult();
 
-        $categories = array();
-        $unique = array();
-        foreach ($result as $entry) {
-            $id = $entry->getBlogPostCategory()->getId();
-            if (!isset($unique[$id])) {
-                $categories[] = $entry->getBlogPostCategory();
-                $unique[$id] = $entry->getBlogPostCategory();
-            }
-        }
-        unset($unique);
-        $total_rows = count($categories);
-        if ($total_rows < 1) {
-            $this->response['code'] = 'err.db.entry.notexist';
-            return $this->response;
-        }
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $categories,
-                'total_rows' => $total_rows,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.entry.exist',
-        );
-        return $this->response;
+		$entities = array();
+		foreach($result as $entry){
+			$id = $entry->getCategory()->getId();
+			if(!isset($unique[$id])){
+				$entities[] = $entry->getCategory();
+			}
+		}
+		$totalRows = count($entities);
+		if ($totalRows < 1) {
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+		}
+		return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
 	/**
 	 * @name            listBlogPostRevisions()
@@ -2179,338 +1696,233 @@ class BlogModel extends CoreModel
 	 * @param           array 			$filter
 	 * @param			array			$sortOrder
 	 * @param			array			$limit
-	 * @param			integer			$site
-	 * @param			string			$queryStr
 	 *
-	 * @return          array           $response
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
-	public function listBlogPostRevisions($filter = null, $sortOrder = null, $limit = null, $site = 1, $queryStr = null){
-		$this->resetResponse();
-		if (!is_array($sortOrder) && !is_null($sortOrder)) {
-			return $this->createException('InvalidSortOrderException', '', 'err.invalid.parameter.sortorder');
+	public function listBlogPostRevisions($filter = null, $sortOrder = null, $limit = null){
+		$timeStamp = time();
+		if(!is_array($sortOrder) && !is_null($sortOrder)){
+			return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
 		}
+		$oStr = $wStr = $gStr = $fStr = '';
 
-		$orderStr = '';
-		$whereStr = '';
-		$groupStr = '';
-		$filterStr = '';
+		$qStr = 'SELECT '.$this->entity['bpr']['alias'].', '.$this->entity['bpr']['alias']
+			.' FROM '.$this->entity['bpr']['name'].' '.$this->entity['bpr']['alias'];
 
-		$queryStr = 'SELECT '.$this->entity['blog_post_revision']['alias']
-			.' FROM '.$this->entity['blog_post_revision']['alias']['name'].' '.$this->entity['blog_post_revision']['alias'];
-
-		if ($sortOrder != null) {
-			foreach ($sortOrder as $column => $direction) {
-				switch ($column) {
-					default:
-						$column = $this->entity['blog_post_revision']['alias'].'.'.$column;
+		if(!is_null($sortOrder)){
+			foreach($sortOrder as $column => $direction){
+				switch($column){
+					case 'url_key':
+					case 'title':
+					case 'date_updated':
+					case 'revision_number':
+					case 'date_added':
+					case 'date_removed':
+						$column = $this->entity['bpr']['alias'].'.'.$column;
 						break;
 				}
-				$orderStr .= ' '.$column.' '.strtoupper($direction).', ';
+				$oStr .= ' '.$column.' '.strtoupper($direction).', ';
 			}
-			$orderStr = rtrim($orderStr, ', ');
-			$orderStr = ' ORDER BY '.$orderStr.' ';
+			$oStr = rtrim($oStr, ', ');
+			$oStr = ' ORDER BY '.$oStr.' ';
 		}
 
-		/**
-		 * Prepare WHERE section of query.
-		 */
-		if ($filter != null) {
-			$filter_str = $this->prepareWhere($filter);
-			$whereStr .= ' WHERE ' . $filter_str;
+		if(!is_null($filter)){
+			$fStr = $this->prepareWhere($filter);
+			$wStr .= ' WHERE '.$fStr;
 		}
 
-		$queryStr .= $whereStr.$groupStr.$orderStr;
+		$qStr .= $wStr.$gStr.$oStr;
+		$q = $this->em->createQuery($qStr);
+		$q = $this->addLimit($q, $limit);
 
-		$query = $this->em->createQuery($queryStr);
+		$result = $q->getResult();
 
-		$query = $this->addLimit($query, $limit);
-		/**
-		 * Prepare & Return Response
-		 */
-		$result = $query->getResult();
-
-		$this->response = array(
-			'rowCount' => $this->response['rowCount'],
-			'result' => array(
-				'set' => $result,
-				'total_rows' => count($result),
-				'last_insert_id' => null,
-			),
-			'error' => false,
-			'code' => 'scc.db.entry.exist',
-		);
-		return $this->response;
+		$totalRows = count($result);
+		if ($totalRows < 1) {
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+		}
+		return new ModelResponse($result, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
 	}
     /**
-     * @name            listBlogPostss ()
-     *                  List blog posts.
+     * @name            listBlogPosts()
      *
      * @since           1.0.1
-     * @version         1.0.1
+     * @version         1.0.9
      * @author          Can Berkol
      *
      * @use             $this->createException()
      *
-     * @param           array $filter Multi-dimensional array
-     * @param           array $sortorder key => order
-     * @param           array $limit start,count
-     * @param           string $query_str If a custom query string needs to be defined.
+     * @param           array 			$filter
+     * @param           array 			$sortOrder
+     * @param           array 			$limit
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listBlogPosts($filter = null, $sortorder = null, $limit = null, $query_str = null)
-    {
-        $this->resetResponse();
-        if (!is_array($sortorder) && !is_null($sortorder)) {
-            return $this->createException('InvalidSortOrder', '', 'err.invalid.parameter.sortorder');
-        }
-        $order_str = '';
-        $where_str = '';
-        $group_str = '';
-        $filter_str = '';
+    public function listBlogPosts($filter = null, $sortOrder = null, $limit = null){
+		$timeStamp = time();
+		if(!is_array($sortOrder) && !is_null($sortOrder)){
+			return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
+		}
+		$oStr = $wStr = $gStr = $fStr = '';
 
-        if (is_null($query_str)) {
-            $query_str = 'SELECT ' . $this->entity['blog_post_localization']['alias'] . ', ' . $this->entity['blog_post']['alias']
-                . ' FROM ' . $this->entity['blog_post_localization']['name'] . ' ' . $this->entity['blog_post_localization']['alias']
-                . ' JOIN ' . $this->entity['blog_post_localization']['alias'] . '.blog_post ' . $this->entity['blog_post']['alias'];
-        }
-        /**
-         * Prepare ORDER BY section of query.
-         */
-        if ($sortorder != null) {
-            foreach ($sortorder as $column => $direction) {
-                switch ($column) {
-                    case 'date_added':
-                    case 'date_approved':
-                    case 'date_published':
-                    case 'count_view':
-                    case 'count_like':
-                    case 'count_dislike':
-                    case 'count_comment':
-                        $column = $this->entity['blog_post']['alias'] . '.' . $column;
-                        break;
-                    case 'title':
-                    case 'url_key':
-                        $column = $this->entity['blog_post_localization']['alias'] . '.' . $column;
-                        break;
-                }
-                $order_str .= ' ' . $column . ' ' . strtoupper($direction) . ', ';
-            }
-            $order_str = rtrim($order_str, ', ');
-            $order_str = ' ORDER BY ' . $order_str . ' ';
-        }
-        /**
-         * Prepare WHERE section of query.
-         */
-        if ($filter != null) {
-            $filter_str = $this->prepareWhere($filter);
-            $where_str .= ' WHERE ' . $filter_str;
-        }
-        if ($limit != null) {
-            $lqStr = 'SELECT ' . $this->entity['blog_post']['alias'] . ' FROM ' . $this->entity['blog_post']['name'] . ' ' . $this->entity['blog_post']['alias'];
-            $lqStr .= $where_str . $group_str . $order_str;
-            $lQuery = $this->em->createQuery($lqStr);
-            $lQuery = $this->addLimit($lQuery, $limit);
-            $result = $lQuery->getResult();
-            $selectedIds = array();
-            foreach ($result as $entry) {
-                $selectedIds[] = $entry->getId();
-            }
-            $where_str .= ' AND ' . $this->entity['blog_post_localization']['alias'] . '.blog_post IN(' . implode(',', $selectedIds) . ')';
-        }
+		$qStr = 'SELECT '.$this->entity['bp']['alias'].', '.$this->entity['bp']['alias']
+			.' FROM '.$this->entity['bpl']['name'].' '.$this->entity['bpl']['alias']
+			.' JOIN '.$this->entity['bpl']['alias'].'.post '.$this->entity['bp']['alias'];
 
-        $query_str .= $where_str . $group_str . $order_str;
-        $query = $this->em->createQuery($query_str);
+		if(!is_null($sortOrder)){
+			foreach($sortOrder as $column => $direction){
+				switch($column){
+					case 'id':
+					case 'author':
+					case 'blog':
+					case 'type':
+					case 'status':
+					case 'date_added':
+					case 'date_approved':
+					case 'date_published':
+					case 'date_updated':
+					case 'date_removed':
+					case 'date_unpublished':
+					case 'count_dislike':
+					case 'count_comment':
+					case 'count_view':
+					case 'count_like':
+						$column = $this->entity['bp']['alias'].'.'.$column;
+						break;
+					case 'title':
+					case 'url_key':
+						$column = $this->entity['bpl']['alias'].'.'.$column;
+						break;
+				}
+				$oStr .= ' '.$column.' '.strtoupper($direction).', ';
+			}
+			$oStr = rtrim($oStr, ', ');
+			$oStr = ' ORDER BY '.$oStr.' ';
+		}
 
-        /**
-         * Prepare & Return Response
-         */
-        $result = $query->getResult();
+		if(!is_null($filter)){
+			$fStr = $this->prepareWhere($filter);
+			$wStr .= ' WHERE '.$fStr;
+		}
 
-        $posts = array();
-        $unique = array();
-        foreach ($result as $entry) {
-            $id = $entry->getBlogPost()->getId();
-            if (!isset($unique[$id])) {
-                $posts[] = $entry->getBlogPost();
-                $unique[$id] = $entry->getBlogPost();
-            }
-        }
-        unset($unique);
-        $total_rows = count($posts);
-        if ($total_rows < 1) {
-            $this->response['code'] = 'err.db.entry.notexist';
-            return $this->response;
-        }
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $posts,
-                'total_rows' => $total_rows,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.entry.exist',
-        );
-        return $this->response;
-    }
+		$qStr .= $wStr.$gStr.$oStr;
+		$q = $this->em->createQuery($qStr);
+		$q = $this->addLimit($q, $limit);
+
+		$result = $q->getResult();
+
+		$entities = array();
+		foreach($result as $entry){
+			$id = $entry->getPost()->getId();
+			if(!isset($unique[$id])){
+				$entities[] = $entry->getPost();
+			}
+		}
+		$totalRows = count($entities);
+		if ($totalRows < 1) {
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+		}
+		return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+	}
 
     /**
-     * @name            listBlogs ()
-     *                  List registered blogs.
+     * @name            listBlogs()
      *
      * @since           1.0.1
-     * @version         1.0.1
+     * @version         1.0.9
      * @author          Can Berkol
      *
      * @use             $this->createException()
      *
-     * @param           array $filter Multi-dimensional array
-     * @param           array $sortorder key => order
-     * @param           array $limit start,count
-     * @param           string $query_str If a custom query string needs to be defined.
+     * @param           array 			$filter
+     * @param           array 			$sortOrder
+     * @param           array 			$limit
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listBlogs($filter = null, $sortorder = null, $limit = null, $query_str = null)
-    {
-        $this->resetResponse();
-        if (!is_array($sortorder) && !is_null($sortorder)) {
-            return $this->createException('InvalidSortOrder', '', 'err.invalid.parameter.sortorder');
-        }
+    public function listBlogs($filter = null, $sortOrder = null, $limit = null){
+		$timeStamp = time();
+		if(!is_array($sortOrder) && !is_null($sortOrder)){
+			return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
+		}
+		$oStr = $wStr = $gStr = $fStr = '';
 
-        $order_str = '';
-        $where_str = '';
-        $group_str = '';
-        $filter_str = '';
-        if (is_null($query_str)) {
-            $query_str = 'SELECT ' . $this->entity['blog_localization']['alias'] . ', ' . $this->entity['blog']['alias']
-                . ' FROM ' . $this->entity['blog_localization']['name'] . ' ' . $this->entity['blog_localization']['alias']
-                . ' JOIN ' . $this->entity['blog_localization']['alias'] . '.blog ' . $this->entity['blog']['alias'];
-        }
-        /**
-         * Prepare ORDER BY section of query.
-         */
-        if ($sortorder != null) {
-            foreach ($sortorder as $column => $direction) {
-                switch ($column) {
-                    case 'date_created':
-                    case 'date_updated':
-                    case 'count_posts':
-                    case 'site':
-                        $column = $this->entity['blog']['alias'] . '.' . $column;
-                        break;
-                    case 'title':
-                    case 'url_key':
-                        $column = $this->entity['blog_localization']['alias'] . '.' . $column;
-                        break;
-                }
-                $order_str .= ' ' . $column . ' ' . strtoupper($direction) . ', ';
-            }
-            $order_str = rtrim($order_str, ', ');
-            $order_str = ' ORDER BY ' . $order_str . ' ';
-        }
+		$qStr = 'SELECT '.$this->entity['b']['alias'].', '.$this->entity['b']['alias']
+			.' FROM '.$this->entity['bl']['name'].' '.$this->entity['bl']['alias']
+			.' JOIN '.$this->entity['bl']['alias'].'.blog '.$this->entity['b']['alias'];
 
-        /**
-         * Prepare WHERE section of query.
-         */
-        if ($filter != null) {
-            $filter_str = $this->prepareWhere($filter);
-            $where_str .= ' WHERE ' . $filter_str;
-        }
+		if(!is_null($sortOrder)){
+			foreach($sortOrder as $column => $direction){
+				switch($column){
+					case 'id':
+					case 'date_added':
+					case 'date_updated':
+					case 'date_removed':
+					case 'count_posts':
+					case 'site':
+						$column = $this->entity['b']['alias'].'.'.$column;
+						break;
+					case 'title':
+					case 'url_key':
+						$column = $this->entity['bl']['alias'].'.'.$column;
+						break;
+				}
+				$oStr .= ' '.$column.' '.strtoupper($direction).', ';
+			}
+			$oStr = rtrim($oStr, ', ');
+			$oStr = ' ORDER BY '.$oStr.' ';
+		}
 
-        if ($limit != null) {
-            $lqStr = 'SELECT ' . $this->entity['blog']['alias'] . ' FROM ' . $this->entity['blog']['name'] . ' ' . $this->entity['blog']['alias'];
-            $lqStr .= $where_str . $group_str . $order_str;
-            $lQuery = $this->em->createQuery($lqStr);
-            $lQuery = $this->addLimit($lQuery, $limit);
-            $result = $lQuery->getResult();
-            $selectedIds = array();
-            foreach ($result as $entry) {
-                $selectedIds[] = $entry->getId();
-            }
-            $where_str .= ' AND ' . $this->entity['blog_localization']['alias'] . '.blog IN(' . implode(',', $selectedIds) . ')';
-        }
+		if(!is_null($filter)){
+			$fStr = $this->prepareWhere($filter);
+			$wStr .= ' WHERE '.$fStr;
+		}
 
-        $query_str .= $where_str . $group_str . $order_str;
-        $query = $this->em->createQuery($query_str);
+		$qStr .= $wStr.$gStr.$oStr;
+		$q = $this->em->createQuery($qStr);
+		$q = $this->addLimit($q, $limit);
 
-        /**
-         * Prepare & Return Response
-         */
-        $result = $query->getResult();
+		$result = $q->getResult();
 
-        $blogs = array();
-        $unique = array();
-        foreach ($result as $entry) {
-            $id = $entry->getBlog()->getId();
-            if (!isset($unique[$id])) {
-                $blogs[] = $entry->getBlog();
-                $unique[$id] = $entry->getBlog();
-            }
-        }
-        unset($unique);
-        $total_rows = count($blogs);
-        if ($total_rows < 1) {
-            $this->response['code'] = 'err.db.entry.notexist';
-            return $this->response;
-        }
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $blogs,
-                'total_rows' => $total_rows,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.entry.exist',
-        );
-        return $this->response;
-    }
+		$entities = array();
+		foreach($result as $entry){
+			$id = $entry->getBlog()->getId();
+			if(!isset($unique[$id])){
+				$entities[] = $entry->getBlog();
+			}
+		}
+		$totalRows = count($entities);
+		if ($totalRows < 1) {
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+		}
+		return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+	}
 
     /**
-     * @name            listCategoriesOfPost ()
-     *                  List categories associated with a post
+     * @name            listCategoriesOfPost(
      *
      * @since           1.0.1
-     * @version         1.0.1
+     * @version         1.0.9
      * @author          Can Berkol
      *
      * @use             $this->createException()
      * @use             $this->getBlogPostCategory()
      * @use             $this->listPostCategories()
      *
-     * @param           mixed $post
-     * @param           array $filter
-     * @param           array $sortorder
-     * @param           array $limit
+     * @param           mixed 			$post
+     * @param           array 			$filter
+     * @param           array 			$sortOrder
+     * @param           array 			$limit
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listCategoriesOfPost($post, $filter = null, $sortorder = null, $limit = null)
-    {
-        $this->resetResponse();
-        if (!$post instanceof BundleEntity\BlogPost && !is_numeric($post) && !is_string($post)) {
-            return $this->createException('InvalidParameter', 'BlogPost entity', 'err.invalid.parameter.post');
-        }
-        if (!is_object($post)) {
-            switch ($post) {
-                case is_numeric($post):
-                    $response = $this->getBlogPost($post, 'id');
-                    break;
-                case is_string($post):
-                    $response = $post->getBlogPost($post, 'url_key');
-                    break;
-            }
-            if ($response['error']) {
-                return $this->createException('InvalidParameter', 'BlogPost entity', 'err.invalid.parameter.post');
-            }
-            $post = $response['result']['set'];
-        }
-        /** First identify posts associated with given category */
-        $query_str = 'SELECT ' . $this->entity['categories_of_blog_post']['alias']
-            . ' FROM ' . $this->entity['categories_of_blog_post']['name'] . ' ' . $this->entity['categories_of_blog_post']['alias']
-            . ' WHERE ' . $this->entity['categories_of_blog_post']['alias'] . '.post = ' . $post->getId();
+    public function listCategoriesOfPost($post, $filter = null, $sortOrder = null, $limit = null){
+        $timeStamp = time();
+        $post = $this->getBlogPost($post);
+        $query_str = 'SELECT ' . $this->entity['cobp']['alias']
+            . ' FROM ' . $this->entity['cobp']['name'] . ' ' . $this->entity['cobp']['alias']
+            . ' WHERE ' . $this->entity['cobp']['alias'] . '.post = ' . $post->getId();
         $query = $this->em->createQuery($query_str);
         $result = $query->getResult();
 
@@ -2521,19 +1933,9 @@ class BlogModel extends CoreModel
             }
         }
         if (count($catsInPost) < 1) {
-            $this->response = array(
-                'rowCount' => $this->response['rowCount'],
-                'result' => array(
-                    'set' => null,
-                    'total_rows' => 0,
-                    'last_insert_id' => null,
-                ),
-                'error' => true,
-                'code' => 'err.db.entry.notexist',
-            );
-            return $this->response;
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
         }
-        $columnI = $this->entity['blog_post_category']['alias'] . '.id';
+        $columnI = $this->entity['bpc']['alias'] . '.id';
         $conditionI = array('column' => $columnI, 'comparison' => 'in', 'value' => $catsInPost);
         $filter[] = array(
             'glue' => 'and',
@@ -2544,56 +1946,52 @@ class BlogModel extends CoreModel
                 )
             )
         );
-        return $this->listBlogPostCategories($filter, $sortorder, $limit);
+        return $this->listBlogPostCategories($filter, $sortOrder, $limit);
     }
     /**
      * @name            listMediaOfBlogPost()
      *                  Lists one ore more random media from gallery
      *
      * @since           1.0.7
-     * @version         1.0.7
+     * @version         1.0.9
      *
+     * @author          Can Berkol
      * @author          Said İmamoğlu
      *
      * @use             $this->createException()
      *
-     * @param           mixed       $post
-     * @param           string      $mediaType      all, i, a, v, f, d, p, s
-     * @param           array       $sortorder
-     * @param           array       $limit
-     * @param           array       $filter
+     * @param           mixed       	$post
+     * @param           string      	$mediaType      all, i, a, v, f, d, p, s
+     * @param           array       	$sortOrder
+     * @param           array       	$limit
+     * @param           array       	$filter
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listFilesOfBlogPost($post, $mediaType = 'all', $sortorder = null, $limit = null, $filter = null){
-        $this->resetResponse();
+    public function listMediaOfBlogPost($post, $mediaType = 'all', $sortOrder = null, $limit = null, $filter = null){
+        $timeStamp = time();
         $allowedTypes = array('i', 'a', 'v', 'f', 'd', 'p', 's');
-        if(!$post instanceof BundleEntity\BlogPost && !is_numeric($post)){
-            return $this->createException('InvalidParameterValueException', 'BlogPost entity or integer  representing row id', 'err.invalid.parameter.gallery');
-        }
+		$response = $this->getBlogPost($post);
+		if($response->error->exist){
+			return $response;
+		}
+		$post = $response->result->set;
         if($mediaType != 'all' && !in_array($mediaType, $allowedTypes)){
-            return $this->createException('InvalidParameterValueException', 'i, a, v, f, d, p, or s', 'err.invalid.parameter.mediaType');
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. $mediaType can have only the following values: i, a, v, f, d, p, or s', 'E:S:001');
         }
-        if(is_numeric($post)){
-            $response = $this->getBlogPost($post);
-            if($response['error']){
-                return $this->createException('InvalidParameterValueException', 'BlogPost entity or integer  representing row id', 'err.invalid.parameter.gallery');
-            }
-            $post = $response['result']['set'];
-        }
-        $qStr = 'SELECT '.$this->entity['files_of_blog_post']['alias']
-            .' FROM '.$this->entity['files_of_blog_post']['name'].' '.$this->entity['files_of_blog_post']['alias']
-            .' WHERE '.$this->entity['files_of_blog_post']['alias'].'.post = '.$post->getId();
+        $qStr = 'SELECT '.$this->entity['fobp']['alias']
+            .' FROM '.$this->entity['fobp']['name'].' '.$this->entity['fobp']['alias']
+            .' WHERE '.$this->entity['fobp']['alias'].'.post = '.$post->getId();
         unset($response, $post);
         $whereStr = '';
         if($mediaType != 'all'){
-            $whereStr = ' AND '.$this->entity['files_of_blog_post']['alias'].".type = '".$mediaType."'";
+            $whereStr = ' AND '.$this->entity['fobp']['alias'].".type = '".$mediaType."'";
         }
         $qStr .= $whereStr;
 
-        $query = $this->em->createQuery($qStr);
+        $q = $this->em->createQuery($qStr);
 
-        $result = $query->getResult();
+        $result = $q->getResult();
 
         $fileIds = array();
         $totalRows = count($result);
@@ -2604,19 +2002,10 @@ class BlogModel extends CoreModel
             }
         }
         else{
-            $this->response = array(
-                'result' => array(
-                    'set' => null,
-                    'total_rows' => 0,
-                    'last_insert_id' => null,
-                ),
-                'error' => true,
-                'code' => 'err.db.entry.notexist',
-            );
-            return $this->response;
-        }
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+		}
 
-        $fileFilter[] = array('glue' => 'and',
+        $filter[] = array('glue' => 'and',
             'condition' => array(
                 array(
                     'glue' => 'and',
@@ -2626,51 +2015,41 @@ class BlogModel extends CoreModel
         );
         $fModel = $this->kernel->getContainer()->get('filemanagement.model');
 
-        return $fModel->listFiles($fileFilter, $sortorder, $limit);
+        $response = $fModel->listFiles($filter, $sortOrder, $limit);
+
+		$response->stats->execution->start = $timeStamp;
+
+		return $response;
     }
     /**
-     * @name            listPostsInCategory ()
-     *                  List posts in a given category
+     * @name            listPostsInCategory()
      *
      * @since           1.0.1
-     * @version         1.0.1
+     * @version         1.0.9
      * @author          Can Berkol
      *
      * @use             $this->createException()
      * @use             $this->getBlogPostCategory()
      * @use             $this->listPostsOfBlog()
      *
-     * @param           mixed $category
-     * @param           array $filter
-     * @param           array $sortorder
-     * @param           array $limit
+     * @param           mixed 			$category
+     * @param           array 			$filter
+     * @param           array 			$sortOrder
+     * @param           array 			$limit
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPostsInCategory($category, $filter = null, $sortorder = null, $limit = null)
-    {
-        $this->resetResponse();
-        if (!$category instanceof BundleEntity\BlogPostCategory && !is_numeric($category) && !is_string($category)) {
-            return $this->createException('InvalidParameter', 'BlogPostCategory entity', 'err.invalid.parameter.category');
-        }
-        if (!is_object($category)) {
-            switch ($category) {
-                case is_numeric($category):
-                    $response = $this->getBlogPostCategory($category, 'id');
-                    break;
-                case is_string($category):
-                    $response = $this->getBlogPostCategory($category, 'url_key');
-                    break;
-            }
-            if ($response['error']) {
-                return $this->createException('InvalidParameter', 'BlogPostCategory entity', 'err.invalid.parameter.blog');
-            }
-            $category = $response['result']['set'];
-        }
+    public function listPostsInCategory($category, $filter = null, $sortOrder = null, $limit = null){
+        $timeStamp = time();
+		$response = $this->getBlogPostCategory($category);
+		if($response->error->exist){
+			return $response;
+		}
+		$category = $response->result->set;
         /** First identify posts associated with given category */
-        $query_str = 'SELECT ' . $this->entity['categories_of_blog_post']['alias']
-            . ' FROM ' . $this->entity['categories_of_blog_post']['name'] . ' ' . $this->entity['categories_of_blog_post']['alias']
-            . ' WHERE ' . $this->entity['categories_of_blog_post']['alias'] . '.category = ' . $category->getId();
+        $query_str = 'SELECT ' . $this->entity['cobp']['alias']
+            . ' FROM ' . $this->entity['cobp']['name'] . ' ' . $this->entity['cobp']['alias']
+            . ' WHERE ' . $this->entity['cobp']['alias'] . '.category = ' . $category->getId();
         $query = $this->em->createQuery($query_str);
         $result = $query->getResult();
 
@@ -2681,17 +2060,9 @@ class BlogModel extends CoreModel
             }
         }
         if (count($postsInCat)<1) {
-            return  $this->response = array(
-                'result' => array(
-                    'set' => null,
-                    'total_rows' => null,
-                    'last_insert_id' => null,
-                ),
-                'error' => true,
-                'code' => 'err.collection.empty',
-            );
+			return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
         }
-        $columnI = $this->entity['blog_post']['alias'] . '.id';
+        $columnI = $this->entity['bp']['alias'] . '.id';
         $filter = array();
         $filter[] = array(
             'glue' => 'and',
@@ -2702,52 +2073,39 @@ class BlogModel extends CoreModel
                 )
             )
         );
-        return $this->listBlogPosts($filter, $sortorder, $limit);
+        $response = $this->listBlogPosts($filter, $sortOrder, $limit);
+		$response->stats->execution->start = $timeStamp;
+
+		return $response;
     }
 
     /**
      * @name            listPostCategoriesOfBlog()
-     *                  List posts categories of a blog
      *
      * @since           1.0.3
-     * @version         1.0.3
+     * @version         1.0.9
      * @author          Can Berkol
      *
      * @use             $this->createException()
      * @use             $this->getBlog()
-     * @use             $this->listBlogPostCategoriess()
+     * @use             $this->listBlogPostCategories()
      *
-     * @param           mixed $blog
-     * @param           array $filter
-     * @param           array $sortorder
-     * @param           array $limit
+     * @param           mixed 			$blog
+     * @param           array 			$filter
+     * @param           array 			$sortOrder
+     * @param           array 			$limit
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPostCategoriesOfBlog($blog, $filter = null, $sortorder = null, $limit = null)
-    {
-        $this->resetResponse();
-        if (!$blog instanceof BundleEntity\Blog && !is_numeric($blog) && !is_string($blog)) {
-            return $this->createException('InvalidParameter', 'BlogPostCategory entity', 'err.invalid.parameter.category');
-        }
-        if (!is_object($blog)) {
-            switch ($blog) {
-                case is_numeric($blog):
-                    $response = $this->getBlog($blog, 'id');
-                    break;
-                case is_string($blog):
-                    $response = $this->getBlog($blog, 'url_key');
-                    break;
-            }
-            if ($response['error']) {
-                return $this->createException('InvalidParameter', 'Blog entity', 'err.invalid.parameter.blog');
-            }
-            $blog = $response['result']['set'];
-        }
-        /**
-         * Prepare $filter
-         */
-        $column = $this->entity['blog_post_category']['alias'] . '.blog';
+    public function listPostCategoriesOfBlog($blog, $filter = null, $sortOrder = null, $limit = null){
+        $timeStamp = time();
+        $response = $this->getBlog($blog);
+		if($this->error->exist){
+			return $response;
+		}
+		$blog = $response->result->set;
+
+        $column = $this->entity['bpc']['alias'] . '.blog';
         $condition = array('column' => $column, 'comparison' => '=', 'value' => $blog->getId());
         $filter[] = array(
             'glue' => 'and',
@@ -2758,7 +2116,11 @@ class BlogModel extends CoreModel
                 )
             )
         );
-        return $this->listBlogPostCategories($filter, $sortorder, $limit);
+        $response = $this->listBlogPostCategories($filter, $sortOrder, $limit);
+
+		$response->stats->execution->start = $timeStamp;
+
+		return $response;
     }
 
     /**
@@ -2766,44 +2128,29 @@ class BlogModel extends CoreModel
      *                  List posts of a blog
      *
      * @since           1.0.1
-     * @version         1.0.1
+     * @version         1.0.9
      * @author          Can Berkol
      *
      * @use             $this->createException()
      * @use             $this->getBlog()
      * @use             $this->listBlogPosts()
      *
-     * @param           mixed $blog
-     * @param           array $filter
-     * @param           array $sortorder
-     * @param           array $limit
+     * @param           mixed 		$blog
+     * @param           array 		$filter
+     * @param           array 		$sortOrder
+     * @param           array 		$limit
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPostsOfBlog($blog, $filter = null, $sortorder = null, $limit = null)
-    {
-        $this->resetResponse();
-        if (!$blog instanceof BundleEntity\Blog && !is_numeric($blog) && !is_string($blog)) {
-            return $this->createException('InvalidParameter', 'Blog entity', 'err.invalid.parameter.blog');
-        }
-        if (!is_object($blog)) {
-            switch ($blog) {
-                case is_numeric($blog):
-                    $response = $this->getBlog($blog, 'id');
-                    break;
-                case is_string($blog):
-                    $response = $this->getBlog($blog, 'url_key');
-                    break;
-            }
-            if ($response['error']) {
-                return $this->createException('InvalidParameter', 'Blog entity', 'err.invalid.parameter.blog');
-            }
-            $blog = $response['result']['set'];
-        }
-        /**
-         * Prepare $filter
-         */
-        $column = $this->entity['blog_post']['alias'] . '.blog';
+    public function listPostsOfBlog($blog, $filter = null, $sortOrder = null, $limit = null){
+		$timeStamp = time();
+        $response = $this->getBlog($blog);
+		if($this->error->exist){
+			return $response;
+		}
+		$blog = $response->result->set;
+
+        $column = $this->entity['bp']['alias'] . '.blog';
         $filter = array();
         $filter[] = array(
             'glue' => 'and',
@@ -2814,72 +2161,45 @@ class BlogModel extends CoreModel
                 )
             )
         );
-        return $this->listBlogPosts($filter, $sortorder, $limit);
+        return $this->listBlogPosts($filter, $sortOrder, $limit);
     }
 
     /**
      * @name            listPostsOfBlogInCategory ()
-     *                  List posts of a blog in a given category
      *
      * @since           1.0.1
-     * @version         1.0.1
+     * @version         1.0.9
      * @author          Can Berkol
      *
      * @use             $this->createException()
      * @use             $this->getBlog()
      * @use             $this->listPostsOfBlog()
      *
-     * @param           mixed $blog
-     * @param           mixed $category
-     * @param           array $filter
-     * @param           array $sortorder
-     * @param           array $limit
+     * @param           mixed 			$blog
+     * @param           mixed 			$category
+     * @param           array 			$filter
+     * @param           array 			$sortOrder
+     * @param           array 			$limit
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPostsOfBlogInCategory($blog, $category, $filter = null, $sortorder = null, $limit = null)
-    {
-        $this->resetResponse();
-        if (!$blog instanceof BundleEntity\Blog && !is_numeric($blog) && !is_string($blog)) {
-            return $this->createException('InvalidParameter', 'Blog entity', 'err.invalid.parameter.blog');
-        }
-        if (!$category instanceof BundleEntity\BlogPostCategory && !is_numeric($category) && !is_string($category)) {
-            return $this->createException('InvalidParameter', 'BlogPostCategory entity', 'err.invalid.parameter.category');
-        }
-        if (!is_object($blog)) {
-            switch ($blog) {
-                case is_numeric($blog):
-                    $response = $this->getBlog($blog, 'id');
-                    break;
-                case is_string($blog):
-                    $response = $this->getBlog($blog, 'url_key');
-                    break;
-            }
-            if ($response['error']) {
-                return $this->createException('InvalidParameter', 'Blog entity', 'err.invalid.parameter.blog');
-            }
-            $blog = $response['result']['set'];
-        }
-        if (!is_object($category)) {
-            switch ($category) {
-                case is_numeric($category):
-                    $response = $this->getBlogPostCategory($category, 'id');
-                    break;
-                case is_string($category):
-                    $response = $this->getBlogPostCategory($category, 'url_key');
-                    break;
-            }
-            if ($response['error']) {
-                return $this->createException('InvalidParameter', 'BlogPostCategory entity', 'err.invalid.parameter.blog');
-            }
-            $category = $response['result']['set'];
-        }
-        /** First identify posts associated with given category */
-        $query_str = 'SELECT ' . $this->entity['categories_of_blog_post']['alias']
-            . ' FROM ' . $this->entity['categories_of_blog_post']['name'] . ' ' . $this->entity['categories_of_blog_post']['alias']
-            . ' WHERE ' . $this->entity['categories_of_blog_post']['alias'] . '.category = ' . $category->getId();
-        $query = $this->em->createQuery($query_str);
-        $result = $query->getResult();
+    public function listPostsOfBlogInCategory($blog, $category, $filter = null, $sortOrder = null, $limit = null){
+		$timeStamp = time();
+		$response = $this->getBlog($blog);
+		if($this->error->exist){
+			return $response;
+		}
+		$blog = $response->result->set;
+		$response = $this->getBlogPostCategory($category);
+		if($this->error->exist){
+			return $response;
+		}
+		$category = $response->result->set;
+        $qStr = 'SELECT ' . $this->entity['cobp']['alias']
+            . ' FROM ' . $this->entity['cobp']['name'] . ' ' . $this->entity['cobp']['alias']
+            . ' WHERE ' . $this->entity['cobp']['alias'] . '.category = ' . $category->getId();
+        $q = $this->em->createQuery($qStr);
+        $result = $q->getResult();
 
         $postsInCat = array();
         if (count($result) > 0) {
@@ -2888,7 +2208,7 @@ class BlogModel extends CoreModel
             }
         }
         $selectedIds = implode(',', $postsInCat);
-        $columnI = $this->entity['blog_post']['alias'] . '.id';
+        $columnI = $this->entity['bp']['alias'] . '.id';
         $conditionI = array('column' => $columnI, 'comparison' => '=', 'in' => $selectedIds);
         $filter[] = array(
             'glue' => 'and',
@@ -2899,38 +2219,38 @@ class BlogModel extends CoreModel
                 )
             )
         );
-        return $this->listPostsOfBlog($blog, $filter, $sortorder, $limit);
+        $response = $this->listPostsOfBlog($blog, $filter, $sortOrder, $limit);
+
+		$response->stats->execution->start = $timeStamp;
+
+		return $response;
     }
 
     /**
-     * @name            listPublishedPosts ()
-     *                  List published posts.
+     * @name            listPublishedPosts()
      *
      * @since           1.0.5
-     * @version         1.0.5
+     * @version         1.0.9
+	 *
+     * @author          Can Berkol
      * @author          Said İmamoğlu
      *
      * @use             $this->createException()
      * @use             $this->listBlogPosts()
      *
-     * @param           array $filter
-     * @param           array $sortorder
-     * @param           array $limit
+     * @param           array 			$filter
+     * @param           array 			$sortOrder
+     * @param           array 			$limit
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPublishedPosts($filter = null, $sortorder = null, $limit = null)
-    {
-        /**
-         * Prepare date_published filter
-         */
+    public function listPublishedPosts($filter = null, $sortOrder = null, $limit = null){
+		$timeStamp = time();
         $now = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
-        $columnDA = $this->entity['blog_post']['alias'] . '.date_published';
+        $columnDA = $this->entity['bp']['alias'] . '.date_published';
         $conditionDA = array('column' => $columnDA, 'comparison' => '<=', 'value' => $now->format('Y-m-d h:i:s'));
-        /**
-         * Prepare date_unpublished filter
-         */
-        $columnDU = $this->entity['blog_post']['alias'] . '.date_unpublished';
+
+        $columnDU = $this->entity['bp']['alias'] . '.date_unpublished';
         $conditionDU = array('column' => $columnDU, 'comparison' => 'isnull', 'value' => '');
         $filter[] = array(
             'glue' => 'and',
@@ -2945,36 +2265,41 @@ class BlogModel extends CoreModel
                 )
             )
         );
-        return $this->listBlogPosts($filter, $sortorder, $limit);
+        $response = $this->listBlogPosts($filter, $sortOrder, $limit);
+		$response->stats->execution->start = $timeStamp;
+
+		return $response;
     }
 
     /**
-     * @name            listPublishedPostsOfBlog ()
-     *                  List published posts of a blog. Published posts are those that have a
-     *                  published date set in the past with no unpublished date (null).
+     * @name            listPublishedPostsOfBlog()
      *
      * @since           1.0.5
-     * @version         1.0.5
+     * @version         1.0.9
+	 *
+     * @author          Can Berkol
      * @author          Said İmamoğlu
      *
      * @use             $this->createException()
      * @use             $this->getBlog()
      * @use             $this->listPostsOfBlog()
      *
-     * @param           mixed $blog
-     * @param           array $filter
-     * @param           array $sortorder
-     * @param           array $limit
+     * @param           mixed 			$blog
+     * @param           array 			$filter
+     * @param           array 			$sortOrder
+     * @param           array 			$limit
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPublishedPostsOfBlog($blog, $filter = null, $sortorder = null, $limit = null)
-    {
-        /**
-         * Prepare  filter
-         */
-        $columnDA = $this->entity['blog_post']['alias'] . '.blog';
-        $conditionDA = array('column' => $columnDA, 'comparison' => '<=', 'value' => $blog);
+    public function listPublishedPostsOfBlog($blog, $filter = null, $sortOrder = null, $limit = null){
+		$timeStamp = time();
+		$response = $this->getBlog($blog);
+		if($response->error->exist){
+			return $response;
+		}
+		$blog = $response->result->set;
+        $columnDA = $this->entity['bp']['alias'] . '.blog';
+        $conditionDA = array('column' => $columnDA, 'comparison' => '<=', 'value' => $blog->getId());
         $filter[] = array(
             'glue' => 'and',
             'condition' => array(
@@ -2984,71 +2309,47 @@ class BlogModel extends CoreModel
                 )
             )
         );
-        return $this->listPublishedPosts($blog, $filter, $sortorder, $limit);
+        $response = $this->listPublishedPosts($blog, $filter, $sortOrder, $limit);
+		$response->stats->execution->start = $timeStamp;
+		return $response;
     }
 
     /**
      * @name            listPublishedPostsOfBlogInCategory ()
-     *                  List published posts of a blog in a category.
      *
      * @since           1.0.1
-     * @version         1.0.1
+     * @version         1.0.9
      * @author          Can Berkol
      *
      * @use             $this->createException()
      * @use             $this->getBlog()
      * @use             $this->listPublishedBlogPosts()
      *
-     * @param           mixed $blog
-     * @param           mixed $category
-     * @param           array $filter
-     * @param           array $sortorder
-     * @param           array $limit
+     * @param           mixed 			$blog
+     * @param           mixed 			$category
+     * @param           array 			$filter
+     * @param           array 			$sortOrder
+     * @param           array 			$limit
      *
-     * @return          array           $response
+     * @return           BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPublishedPostsOfBlogInCategory($blog, $category, $filter = null, $sortorder = null, $limit = null)
-    {
-        $this->resetResponse();
-        if (!$blog instanceof BundleEntity\Blog && !is_numeric($blog) && !is_string($blog)) {
-            return $this->createException('InvalidParameter', 'Blog entity', 'err.invalid.parameter.blog');
-        }
-        if (!$category instanceof BundleEntity\BlogPostCategory && !is_numeric($category) && !is_string($category)) {
-            return $this->createException('InvalidParameter', 'BlogPostCategory entity', 'err.invalid.parameter.category');
-        }
-        if (!is_object($blog)) {
-            switch ($blog) {
-                case is_numeric($blog):
-                    $response = $this->getBlog($blog, 'id');
-                    break;
-                case is_string($blog):
-                    $response = $this->getBlog($blog, 'url_key');
-                    break;
-            }
-            if ($response['error']) {
-                return $this->createException('InvalidParameter', 'Blog entity', 'err.invalid.parameter.blog');
-            }
-            $blog = $response['result']['set'];
-        }
-        if (!is_object($category)) {
-            switch ($category) {
-                case is_numeric($category):
-                    $response = $this->getBlogPostCategory($category, 'id');
-                    break;
-                case is_string($category):
-                    $response = $this->getBlogPostCategory($category, 'url_key');
-                    break;
-            }
-            if ($response['error']) {
-                return $this->createException('InvalidParameter', 'BlogPostCategory entity', 'err.invalid.parameter.blog');
-            }
-            $category = $response['result']['set'];
-        }
+    public function listPublishedPostsOfBlogInCategory($blog, $category, $filter = null, $sortOrder = null, $limit = null){
+        $timeStamp = time();
+		$response = $this->getBlog($blog);
+		if($response->error->exist){
+			return $response;
+		}
+		$blog = $response->result->set;
+		$response = $this->getBlogPostCategory($category);
+		if($response->error->exist){
+			return $response;
+		}
+		$category = $response->result->set;
         /** First identify posts associated with given category */
-        $query_str = 'SELECT ' . $this->entity['categories_of_blog_post']['alias']
-            . ' FROM ' . $this->entity['categories_of_blog_post']['name'] . ' ' . $this->entity['categories_of_blog_post']['alias']
-            . ' WHERE ' . $this->entity['categories_of_blog_post']['alias'] . '.category = ' . $category->getId();
-        $query = $this->em->createQuery($query_str);
+        $qStr = 'SELECT ' . $this->entity['cobp']['alias']
+            . ' FROM ' . $this->entity['cobp']['name'] . ' ' . $this->entity['cobp']['alias']
+            . ' WHERE ' . $this->entity['cobp']['alias'] . '.category = ' . $category->getId();
+        $query = $this->em->createQuery($qStr);
         $result = $query->getResult();
 
         $postsInCat = array();
@@ -3061,7 +2362,7 @@ class BlogModel extends CoreModel
         /**
          * Prepare $filter
          */
-        $columnI = $this->entity['blog_post']['alias'] . '.id';
+        $columnI = $this->entity['bp']['alias'] . '.id';
         $conditionI = array('column' => $columnI, 'comparison' => '=', 'in' => $selectedIds);
         $filter[] = array(
             'glue' => 'and',
@@ -3072,256 +2373,137 @@ class BlogModel extends CoreModel
                 ),
             )
         );
-        return $this->listPublishedPostsOfBlog($blog, $filter, $sortorder, $limit);
+        $response = $this->listPublishedPostsOfBlog($blog, $filter, $sortOrder, $limit);
+		$response->stats->execution->start = $timeStamp;
+		return $response;
     }
 
     /**
      * @name            removeCategoriesFromPost ()
-     *                  Removes the association of categories with posts.
      *
      * @since           1.0.2
-     * @version         1.0.2
+     * @version         1.0.9
      * @author          Can Berkol
      *
-     * @use             $this->doesProductExist()
-     * @use             $this->isPostAssociatedWithCategory()
+     * @param           array 			$categories
+     * @param           mixed			$post
      *
-     * @param           array $categories
-     * @param           mixed $post 'entity' or 'entity' id.
-     *
-     * @return          array           $response
+     * @return           BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function removeCategoriesFromPost($categories, $post)
-    {
-        $this->resetResponse();
-        /**
-         * Validate Parameters
-         */
-        $count = 0;
-        /** remove invalid file entries */
-        foreach ($categories as $category) {
-            if (!is_numeric($category) && !$category instanceof BundleEntity\BlogPostCategory && !$category instanceof BundleEntity\CategoriesOfPost) {
-                unset($category[$count]);
-            }
-            $count++;
-        }
-        if (count($categories) < 1) {
-            $this->response = array(
-                'result' => array(
-                    'set' => null,
-                    'total_rows' => null,
-                    'last_insert_id' => null,
-                ),
-                'error' => true,
-                'code' => 'err.collection.empty',
-            );
-        }
-        if (!is_numeric($post) && !$post instanceof BundleEntity\BlogPost) {
-            return $this->createException('InvalidParameter', 'BlogPost', 'err.invalid.parameter.post');
-        }
-        /** If no entity is provided as post we need to check if it does exist */
-        if (is_numeric($post)) {
-            $response = $this->getBlogPost($post, 'id');
-            if ($response['error']) {
-                return $this->createException('EntityDoesNotExist', 'BlogPost', 'err.db.entry.notexist');
-            }
-            $post = $response['result']['set'];
-        }
-        $cop_count = 0;
-        $to_remove = array();
-        $count = 0;
-        /** Start persisting entries */
-        foreach ($categories as $category) {
-            /** If no entity is provided as file we need to check if it does exist */
-            if (is_numeric($category)) {
-                $response = $this->getBlogPostCategory($category, 'id');
-                if ($response['error']) {
-                    return $this->createException('EntityDoesNotExist', 'BlogPostCategory', 'err.db.entity.notexist');
-                }
-                $to_remove[] = $category;
-            }
-            if ($category instanceof BundleEntity\CategoriesOfBlogPost) {
-                $this->em->remove($category);
-                $cop_count++;
-            }
-            $count++;
-        }
-        /** flush all into database */
-        if ($cop_count > 0) {
-            $this->em->flush();
-        }
+    public function removeCategoriesFromPost($categories, $post){
+		$timeStamp = time();
+		$response = $this->getBlogPost($post);
+		if($response->error->exist){
+			return $response;
+		}
+		$post = $response->result->set;
+		$idsToRemove = array();
+		foreach ($categories as $category) {
+			$response = $this->getBlogPostCategory($category);
+			if($response->error->exist){
+				return $response;
+			}
+			$idsToRemove[] = $response->result->set->getId();
+		}
+		$in = ' IN (' . implode(',', $idsToRemove) . ')';
+		$qStr = 'DELETE FROM '.$this->entity['cobp']['name'].' '.$this->entity['cobp']['alias']
+			.' WHERE '.$this->entity['cobp']['alias'].'.post '.$post->getId()
+			.' AND '.$this->entity['cobp']['alias'].'.category '.$in;
 
-        if (count($to_remove) > 0) {
-            $ids = implode(',', $to_remove);
-            $table = $this->entity['categories_of_blog_post']['name'] . ' ' . $this->entity['categories_of_blog_post']['alias'];
-            $q_str = 'DELETE FROM ' . $table
-                . ' WHERE ' . $this->entity['categories_of_blog_post']['alias'] . '.post = ' . $post->getId()
-                . ' AND ' . $this->entity['categories_of_blog_post']['alias'] . '.category IN(' . $ids . ')';
+		$q = $this->em->createQuery($qStr);
+		$result = $q->getResult();
 
-            $query = $this->em->createQuery($q_str);
-            /**
-             * 6. Run query
-             */
-            $query->getResult();
-        }
+		$deleted = true;
+		if (!$result) {
+			$deleted = false;
+		}
+		if ($deleted) {
+			return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
+	}
 
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $to_remove,
-                'total_rows' => $count,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.delete.done',
-        );
-        unset($count, $to_remove);
-        return $this->response;
-    }
+	/**
+	 * @name            removePostsFromCategory ()
+	 *
+	 * @since           1.0.2
+	 * @version         1.0.9
+	 * @author          Can Berkol
+	 *
+	 * @param           array 			$posts
+	 * @param           mixed			$category
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function removePostsFromCategory($posts, $category){
+		$timeStamp = time();
+		$response = $this->getBlogPostCategory($category);
+		if($response->error->exist){
+			return $response;
+		}
+		$category = $response->result->set;
+		$idsToRemove = array();
+		foreach ($posts as $post) {
+			$response = $this->getBlogPost($post);
+			if($response->error->exist){
+				return $response;
+			}
+			$idsToRemove[] = $response->result->set->getId();
+		}
+		$in = ' IN (' . implode(',', $idsToRemove) . ')';
+		$qStr = 'DELETE FROM '.$this->entity['cobp']['name'].' '.$this->entity['cobp']['alias']
+			.' WHERE '.$this->entity['cobp']['alias'].'.category '.$category->getId()
+			.' AND '.$this->entity['cobp']['alias'].'.post '.$in;
 
-    /**
-     * @name            removePostsFromCategory ()
-     *                  Removes the association of categories with posts.
-     *
-     * @since           1.0.2
-     * @version         1.0.2
-     * @author          Can Berkol
-     *
-     * @use             $this->doesProductExist()
-     *
-     * @param           array $categories
-     * @param           mixed $post 'entity' or 'entity' id.
-     *
-     * @return          array           $response
-     */
-    public function removePostsFromCategory($posts, $category)
-    {
-        $this->resetResponse();
-        /**
-         * Validate Parameters
-         */
-        $count = 0;
-        /** remove invalid file entries */
-        foreach ($posts as $post) {
-            if (!is_numeric($post) && !$post instanceof BundleEntity\BlogPost && !$category instanceof BundleEntity\CategoriesOfPost) {
-                unset($posts[$count]);
-            }
-            $count++;
-        }
-        if (count($post) < 1) {
-            $this->response = array(
-                'result' => array(
-                    'set' => null,
-                    'total_rows' => null,
-                    'last_insert_id' => null,
-                ),
-                'error' => true,
-                'code' => 'err.collection.empty',
-            );
-        }
-        if (!is_numeric($category) && !$category instanceof BundleEntity\BlogPostCategory) {
-            return $this->createException('InvalidParameter', 'BlogPostCategory', 'err.invalid.parameter.post');
-        }
-        /** If no entity is provided as post we need to check if it does exist */
-        if (is_numeric($post)) {
-            $response = $this->getBlogPost($post, 'id');
-            if ($response['error']) {
-                return $this->createException('EntityDoesNotExist', 'BlogPost', 'err.db.post.notexist');
-            }
-            $post = $response['result']['set'];
-        }
-        $cop_count = 0;
-        $to_remove = array();
-        $count = 0;
-        /** Start persisting entries */
-        foreach ($posts as $post) {
-            /** If no entity is provided as file we need to check if it does exist */
-            if (is_numeric($post)) {
-                $response = $this->getBlogPost($post, 'id');
-                if ($response['error']) {
-                    return $this->createException('EntityDoesNotExist', 'BlogPost', 'err.db.entity.notexist');
-                }
-                $to_remove[] = $category;
-            }
-            if ($category instanceof BundleEntity\CategoriesOfBlogPost) {
-                $this->em->remove($category);
-                $cop_count++;
-            }
-            $count++;
-        }
-        /** flush all into database */
-        if ($cop_count > 0) {
-            $this->em->flush();
-        }
+		$q = $this->em->createQuery($qStr);
+		$result = $q->getResult();
 
-        if (count($to_remove) > 0) {
-            $ids = implode(',', $to_remove);
-            $table = $this->entity['categories_of_blog_post']['name'] . ' ' . $this->entity['categories_of_blog_post']['alias'];
-            $q_str = 'DELETE FROM ' . $table
-                . ' WHERE ' . $this->entity['categories_of_blog_post']['alias'] . '.category  = ' . $category->getId()
-                . ' AND ' . $this->entity['categories_of_blog_post']['alias'] . '.post IN(' . $ids . ')';
-
-            $query = $this->em->createQuery($q_str);
-            /**
-             * 6. Run query
-             */
-            $query->getResult();
-        }
-
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $to_remove,
-                'total_rows' => $count,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.delete.done',
-        );
-        unset($count, $to_remove);
-        return $this->response;
-    }
+		$deleted = true;
+		if (!$result) {
+			$deleted = false;
+		}
+		if ($deleted) {
+			return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
+	}
 
     /**
      * @name            updateBlog ()
-     *                  Updates a single blog entry.
      *
      * @since           1.0.2
-     * @version         1.0.2
+     * @version         1.0.9
+	 *
      * @author          Can Berkol
      *
      * @use             $this->updateBlogs()
      *
      * @param           mixed $blog
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function updateBlog($blog)
-    {
+    public function updateBlog($blog){
         return $this->updateBlogs(array($blog));
     }
 
     /**
-     * @name            updateBlogs ()
-     *                  Updates one or more blog entries.
+     * @name            updateBlogs()
      *
      * @since           1.0.2
-     * @version         1.0.2
+     * @version         1.0.9
      * @author          Can Berkol
      *
      * @use             $this->createException()
      *
-     * @param           array $collection Collection of entities or stdClass of entity details.
+     * @param           array 			$collection
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function updateBlogs($collection)
-    {
-        $this->resetResponse();
-        /** Parameter must be an array */
-        if (!is_array($collection)) {
-            return $this->createException('InvalidParameter', 'Array', 'err.invalid.parameter.collection');
-        }
+    public function updateBlogs($collection){
+		$timeStamp = time();
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
         $countUpdates = 0;
         $updatedItems = array();
         foreach ($collection as $data) {
@@ -3330,21 +2512,22 @@ class BlogModel extends CoreModel
                 $this->em->persist($entity);
                 $updatedItems[] = $entity;
                 $countUpdates++;
-            } else if (is_object($data)) {
-                if (!property_exists($data, 'id') || !is_numeric($data->id)) {
-                    return $this->createException('InvalidParameter', 'Each data must contain a valid identifier id, integer', 'err.invalid.parameter.collection');
-                }
+            }
+			else if (is_object($data)) {
+				if(!property_exists($data, 'id') || !is_numeric($data->id)){
+					return $this->createException('InvalidParameterException', 'Parameter must be an object with the "id" property and id property ​must have an integer value.', 'E:S:003');
+				}
                 if (property_exists($data, 'date_created')) {
                     unset($data->date_created);
                 }
                 if (!property_exists($data, 'date_updated')) {
                     $data->date_updated = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
                 }
-                $response = $this->getBlog($data->id, 'id');
-                if ($response['error']) {
-                    return $this->createException('EntityDoesNotExist', 'Blog with id ' . $data->id, 'err.invalid.entity');
+                $response = $this->getBlog($data->id);
+                if ($response->error->exist) {
+                    return $response;
                 }
-                $oldEntity = $response['result']['set'];
+                $oldEntity = $response->resul>set;
                 foreach ($data as $column => $value) {
                     $set = 'set' . $this->translateColumnName($column);
                     switch ($column) {
@@ -3357,8 +2540,8 @@ class BlogModel extends CoreModel
                                     $newLocalization = true;
                                     $localization = new BundleEntity\BlogLocalization();
                                     $mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
-                                    $response = $mlsModel->getLanguage($langCode, 'iso_code');
-                                    $localization->setLanguage($response['result']['set']);
+                                    $response = $mlsModel->getLanguage($langCode);
+                                    $localization->setLanguage($response->result->set);
                                     $localization->setBlog($oldEntity);
                                 }
                                 foreach ($translation as $transCol => $transVal) {
@@ -3374,11 +2557,12 @@ class BlogModel extends CoreModel
                             break;
                         case 'site':
                             $sModel = $this->kernel->getContainer()->get('sitemanagement.model');
-                            $response = $sModel->getSite($value, 'id');
-                            if (!$response['error']) {
-                                $oldEntity->$set($response['result']['set']);
-                            } else {
-                                $this->createException('EntityDoesNotExist', 'Site', 'err.invalid.entity');
+                            $response = $sModel->getSite($value);
+                            if (!$response->error->exist) {
+                                $oldEntity->$set($response->result->set);
+                            }
+							else {
+								return $this->createException('EntityDoesNotExist', 'Site with id / url_key '.$value.' does not exist in database.', 'E:D:002');
                             }
                             unset($response, $sModel);
                             break;
@@ -3394,70 +2578,52 @@ class BlogModel extends CoreModel
                         $updatedItems[] = $oldEntity;
                     }
                 }
-            } else {
-                $this->createException('InvalidData', '$data', 'err.invalid.data');
             }
         }
-        if ($countUpdates > 0) {
-            $this->em->flush();
-        }
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $updatedItems,
-                'total_rows' => $countUpdates,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.update.done',
-        );
-        return $this->response;
-    }
+		if($countUpdates > 0){
+			$this->em->flush();
+			return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
+	}
 
     /**
-     * @name            updateBlogPost ()
-     *                  Updates a single blog post.
+     * @name            updateBlogPost()
      *
      * @since           1.0.2
-     * @version         1.0.2
+     * @version         1.0.9
+	 *
      * @author          Can Berkol
      *
      * @use             $this->updateBlogPosts()
      *
-     * @param           mixed $post
+     * @param           mixed 			$post
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function updateBlogPost($post)
-    {
+    public function updateBlogPost($post){
         return $this->updateBlogPosts(array($post));
     }
 
     /**
-     * @name            updateBlogPosts ()
-     *                  Updates one or more blog entries.
+     * @name            updateBlogPosts()
      *
      * @since           1.0.2
-     * @version         1.0.2
+     * @version         1.0.9
+	 *
      * @author          Can Berkol
      *
      * @use             $this->createException()
      *
-     * @param           array $collection Collection of Product entities or array of entity details.
-     * @param           array $collection Collection of entities or stdClass of entity details.
+     * @param           array 			$collection
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function updateBlogPosts($collection)
-    {
-        $this->resetResponse();
-        /** Parameter must be an array */
-        if (!is_array($collection)) {
-            return $this->createException('InvalidParameter', 'Array', 'err.invalid.parameter.collection');
-        }
+    public function updateBlogPosts($collection){
+		$timeStamp = time();
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
         $countUpdates = 0;
         $updatedItems = array();
         foreach ($collection as $data) {
@@ -3467,17 +2633,17 @@ class BlogModel extends CoreModel
                 $updatedItems[] = $entity;
                 $countUpdates++;
             } else if (is_object($data)) {
-                if (!property_exists($data, 'id') || !is_numeric($data->id)) {
-                    return $this->createException('InvalidParameter', 'Each data must contain a valid identifier id, integer', 'err.invalid.parameter.collection');
-                }
+				if(!property_exists($data, 'id') || !is_numeric($data->id)){
+					return $this->createException('InvalidParameterException', 'Parameter must be an object with the "id" property and id property ​must have an integer value.', 'E:S:003');
+				}
                 if (property_exists($data, 'date_added')) {
                     unset($data->date_added);
                 }
-                $response = $this->getBlogPost($data->id, 'id');
-                if ($response['error']) {
-                    return $this->createException('EntityDoesNotExist', 'BlogPost with id ' . $data->id, 'err.invalid.entity');
-                }
-                $oldEntity = $response['result']['set'];
+                $response = $this->getBlogPost($data->id);
+				if ($response->error->exist) {
+					return $this->createException('EntityDoesNotExist', 'Page with id / code '.$data->id.' does not exist in database.', 'E:D:002');
+				}
+                $oldEntity = $response->result->set;
                 foreach ($data as $column => $value) {
                     $set = 'set' . $this->translateColumnName($column);
                     switch ($column) {
@@ -3490,8 +2656,8 @@ class BlogModel extends CoreModel
                                     $newLocalization = true;
                                     $localization = new BundleEntity\BlogPostLocalization();
                                     $mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
-                                    $response = $mlsModel->getLanguage($langCode, 'iso_code');
-                                    $localization->setLanguage($response['result']['set']);
+                                    $response = $mlsModel->getLanguage($langCode);
+                                    $localization->setLanguage($response->result->set);
                                     $localization->setBlogPost($oldEntity);
                                 }
                                 foreach ($translation as $transCol => $transVal) {
@@ -3507,33 +2673,33 @@ class BlogModel extends CoreModel
                             break;
                         case 'author':
                             $mModel = $this->kernel->getContainer()->get('membermanagement.model');
-                            $response = $mModel->getMember($value, 'id');
-                            if (!$response['error']) {
-                                $oldEntity->$set($response['result']['set']);
+                            $response = $mModel->getMember($value);
+                            if (!$response->error->exist) {
+                                $oldEntity->$set($response->result->set);
                             } else {
-                                $this->createException('EntityDoesNotExist', 'Site', 'err.invalid.entity');
-                            }
+								return $this->createException('EntityDoesNotExist', 'Member with id / username / e-mail '.$value.' does not exist in database.', 'E:D:002');
+							}
                             unset($response, $sModel);
                             break;
                         case 'file':
                         case 'preview_image':
                         case 'previewImage':
                             $fModel = $this->kernel->getContainer()->get('filemanagement.model');
-                            $response = $fModel->getFile($value, 'id');
-                            if (!$response['error']) {
-                                $oldEntity->$set($response['result']['set']);
+                            $response = $fModel->getFile($value);
+                            if (!$response->error->exist) {
+                                $oldEntity->$set($response->result->set);
                             } else {
-                                $this->createException('EntityDoesNotExist', 'File', 'err.invalid.entity');
+								return $this->createException('EntityDoesNotExist', 'File with id / url_key '.$value.' does not exist in database.', 'E:D:002');
                             }
                             unset($response, $sModel);
                             break;
                         case 'site':
                             $sModel = $this->kernel->getContainer()->get('sitemanagement.model');
                             $response = $sModel->getSite($value, 'id');
-                            if (!$response['error']) {
-                                $oldEntity->$set($response['result']['set']);
+                            if (!$response->error) {
+                                $oldEntity->$set($response->result->set);
                             } else {
-                                $this->createException('EntityDoesNotExist', 'Site', 'err.invalid.entity');
+								return $this->createException('EntityDoesNotExist', 'Site with id / url_key '.$value.' does not exist in database.', 'E:D:002');
                             }
                             unset($response, $sModel);
                             break;
@@ -3553,66 +2719,48 @@ class BlogModel extends CoreModel
                 $this->createException('InvalidData', '$data', 'err.invalid.data');
             }
         }
-        if ($countUpdates > 0) {
-            $this->em->flush();
-        }
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $updatedItems,
-                'total_rows' => $countUpdates,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.update.done',
-        );
-        return $this->response;
-    }
+		if($countUpdates > 0){
+			$this->em->flush();
+			return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
+	}
 
     /**
-     * @name            updateBlogPostCategory ()
-     *                  Updates a single blog post category.
+     * @name            updateBlogPostCategory()
      *
      * @since           1.0.2
-     * @version         1.0.2
+     * @version         1.0.9
      * @author          Can Berkol
      *
      * @use             $this->updateBlogPostCategories()
      *
-     * @param           mixed $category
+     * @param           mixed 			$category
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function updateBlogPostCategory($category)
-    {
+    public function updateBlogPostCategory($category){
         return $this->updateBlogPostCategories(array($category));
     }
 
     /**
      * @name            updateBlogPostCategories ()
-     *                  Updates one or more blog categories.
      *
      * @since           1.0.2
-     * @version         1.0.2
+     * @version         1.0.9
      * @author          Can Berkol
      *
      * @use             $this->createException()
      *
-     * @param           array $collection Collection of Product entities or array of entity details.
-     * @param           array $collection Collection of entities or stdClass of entity details.
+     * @param           array 				$collection
      *
-     * @return          array           $response
+     * @return         	BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function updateBlogPostCategories($collection)
-    {
-        $this->resetResponse();
-        /** Parameter must be an array */
-        if (!is_array($collection)) {
-            return $this->createException('InvalidParameter', 'Array', 'err.invalid.parameter.collection');
-        }
+    public function updateBlogPostCategories($collection){
+		$timeStamp = time();
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
         $countUpdates = 0;
         $updatedItems = array();
         foreach ($collection as $data) {
@@ -3622,17 +2770,17 @@ class BlogModel extends CoreModel
                 $updatedItems[] = $entity;
                 $countUpdates++;
             } else if (is_object($data)) {
-                if (!property_exists($data, 'id') || !is_numeric($data->id)) {
-                    return $this->createException('InvalidParameter', 'Each data must contain a valid identifier id, integer', 'err.invalid.parameter.collection');
-                }
+				if(!property_exists($data, 'id') || !is_numeric($data->id)){
+					return $this->createException('InvalidParameterException', 'Parameter must be an object with the "id" property and id property ​must have an integer value.', 'E:S:003');
+				}
                 if (property_exists($data, 'date_added')) {
                     unset($data->date_added);
                 }
-                $response = $this->getBlogPost($data->id, 'id');
-                if ($response['error']) {
-                    return $this->createException('EntityDoesNotExist', 'BlogPostCategory with id ' . $data->id, 'err.invalid.entity');
-                }
-                $oldEntity = $response['result']['set'];
+                $response = $this->getBlogPost($data->id);
+				if ($response->error->exist) {
+					return $this->createException('EntityDoesNotExist', 'Page with id / code '.$data->id.' does not exist in database.', 'E:D:002');
+				}
+                $oldEntity = $response->result->set;
                 foreach ($data as $column => $value) {
                     $set = 'set' . $this->translateColumnName($column);
                     switch ($column) {
@@ -3645,8 +2793,8 @@ class BlogModel extends CoreModel
                                     $newLocalization = true;
                                     $localization = new BundleEntity\BlogPostCategoryLocalization();
                                     $mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
-                                    $response = $mlsModel->getLanguage($langCode, 'iso_code');
-                                    $localization->setLanguage($response['result']['set']);
+                                    $response = $mlsModel->getLanguage($langCode);
+                                    $localization->setLanguage($response->result->set);
                                     $localization->setBlogPostCategory($oldEntity);
                                 }
                                 foreach ($translation as $transCol => $transVal) {
@@ -3662,29 +2810,29 @@ class BlogModel extends CoreModel
                             break;
                         case 'blog':
                             $response = $this->getBlog($value, 'id');
-                            if (!$response['error']) {
-                                $oldEntity->$set($response['result']['set']);
+                            if (!$response->error) {
+                                $oldEntity->$set($response->result->set);
                             } else {
-                                $this->createException('EntityDoesNotExist', 'Blog', 'err.invalid.entity');
+								return $this->createException('EntityDoesNotExist', 'Blog with id / url_key '.$value.' does not exist in database.', 'E:D:002');
                             }
                             unset($response, $sModel);
                             break;
                         case 'parent':
-                            $response = $this->getBlogPostCategory($value, 'id');
-                            if (!$response['error']) {
-                                $oldEntity->$set($response['result']['set']);
+                            $response = $this->getBlogPostCategory($value);
+                            if (!$response->error->exist) {
+                                $oldEntity->$set($response->result->set);
                             } else {
-                                $this->createException('EntityDoesNotExist', 'BlogPostCategory', 'err.invalid.entity');
+								return $this->createException('EntityDoesNotExist', 'Blog Post Category with id / url_key '.$value.' does not exist in database.', 'E:D:002');
                             }
                             unset($response, $sModel);
                             break;
                         case 'site':
                             $sModel = $this->kernel->getContainer()->get('sitemanagement.model');
-                            $response = $sModel->getSite($value, 'id');
-                            if (!$response['error']) {
-                                $oldEntity->$set($response['result']['set']);
+                            $response = $sModel->getSite($value);
+                            if (!$response->error->exist) {
+                                $oldEntity->$set($response->result->set);
                             } else {
-                                $this->createException('EntityDoesNotExist', 'Site', 'err.invalid.entity');
+								return $this->createException('EntityDoesNotExist', 'Site with id / url_key '.$value.' does not exist in database.', 'E:D:002');
                             }
                             unset($response, $sModel);
                             break;
@@ -3700,28 +2848,14 @@ class BlogModel extends CoreModel
                         $updatedItems[] = $oldEntity;
                     }
                 }
-            } else {
-                $this->createException('InvalidData', '$data', 'err.invalid.data');
             }
         }
-        if ($countUpdates > 0) {
-            $this->em->flush();
-        }
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $updatedItems,
-                'total_rows' => $countUpdates,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.update.done',
-        );
-        return $this->response;
-    }
+		if($countUpdates > 0){
+			$this->em->flush();
+			return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, time());
+		}
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
+	}
 	/**
 	 * @name            updateBlogPostRevision()
 	 *
@@ -3733,7 +2867,7 @@ class BlogModel extends CoreModel
 	 *
 	 * @param           mixed 			$revision
 	 *
-	 * @return          mixed           $response
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function updateBlogPostRevision($revision){
 		return $this->updateBlogPostRevisions(array($revision));
@@ -3742,20 +2876,20 @@ class BlogModel extends CoreModel
 	 * @name            updateBlogPostRevisions()
 	 *
 	 * @since           1.0.8
-	 * @version         1.0.8
+	 * @version         1.0.9
 	 * @author          Can Berkol
 	 *
 	 * @use             $this->createException()
 	 *
 	 * @param           array 			$collection
 	 *
-	 * @return          array           $response
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function updateBlogPostRevisions($collection) {
-		$this->resetResponse();
+		$timeStamp = time();
 		/** Parameter must be an array */
 		if (!is_array($collection)) {
-			return $this->createException('InvalidParameter', 'Array', 'err.invalid.parameter.collection');
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
 		}
 		$countUpdates = 0;
 		$updatedItems = array();
@@ -3773,31 +2907,33 @@ class BlogModel extends CoreModel
 				if (property_exists($data, 'date_added')) {
 					unset($data->date_added);
 				}
-				$response = $this->getBlogPostRevision($data->page, $data->language, $data->revision_number);
-				if ($response['error']) {
-					return $this->createException('EntityDoesNotExist', 'BlogPostRevision', 'err.invalid.entity');
+				$response = $this->getBlogPostRevision($data->post, $data->language, $data->revision_number);
+				if ($response->error->exist) {
+					return $this->createException('EntityDoesNotExist', 'BlogPostRevision revision cannot be found in database.', 'E:D:002');
 				}
-				$oldEntity = $response['result']['set'];
+				$oldEntity = $response->result->set;
 
 				foreach ($data as $column => $value) {
 					$set = 'set' . $this->translateColumnName($column);
 					switch ($column) {
 						case 'post':
-							$response = $this->getBlogPost($value, 'id');
-							if (!$response['error']) {
-								$oldEntity->$set($response['result']['set']);
-							} else {
-								new CoreExceptions\EntityDoesNotExistException($this->kernel, $value);
+							$response = $this->getBlogPost($value);
+							if (!$response->error->exist) {
+								$oldEntity->$set($response->result->set);
 							}
-							unset($response, $pModel);
+							else {
+								return $this->createException('EntityDoesNotExist', 'Blog post with id / url_key '.$value.' does not exist in database.', 'E:D:002');
+							}
+							unset($response);
 							break;
 						case 'language':
 							$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
 							$response = $lModel->getLanguage($value, 'id');
-							if (!$response['error']) {
-								$oldEntity->$set($response['result']['set']);
-							} else {
-								new CoreExceptions\EntityDoesNotExistException($this->kernel, $value);
+							if (!$response->error->exist) {
+								$oldEntity->$set($response->result->set);
+							}
+							else {
+								return $this->createException('EntityDoesNotExist', 'Language with id / url_key / iso_code '.$data->id.' does not exist in database.', 'E:D:002');
 							}
 							unset($response, $lModel);
 							break;
@@ -3811,456 +2947,220 @@ class BlogModel extends CoreModel
 						$updatedItems[] = $oldEntity;
 					}
 				}
-			} else {
-				new CoreExceptions\InvalidDataException($this->kernel);
 			}
 		}
-		if ($countUpdates > 0) {
+		if($countUpdates > 0){
 			$this->em->flush();
+			return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, time());
 		}
-		/**
-		 * Prepare & Return Response
-		 */
-		$this->response = array(
-			'rowCount' => $this->response['rowCount'],
-			'result' => array(
-				'set' => $updatedItems,
-				'total_rows' => $countUpdates,
-				'last_insert_id' => null,
-			),
-			'error' => false,
-			'code' => 'scc.db.update.done',
-		);
-		return $this->response;
+		return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
 	}
-    /**
-     * @name            listPublishedPostsOfBlog ()
-     *                  List published posts of a blog that between given dates.
-     *
-     * @since           1.0.5
-     * @version         1.0.5
-     * @author          Said İmamoğlu
-     *
-     * @use             $this->createException()
-     * @use             $this->getBlog()
-     * @use             $this->listPostsOfBlog()
-     *
-     * @param           mixed $blog
-     * @param           mixed $dates
-     * @param           array $filter
-     * @param           array $sortorder
-     * @param           array $limit
-     *
-     * @return          array           $response
-     */
-    public function listPublishedPostsOfBlogBetween($blog, $dates, $filter = null, $sortorder = null, $limit = null)
-    {
-        /**
-         * Prepare date_published filter
-         */
-        $now = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
-        $columnDA = $this->entity['blog_post']['alias'] . '.date_published';
-        $conditionDA = array('column' => $columnDA, 'comparison' => '<=', 'value' => $now->format('Y-m-d h:i:s'));
-        /**
-         * Prepare date_unpublished filter
-         */
-        $columnDU = $this->entity['blog_post']['alias'] . '.date_published';
-        $conditionDU = array('column' => $columnDU, 'comparison' => 'between', 'value' => '');
-        $filter[] = array(
-            'glue' => 'and',
-            'condition' => array(
-                array(
-                    'glue' => 'and',
-                    'condition' => $conditionDA,
-                ),
-                array(
-                    'glue' => 'and',
-                    'condition' => $conditionDU,
-                )
-            )
-        );
-        return $this->listPostsOfBlog($blog, $filter, $sortorder, $limit);
-    }
-
-    /**
-     * @name            listPublishedPostsOfBlogBefore ()
-     *                  List published posts of a blog that before than given date.
-     *
-     * @since           1.0.5
-     * @version         1.0.5
-     * @author          Said İmamoğlu
-     *
-     * @use             $this->createException()
-     * @use             $this->getBlog()
-     * @use             $this->listPostsOfBlog()
-     *
-     * @param           mixed $blog
-     * @param           mixed $date
-     * @param           array $filter
-     * @param           array $sortorder
-     * @param           array $limit
-     *
-     * @return          array           $response
-     */
-    public function listPublishedPostsOfBlogBefore($blog, $date, $filter = null, $sortorder = null, $limit = null)
-    {
-        /**
-         * Prepare date_published filter
-         */
-        $column = $this->entity['blog_post']['alias'] . '.date_published';
-        $condition = array('column' => $column, 'comparison' => 'before', 'value' => $date);
-        $filter[] = array(
-            'glue' => 'and',
-            'condition' => array(
-                array(
-                    'glue' => 'and',
-                    'condition' => $condition,
-                )
-            )
-        );
-        return $this->listPublishedPostsOfBlog($blog, $filter, $sortorder, $limit);
-    }
-
-    /**
-     * @name            listPublishedPostsOfBlogAfter ()
-     *                  List published posts of a blog that after than given date.
-     *
-     * @since           1.0.5
-     * @version         1.0.5
-     * @author          Said İmamoğlu
-     *
-     * @use             $this->createException()
-     * @use             $this->getBlog()
-     * @use             $this->listPostsOfBlog()
-     *
-     * @param           mixed $blog
-     * @param           mixed $date
-     * @param           array $filter
-     * @param           array $sortorder
-     * @param           array $limit
-     *
-     * @return          array           $response
-     */
-    public function listPublishedPostsOfBlogAfter($blog, $date, $filter = null, $sortorder = null, $limit = null)
-    {
-        /**
-         * Prepare date_published filter
-         */
-        $column = $this->entity['blog_post']['alias'] . '.date_published';
-        $condition = array('column' => $column, 'comparison' => 'after', 'value' => $date);
-        $filter[] = array(
-            'glue' => 'and',
-            'condition' => array(
-                array(
-                    'glue' => 'and',
-                    'condition' => $condition,
-                )
-            )
-        );
-        return $this->listPublishedPostsOfBlog($blog, $filter, $sortorder, $limit);
-    }
 
     /**
      * @name            listPostsInCategoryByPublishDate ()
-     *                 Lists posts in category by publis date.
      *
      * @since           1.0.5
-     * @version         1.0.5
+     * @version         1.0.9
+	 *
+     * @author          Can Berkol
      * @author          Said İmamoğlu
      *
      * @use             $this->createException()
      * @use             $this->getBlog()
      * @use             $this->listPostsOfBlog()
      *
-     * @param           mixed $category
-     * @param           array $filter
-     * @param           array $sortorder
-     * @param           array $limit
+     * @param           mixed 	$category
+     * @param           string 	$order
+     * @param           array 	$filter
+     * @param           array 	$limit
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPostsInCategoryByPublishDate($category, $filter = null, $sortorder = null, $limit = null)
-    {
-        /**
-         * Prepare date_published filter
-         */
-        $column = $this->entity['blog_post']['alias'] . '.date_published';
-        $sortorder[$column] = 'asc';
-        $response = $this->listPostsInCategory($category, $filter, $sortorder, $limit);
-        if ($response['error']) {
-            return $response;
-        }
-        $posts = $response['result']['set'];
-        unset($response);
-        $collection = array();
-        foreach ($posts as $item) {
-            $collection[] = $item;
-        }
-        unset($posts);
-
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $collection,
-                'total_rows' => count($collection),
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.list.done',
-        );
-        return $this->response;
+    public function listPostsInCategoryByPublishDate($category, $order = 'asc', $filter = null, $limit = null){
+        $column = $this->entity['bp']['alias'] . '.date_published';
+        $sortOrder[$column] = $order;
+        return $this->listPostsInCategory($category, $filter, $sortOrder, $limit);
     }
 
     /**
      * @name            getNextPostInCategoryByPublishDate ()
-     *                 Gets next post in category by publish date.
      *
      * @since           1.0.5
-     * @version         1.0.5
+     * @version         1.0.9
+	 *
+     * @author          Can Berkol
      * @author          Said İmamoğlu
-     *
      *
      * @use             $this->listPostsInCategoryByPublishDate()
      *
-     * @param           mixed $post
-     * @param           mixed $category
-     * @param           array $filter
-     * @param           array $sortorder
-     * @param           array $limit
+     * @param           mixed 	$post
+     * @param           mixed 	$category
+	 * @param			string 	$order
+     * @param           array 	$filter
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getNextPostInCategoryByPublishDate($post, $category, $filter = null, $sortorder = null, $limit = null)
-    {
-        $response = $this->listPostsInCategoryByPublishDate($category, $filter, $sortorder, $limit);
-        if ($response['error']) {
+    public function getNextPostInCategoryByPublishDate($post, $category, $order = 'asc', $filter = null){
+        $response = $this->listPostsInCategoryByPublishDate($category, $order, $filter, null);
+        if ($response->error->exist) {
             return $response;
         }
-        $posts = $response['result']['set'];
-        unset($response);
+        $posts = $response->result->set;
         foreach ($posts as $key => $item) {
             if ($item->getId() == $post) {
                 $currentKey = $key-1>=0 ? $key-1 : 0;
             }
         }
+		$response->result->set = $posts[$currentKey];
 
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $posts[$currentKey],
-                'total_rows' => 1,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.get.done',
-        );
-        return $this->response;
+		return $response;
     }
     /**
      * @name            getPreviousPostInCategoryByPublishDate ()
-     *                 Gets previous post in category by publis date.
      *
      * @since           1.0.5
-     * @version         1.0.5
-     * @author          Said İmamoğlu
+     * @version         1.0.9
+	 *
+     * @author          Can Berkol
+	 * @author          Said İmamoğlu
+	 *
+	 * @use             $this->listPostsInCategoryByPublishDate()
      *
+     * @param           mixed 	$post
+	 * @param           mixed 	$category
+	 * @param			string 	$order
+	 * @param           array 	$filter
      *
-     * @use             $this->listPostsInCategoryByPublishDate()
-     *
-     * @param           mixed $post
-     * @param           mixed $category
-     * @param           array $filter
-     * @param           array $sortorder
-     * @param           array $limit
-     *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getPreviousPostInCategoryByPublishDate($post, $category, $filter = null, $sortorder = null, $limit = null)
-    {
-        $response = $this->listPostsInCategoryByPublishDate($category, $filter, $sortorder, $limit);
-        if ($response['error']) {
-            return $response;
-        }
-        $posts = $response['result']['set'];
-        unset($response);
+    public function getPreviousPostInCategoryByPublishDate($post, $category, $order = 'asc', $filter = null){
+		$response = $this->listPostsInCategoryByPublishDate($category, $order, $filter, null);
+		if ($response->error->exist) {
+			return $response;
+		}
+		$posts = $response->result->set;
         foreach ($posts as $key => $item) {
             if ($item->getId() == $post) {
                 $currentKey = $key+1>count($posts) ? count($posts) :  $key+1;
             }
         }
+		$response->result->set = $posts[$currentKey];
 
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $posts[$currentKey],
-                'total_rows' => 1,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.get.done',
-        );
-        return $this->response;
+		return $response;
     }
     /**
      * @name            getFirstPostInCategoryByPublishDate ()
-     *                 Gets first post in category by publis date.
      *
      * @since           1.0.5
-     * @version         1.0.5
+     * @version         1.0.9
+	 *
+     * @author          Can Berkol
      * @author          Said İmamoğlu
      *
      *
      * @use             $this->listPostsInCategoryByPublishDate()
      *
-     * @param           mixed $category
-     * @param           array $filter
-     * @param           array $sortorder
-     * @param           array $limit
+	 * @param           mixed 	$category
+	 * @param			string 	$order
+	 * @param           array 	$filter
      *
      * @return          array           $response
      */
-    public function getFirstPostInCategoryByPublishDate($category, $filter = null, $sortorder = null, $limit = null)
-    {
-        $response = $this->listPostsInCategoryByPublishDate($category, $filter, $sortorder, $limit);
-        if ($response['error']) {
-            return $response;
-        }
-        $posts = $response['result']['set'];
-        unset($response);
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $posts[0],
-                'total_rows' => 1,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.get.done',
-        );
-        return $this->response;
+    public function getFirstPostInCategoryByPublishDate($category, $order = 'asc', $filter = null){
+		$response = $this->listPostsInCategoryByPublishDate($category, $order, $filter, null);
+		if ($response->error->exist) {
+			return $response;
+		}
+		$posts = $response->result->set;
+
+		$response->result->set = $posts[0];
+
+		return $response;
     }
     /**
      * @name            getLastPostInCategoryByPublishDate ()
-     *                 Gets last post in category by publis date.
      *
-     * @since           1.0.5
-     * @version         1.0.5
-     * @author          Said İmamoğlu
-     *
-     *
-     * @use             $this->listPostsInCategoryByPublishDate()
-     *
-     * @param           mixed $category
-     * @param           array $filter
-     * @param           array $sortorder
-     * @param           array $limit
-     *
-     * @return          array           $response
-     */
-    public function getLastPostInCategoryByPublishDate($category, $filter = null, $sortorder = null, $limit = null)
-    {
-        $response = $this->listPostsInCategoryByPublishDate($category, $filter, $sortorder, $limit);
-        if ($response['error']) {
-            return $response;
-        }
-        $posts = $response['result']['set'];
-        unset($response);
+	 * @since           1.0.5
+	 * @version         1.0.9
+	 *
+	 * @author          Can Berkol
+	 * @author          Said İmamoğlu
+	 *
+	 *
+	 * @use             $this->listPostsInCategoryByPublishDate()
+	 *
+	 * @param           mixed 	$category
+	 * @param			string 	$order
+	 * @param           array 	$filter
+	 *
+	 * @return          array           $response
+	 */
+	public function getLastPostInCategoryByPublishDate($category, $order = 'asc', $filter = null){
+		$response = $this->listPostsInCategoryByPublishDate($category, $order, $filter, null);
+		if ($response->error->exist) {
+			return $response;
+		}
+		$posts = $response->result->set;
 
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $posts[count($posts)-1],
-                'total_rows' => 1,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.get.done',
-        );
-        return $this->response;
-    }
+		$response->result->set = $posts[$response->result->count->total - 1];
+
+		return $response;
+	}
     /**
      * @name            countTotalPostsInCategory ()
-     *                 Counts total post in category.
      *
      * @since           1.0.5
-     * @version         1.0.5
+     * @version         1.0.9
+	 *
+     * @author          Can Berkol
      * @author          Said İmamoğlu
-     *
      *
      * @use             $this->listPostsInCategory()
      *
      * @param           mixed $category
      * @param           array $filter
-     * @param           array $sortorder
+     * @param           array $sortOrder
      * @param           array $limit
      *
      * @return          array           $response
      */
-    public function countTotalPostsInCategory($category, $filter = null, $sortorder = null, $limit = null)
-    {
-        $response = $this->listPostsInCategory($category, $filter, $sortorder, $limit);
-        if ($response['error']) {
+    public function countTotalPostsInCategory($category, $filter = null, $sortOrder = null, $limit = null){
+        $response = $this->listPostsInCategory($category, $filter, $sortOrder, $limit);
+        if ($response->error->exist) {
             return $response;
         }
-        $count = $response['result']['total_rows'];
-        unset($response);
+        $count = $response->result->count->total;
+        $response->result->set = $count;
 
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $count,
-                'total_rows' => $count,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.get.done',
-        );
-        return $this->response;
+        return $response;
     }
 
     /**
-     * @name            countTotalPostsInBlog ()
-     *                 Counts total post in blog.
+     * @name            countTotalPostsInBlog()
      *
      * @since           1.0.5
-     * @version         1.0.5
+     * @version         1.0.9
+	 *
+     * @author          Can Berkol
      * @author          Said İmamoğlu
-     *
-     *
+
      * @use             $this->listPostsInCategory()
      *
      * @param           mixed $blog
      * @param           array $filter
-     * @param           array $sortorder
+     * @param           array $sortOrder
      * @param           array $limit
      *
      * @return          array           $response
      */
-    public function countTotalPostsInBlog($blog, $filter = null, $sortorder = null, $limit = null)
-    {
-        /**
-         * Prepare date_published filter
-         */
-        $column = $this->entity['blog_post']['alias'] . '.blog';
-        $condition = array('column' => $column, 'comparison' => '=', 'value' => $blog);
+    public function countTotalPostsInBlog($blog, $filter = null, $sortOrder = null, $limit = null){
+		$response = $this->getBlog($blog);
+		if($response->error->exist){
+			return $response;
+		}
+		$blog = $response->result->set;
+        $column = $this->entity['bp']['alias'] . '.blog';
+        $condition = array('column' => $column, 'comparison' => '=', 'value' => $blog->getId());
         $filter[] = array(
             'glue' => 'and',
             'condition' => array(
@@ -4270,262 +3170,25 @@ class BlogModel extends CoreModel
                 )
             )
         );
-        $response = $this->listBlogPosts($filter, $sortorder, $limit);
-        if ($response['error']) {
+        $response = $this->listBlogPosts($filter, $sortOrder, $limit);
+        if ($response->error->exist) {
             return $response;
         }
-        $count = count($response['result']['set']);
-        unset($response);
+        $count = count($response->result->set);
+		$response->result->set = $count;
 
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $count,
-                'total_rows' => $count,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.get.done',
-        );
-        return $this->response;
-    }
-    /**
-     * @name            listPostsInBlogByPublishDate ()
-     *                 Lists posts in blog by publis date.
-     *
-     * @since           1.0.5
-     * @version         1.0.5
-     * @author          Said İmamoğlu
-     *
-     * @use             $this->listPostsOfBlog()
-     *
-     * @param           mixed $blog
-     * @param           array $filter
-     * @param           array $sortorder
-     * @param           array $limit
-     *
-     * @return          array           $response
-     */
-    public function listPostsInBlogByPublishDate($blog, $filter = null, $sortorder = null, $limit = null)
-    {
-        /**
-         * Prepare date_published filter
-         */
-        $column = $this->entity['blog_post']['alias'] . '.date_published';
-        $sortorder[$column] = 'asc';
-        $response = $this->listPostsOfBlog($blog,$filter, $sortorder, $limit);
-        if ($response['error']) {
-            return $response;
-        }
-        $posts = $response['result']['set'];
-        unset($response);
-        $collection = array();
-        foreach ($posts as $item) {
-            $collection[] = $item;
-        }
-        unset($posts);
-
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $collection,
-                'total_rows' => count($collection),
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.list.done',
-        );
-        return $this->response;
-    }
-    /**
-     * @name            getNextPostInBlogByPublishDate ()
-     *                 Gets next post in category by publis date.
-     *
-     * @since           1.0.5
-     * @version         1.0.5
-     * @author          Said İmamoğlu
-     *
-     *
-     * @use             $this->listPostsInBlogByPublishDate()
-     *
-     * @param           mixed $post
-     * @param           mixed $category
-     * @param           array $filter
-     * @param           array $sortorder
-     * @param           array $limit
-     *
-     * @return          array           $response
-     */
-    public function getNextPostInBlogByPublishDate($post, $category, $filter = null, $sortorder = null, $limit = null)
-    {
-        $response = $this->listPostsInBlogByPublishDate($category, $filter, $sortorder, $limit);
-        if ($response['error']) {
-            return $response;
-        }
-        $posts = $response['result']['set'];
-        unset($response);
-        foreach ($posts as $key => $item) {
-            if ($item->getId() == $post) {
-                $currentKey = $key-1>=0 ? $key-1 : 0;
-            }
-        }
-
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $posts[$currentKey],
-                'total_rows' => 1,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.get.done',
-        );
-        return $this->response;
-    }
-    /**
-     * @name            getPreviousPostInBlogByPublishDate ()
-     *                 Gets previous post in category by publis date.
-     *
-     * @since           1.0.5
-     * @version         1.0.5
-     * @author          Said İmamoğlu
-     *
-     *
-     * @use             $this->listPostsInBlogByPublishDate()
-     *
-     * @param           mixed $post
-     * @param           mixed $category
-     * @param           array $filter
-     * @param           array $sortorder
-     * @param           array $limit
-     *
-     * @return          array           $response
-     */
-    public function getPreviousPostInBlogByPublishDate($post, $category, $filter = null, $sortorder = null, $limit = null)
-    {
-        $response = $this->listPostsInBlogByPublishDate($category, $filter, $sortorder, $limit);
-        if ($response['error']) {
-            return $response;
-        }
-        $posts = $response['result']['set'];
-        unset($response);
-        foreach ($posts as $key => $item) {
-            if ($item->getId() == $post) {
-                $currentKey = $key+1>count($posts) ? count($posts) :  $key+1;
-            }
-        }
-
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $posts[$currentKey],
-                'total_rows' => 1,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.get.done',
-        );
-        return $this->response;
-    }
-    /**
-     * @name            getFirstPostInBlogByPublishDate ()
-     *                 Gets first post in category by publis date.
-     *
-     * @since           1.0.5
-     * @version         1.0.5
-     * @author          Said İmamoğlu
-     *
-     *
-     * @use             $this->listPostsInBlogByPublishDate()
-     *
-     * @param           mixed $category
-     * @param           array $filter
-     * @param           array $sortorder
-     * @param           array $limit
-     *
-     * @return          array           $response
-     */
-    public function getFirstPostInBlogByPublishDate($category, $filter = null, $sortorder = null, $limit = null)
-    {
-        $response = $this->listPostsInBlogByPublishDate($category, $filter, $sortorder, $limit);
-        if ($response['error']) {
-            return $response;
-        }
-        $posts = $response['result']['set'];
-        unset($response);
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $posts[0],
-                'total_rows' => 1,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.get.done',
-        );
-        return $this->response;
-    }
-    /**
-     * @name            getLastPostInBlogByPublishDate ()
-     *                 Gets last post in category by publis date.
-     *
-     * @since           1.0.5
-     * @version         1.0.5
-     * @author          Said İmamoğlu
-     *
-     *
-     * @use             $this->listPostsInBlogByPublishDate()
-     *
-     * @param           mixed $category
-     * @param           array $filter
-     * @param           array $sortorder
-     * @param           array $limit
-     *
-     * @return          array           $response
-     */
-    public function getLastPostInBlogByPublishDate($category, $filter = null, $sortorder = null, $limit = null)
-    {
-        $response = $this->listPostsInBlogByPublishDate($category, $filter, $sortorder, $limit);
-        if ($response['error']) {
-            return $response;
-        }
-        $posts = $response['result']['set'];
-        unset($response);
-
-        /**
-         * Prepare & Return Response
-         */
-        $this->response = array(
-            'rowCount' => $this->response['rowCount'],
-            'result' => array(
-                'set' => $posts[count($posts)-1],
-                'total_rows' => 1,
-                'last_insert_id' => null,
-            ),
-            'error' => false,
-            'code' => 'scc.db.get.done',
-        );
-        return $this->response;
+		return $response;
     }
 }
 
 /**
  * Change Log
+ * **************************************
+ * v1.0.9                      10.05.2015
+ * Can Berkol
+ * **************************************
+ * CR :: Made compatible with Core 3.3.
+ *
  * **************************************
  * v1.0.8                      24.04.2015
  * TW #3568873

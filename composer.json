@@ -17,11 +17,11 @@
         }
     ],
     "require": {
-        "biberltd/core-bundle" : "~3.2",
-        "biberltd/file-management-bundle" : "~3.1",
-        "biberltd/member-management-bundle" : "~3.1",
-        "biberltd/multilanguage-support-bundle" : "~3.1",
-        "biberltd/site-management-bundle" : "~3.2"
+        "biberltd/core-bundle" : "~3.3",
+        "biberltd/file-management-bundle" : "~3.3",
+        "biberltd/member-management-bundle" : "~3.3",
+        "biberltd/multilanguage-support-bundle" : "~3.3",
+        "biberltd/site-management-bundle" : "~3.3"
     },
     "autoload": {
         "psr-0": { "BiberLtd\\Bundle\\BlogBundle": "" }
