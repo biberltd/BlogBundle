@@ -9,8 +9,8 @@
  *
  * @copyright   	Biber Ltd. (www.biberltd.com)
  *
- * @version     	1.0.9
- * @date        	09.05.2015
+ * @version     	1.1.0
+ * @date        	11.05.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Services;
 
@@ -455,12 +455,12 @@ class BlogModel extends CoreModel
 		}
 		$countDeleted = 0;
 		foreach($collection as $entry){
-			if($entry instanceof BundleEntity\BlogPostRevision){
-				$this->em->remove($entry);
+			if($entry['entry]'] instanceof BundleEntity\BlogPostRevision){
+				$this->em->remove($entry['entry']);
 				$countDeleted++;
 			}
 			else{
-				$response = $this->getBlogPostRevision($entry);
+				$response = $this->getBlogPostRevision($entry['entry'], $entry['language'], $entry['revisionNumber']);
 				if(!$response->error->exists){
 					$this->em->remove($response->result->set);
 					$countDeleted++;
@@ -602,7 +602,7 @@ class BlogModel extends CoreModel
 	 * @version         1.0.9
 	 * @author          Can Berkol
 	 *
-	 * @use             $this->listBlogPostss()
+	 * @use             $this->listBlogPosts()
 	 * @use             $this->createException()
 	 *
 	 * @param           mixed 			$urlKey
@@ -1016,7 +1016,7 @@ class BlogModel extends CoreModel
         }
         /** Now handle localizations */
 		if ($countInserts > 0 && $countLocalizations > 0) {
-			$response = $this->insertPageLocalizations($localizations);
+			$response = $this->insertBlogLocalizations($localizations);
 		}
 		if($countInserts > 0){
 			$this->em->flush();
@@ -1193,7 +1193,7 @@ class BlogModel extends CoreModel
      * @name            insertBlogPosts()
 	 *
      * @since           1.0.2
-     * @version         1.0.9
+     * @version         1.1.0
      * @author          Can Berkol
      *
      * @use             $this->createException()
@@ -1310,6 +1310,10 @@ class BlogModel extends CoreModel
                 $countInserts++;
             }
         }
+		/** Now handle localizations */
+		if ($countInserts > 0 && $countLocalizations > 0) {
+			$response = $this->insertBlogLocalizations($localizations);
+		}
 		if($countInserts > 0){
 			$this->em->flush();
 			return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
@@ -1499,7 +1503,7 @@ class BlogModel extends CoreModel
         }
 		/** Now handle localizations */
 		if ($countInserts > 0 && $countLocalizations > 0) {
-			$response = $this->insertPageLocalizations($localizations);
+			$response = $this->insertBlogPostCategoryLocalizations($localizations);
 		}
 		if($countInserts > 0){
 			$this->em->flush();
@@ -1903,7 +1907,7 @@ class BlogModel extends CoreModel
      * @name            listCategoriesOfPost(
      *
      * @since           1.0.1
-     * @version         1.0.9
+     * @version         1.1.0
      * @author          Can Berkol
      *
      * @use             $this->createException()
@@ -1919,7 +1923,11 @@ class BlogModel extends CoreModel
      */
     public function listCategoriesOfPost($post, $filter = null, $sortOrder = null, $limit = null){
         $timeStamp = time();
-        $post = $this->getBlogPost($post);
+		$response = $this->getBlogPost($post);
+		if($response->error->exist){
+			return $response;
+		}
+		$post = $response->result->set;
         $query_str = 'SELECT ' . $this->entity['cobp']['alias']
             . ' FROM ' . $this->entity['cobp']['name'] . ' ' . $this->entity['cobp']['alias']
             . ' WHERE ' . $this->entity['cobp']['alias'] . '.post = ' . $post->getId();
@@ -2388,7 +2396,7 @@ class BlogModel extends CoreModel
      * @param           array 			$categories
      * @param           mixed			$post
      *
-     * @return           BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function removeCategoriesFromPost($categories, $post){
 		$timeStamp = time();
@@ -3064,7 +3072,7 @@ class BlogModel extends CoreModel
 	 * @param			string 	$order
 	 * @param           array 	$filter
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function getFirstPostInCategoryByPublishDate($category, $order = 'asc', $filter = null){
 		$response = $this->listPostsInCategoryByPublishDate($category, $order, $filter, null);
@@ -3093,7 +3101,7 @@ class BlogModel extends CoreModel
 	 * @param			string 	$order
 	 * @param           array 	$filter
 	 *
-	 * @return          array           $response
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
 	 */
 	public function getLastPostInCategoryByPublishDate($category, $order = 'asc', $filter = null){
 		$response = $this->listPostsInCategoryByPublishDate($category, $order, $filter, null);
@@ -3122,7 +3130,7 @@ class BlogModel extends CoreModel
      * @param           array $sortOrder
      * @param           array $limit
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function countTotalPostsInCategory($category, $filter = null, $sortOrder = null, $limit = null){
         $response = $this->listPostsInCategory($category, $filter, $sortOrder, $limit);
@@ -3151,7 +3159,7 @@ class BlogModel extends CoreModel
      * @param           array $sortOrder
      * @param           array $limit
      *
-     * @return          array           $response
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function countTotalPostsInBlog($blog, $filter = null, $sortOrder = null, $limit = null){
 		$response = $this->getBlog($blog);
@@ -3183,6 +3191,12 @@ class BlogModel extends CoreModel
 
 /**
  * Change Log
+ * **************************************
+ * v1.1.0                      11.05.2015
+ * Can Berkol
+ * **************************************
+ * BF :: Old habits detected and cleaned in the code.
+ *
  * **************************************
  * v1.0.9                      10.05.2015
  * Can Berkol
