@@ -9,8 +9,8 @@
  *
  * @copyright   	Biber Ltd. (www.biberltd.com)
  *
- * @version     	1.1.0
- * @date        	11.05.2015
+ * @version     	1.1.1
+ * @date        	25.05.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Services;
 
@@ -40,11 +40,11 @@ class BlogModel extends CoreModel
      * @version         1.0.0
      *
      * @param           object $kernel
-     * @param           string $db_connection Database connection key as set in app/config.yml
+     * @param           string $dbConnection Database connection key as set in app/config.yml
      * @param           string $orm ORM that is used.
      */
-    public function __construct($kernel, $db_connection = 'default', $orm = 'doctrine')    {
-        parent::__construct($kernel, $db_connection, $orm);
+    public function __construct($kernel, $dbConnection = 'default', $orm = 'doctrine')    {
+        parent::__construct($kernel, $dbConnection, $orm);
 
         $this->entity = array(
             'b' 		=> array('name' => 'BlogBundle:Blog', 'alias' => 'b'),
@@ -1529,7 +1529,7 @@ class BlogModel extends CoreModel
      */
     public function isFileAssociatedWithBlogPost($file, $post, $bypass = false){
 		$timeStamp = time();
-		$fModel = new FileService\FileManagementModel($this->kernel, $this->db_connection, $this->orm);
+		$fModel = new FileService\FileManagementModel($this->kernel, $this->dbConnection, $this->orm);
 
 		$response = $fModel->getFile($file);
 		if($response->error->exist){
@@ -3191,6 +3191,12 @@ class BlogModel extends CoreModel
 
 /**
  * Change Log
+ * **************************************
+ * v1.1.1                      25.05.2015
+ * Can Berkol
+ * **************************************
+ * BF :: db_connection is replaced with dbConnection
+ *
  * **************************************
  * v1.1.0                      11.05.2015
  * Can Berkol
