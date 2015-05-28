@@ -16,7 +16,7 @@
  *
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
-use BiberLtd\Core\CoreLocalizableEntity;
+use BiberLtd\Bundle\CoreBundle\CoreLocalizableEntity;
 use Doctrine\ORM\Mapping AS ORM;
 
 /** 
