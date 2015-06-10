@@ -9,8 +9,8 @@
  *
  * @copyright   	Biber Ltd. (www.biberltd.com)
  *
- * @version     	1.1.1
- * @date        	25.05.2015
+ * @version     	1.1.2
+ * @date        	10.06.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Services;
 
@@ -2233,7 +2233,81 @@ class BlogModel extends CoreModel
 
 		return $response;
     }
+	/**
+	 * @name            listPostsOfBlogInCategoryAndSite()
+	 *
+	 * @since           1.1.2
+	 * @version         1.1.2
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 * @use             $this->getBlog()
+	 * @use             $this->listPostsOfBlog()
+	 *
+	 * @param           mixed 			$blog
+	 * @param           mixed 			$category
+	 * @param           mixed 			$site
+	 * @param           array 			$filter
+	 * @param           array 			$sortOrder
+	 * @param           array 			$limit
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function listPostsOfBlogInCategoryAndSite($blog, $category, $site, $filter = null, $sortOrder = null, $limit = null){
+		$timeStamp = time();
+		$response = $this->getBlog($blog);
+		if($this->error->exist){
+			return $response;
+		}
+		$blog = $response->result->set;
+		unset($response);
+		$response = $this->getBlogPostCategory($category);
+		if($this->error->exist){
+			return $response;
+		}
+		$category = $response->result->set;
+		unset($response);
+		$sModel = new SMMService\SiteManagementModel($this->kernel, $this->dbConnection, $this->orm);
+		$response = $sModel->getSite($site);
+		if($this->error->exist){
+			return $response;
+		}
+		$site = $response->result->set;
+		unset($response);
+		$qStr = 'SELECT ' . $this->entity['cobp']['alias']
+			. ' FROM ' . $this->entity['cobp']['name'] . ' ' . $this->entity['cobp']['alias']
+			. ' WHERE ' . $this->entity['cobp']['alias'] . '.category = ' . $category->getId();
+		$q = $this->em->createQuery($qStr);
+		$result = $q->getResult();
 
+		$postsInCat = array();
+		if (count($result) > 0) {
+			foreach ($result as $cobp) {
+				$postsInCat[] = $cobp->getPost()->getId();
+			}
+		}
+		$selectedIds = implode(',', $postsInCat);
+		$columnI = $this->entity['bp']['alias'] . '.id';
+		$conditionI = array('column' => $columnI, 'comparison' => '=', 'in' => $selectedIds);
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array(
+				array(
+					'glue' => 'and',
+					'condition' => $conditionI,
+				),
+				array(
+					'glue' => 'and',
+					'condition' => array('column' => $this->entity['bp']['alias'].'.site', 'comparison' => '=', 'value' => $site->getId()),
+				)
+			)
+		);
+		$response = $this->listPostsOfBlog($blog, $filter, $sortOrder, $limit);
+
+		$response->stats->execution->start = $timeStamp;
+
+		return $response;
+	}
     /**
      * @name            listPublishedPosts()
      *
@@ -3191,6 +3265,12 @@ class BlogModel extends CoreModel
 
 /**
  * Change Log
+ * **************************************
+ * v1.1.2                      10.06.2015
+ * Can Berkol
+ * **************************************
+ * FR :: listPostsOfBlogInCategoryAndSite() method implemented.
+ *
  * **************************************
  * v1.1.1                      25.05.2015
  * Can Berkol
