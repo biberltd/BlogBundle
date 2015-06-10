@@ -2308,6 +2308,59 @@ class BlogModel extends CoreModel
 
 		return $response;
 	}
+	/**
+	 * @name            listPostsOfBlogIndSite()
+	 *
+	 * @since           1.1.2
+	 * @version         1.1.2
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 * @use             $this->getBlog()
+	 * @use             $this->listPostsOfBlog()
+	 *
+	 * @param           mixed 			$blog
+	 * @param           mixed 			$site
+	 * @param           array 			$filter
+	 * @param           array 			$sortOrder
+	 * @param           array 			$limit
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function listPostsOfBlogIndSite($blog, $site, $filter = null, $sortOrder = null, $limit = null){
+		$timeStamp = time();
+		$response = $this->getBlog($blog);
+		if($this->error->exist){
+			return $response;
+		}
+		$blog = $response->result->set;
+		unset($response);
+		$sModel = new SMMService\SiteManagementModel($this->kernel, $this->dbConnection, $this->orm);
+		$response = $sModel->getSite($site);
+		if($this->error->exist){
+			return $response;
+		}
+		$site = $response->result->set;
+
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array(
+				array(
+					'glue' => 'and',
+					'condition' => array('column' => $this->entity['bp']['alias'].'.blog', 'comparison' => '=', 'value' => $log->getId()),
+				),
+				array(
+					'glue' => 'and',
+					'condition' => array('column' => $this->entity['bp']['alias'].'.site', 'comparison' => '=', 'value' => $site->getId()),
+				)
+			)
+		);
+		$response = $this->listPostsOfBlog($blog, $filter, $sortOrder, $limit);
+
+		$response->stats->execution->start = $timeStamp;
+
+		return $response;
+	}
     /**
      * @name            listPublishedPosts()
      *
@@ -3270,6 +3323,7 @@ class BlogModel extends CoreModel
  * Can Berkol
  * **************************************
  * FR :: listPostsOfBlogInCategoryAndSite() method implemented.
+ * FR :: listPostsOfBlogInSite() method implemented.
  *
  * **************************************
  * v1.1.1                      25.05.2015
