@@ -2504,7 +2504,46 @@ class BlogModel extends CoreModel
 		$response->stats->execution->start = $timeStamp;
 		return $response;
 	}
+	/**
+	 * @name            markPostsAsDeleted()
+	 *
+	 * @since           1.1.3
+	 * @version         1.1.3
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 *
+	 * @param           array 			$collection
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function markPostsAsDeleted($collection){
+		$timeStamp = time();
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
+		$now = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
+		$toUpdate = array();
+		foreach ($collection as $post) {
+			if(!$post instanceof BundleEntity\BlogPost){
+				$response = $this->getBlogPost($post);
+				if($response->error->exist){
+					return $response;
+				}
+				$post = $response->result->set;
+				unset($response);
+			}
+			$post->setStatus('d');
+			$post->setDateRemoved($now);
+			$toUpdate[] = $post;
+		}
+		$response = $this->updateBlogPosts($toUpdate);
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
 
+		return $response;
+	}
 	/**
 	 * @name            removeCategoriesFromPost ()
 	 *
@@ -3317,6 +3356,7 @@ class BlogModel extends CoreModel
  * BF :: insertBloglocalizations() method rewritten.
  * BF :: insertBlogPostLocalizations() method rewritten.
  * BF :: insertBlogPostLocalizations() method rewritten.
+ * FR :: markPostsAsDeleted() method rewritten.
  *
  * **************************************
  * v1.1.2                      10.06.2015
