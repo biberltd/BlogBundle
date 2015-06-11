@@ -206,7 +206,7 @@ class FilesOfBlogPost extends CoreEntity
      */
     public function setCountView($count_view)
     {
-        if (!$this->setModifiled('count_view', $count_view)->isModified()) {
+        if (!$this->setModified('count_view', $count_view)->isModified()) {
             return $this;
         }
         $this->count_view = $count_view;
@@ -242,7 +242,7 @@ class FilesOfBlogPost extends CoreEntity
      */
     public function setType($type)
     {
-        if (!$this->setModifiled('type', $type)->isModified()) {
+        if (!$this->setModified('type', $type)->isModified()) {
             return $this;
         }
         $this->type = $type;
