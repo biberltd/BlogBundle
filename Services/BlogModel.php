@@ -9,8 +9,8 @@
  *
  * @copyright   	Biber Ltd. (www.biberltd.com)
  *
- * @version     	1.1.2
- * @date        	10.06.2015
+ * @version     	1.1.3
+ * @date        	11.06.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Services;
 
@@ -872,7 +872,7 @@ class BlogModel extends CoreModel
 	 * @name            insertBlogLocalizations()
 	 *
 	 * @since           1.0.2
-	 * @version         1.0.9
+	 * @version         1.1.3
 	 * @author          Can Berkol
 	 *
 	 * @use             $this->createException()
@@ -895,34 +895,33 @@ class BlogModel extends CoreModel
 				$insertedItems[] = $entity;
 				$countInserts++;
 			}
-			else if(is_object($data)){
-				$entity = new BundleEntity\BlogLocalization();
-				foreach($data as $column => $value){
-					$set = 'set'.$this->translateColumnName($column);
-					switch($column){
-						case 'language':
-							$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
-							$response = $lModel->getLanguage($value);
-							if(!$response->error->exists){
-								$entity->$set($response->result->set);
-							}
-							unset($response, $lModel);
-							break;
-						case 'blog':
-							$response = $this->getBlog($value);
-							if(!$response->error->exists){
-								$entity->$set($response->result->set);
-							}
-							unset($response, $lModel);
-							break;
-						default:
-							$entity->$set($value);
-							break;
+			else{
+				$blog = $data['entity'];
+				foreach($data['localizations'] as $locale => $translation){
+					$entity = new BundleEntity\BlogLocalization();
+					$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+					$response = $lModel->getLanguage($locale);
+					if($response->error->exist){
+						return $response;
 					}
+					$entity->setLanguage($response->result->set);
+					unset($response);
+					$entity->setBlog($blog);
+					foreach($translation as $column => $value){
+						$set = 'set'.$this->translateColumnName($column);
+						switch($column){
+							default:
+								if(is_object($value) || is_array($value)){
+									$value = json_encode($value);
+								}
+								$entity->$set($value);
+								break;
+						}
+					}
+					$this->em->persist($entity);
+					$insertedItems[] = $entity;
+					$countInserts++;
 				}
-				$this->em->persist($entity);
-				$insertedItems[] = $entity;
-				$countInserts++;
 			}
 		}
 		if($countInserts > 0){
@@ -1046,7 +1045,7 @@ class BlogModel extends CoreModel
 	 * @name            insertBlogPostLocalizations()
 	 *
 	 * @since           1.0.2
-	 * @version         1.0.9
+	 * @version         1.1.3
 	 * @author          Can Berkol
 	 *
 	 * @use             $this->createException()
@@ -1069,34 +1068,33 @@ class BlogModel extends CoreModel
 				$insertedItems[] = $entity;
 				$countInserts++;
 			}
-			else if(is_object($data)){
-				$entity = new BundleEntity\BlogPostLocalization();
-				foreach($data as $column => $value){
-					$set = 'set'.$this->translateColumnName($column);
-					switch($column){
-						case 'language':
-							$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
-							$response = $lModel->getLanguage($value);
-							if(!$response->error->exists){
-								$entity->$set($response->result->set);
-							}
-							unset($response, $lModel);
-							break;
-						case 'post':
-							$response = $this->getBlogPost($value);
-							if(!$response->error->exists){
-								$entity->$set($response->result->set);
-							}
-							unset($response, $lModel);
-							break;
-						default:
-							$entity->$set($value);
-							break;
+			else{
+				$bPost = $data['entity'];
+				foreach($data['localizations'] as $locale => $translation){
+					$entity = new BundleEntity\BlogPostLocalization();
+					$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+					$response = $lModel->getLanguage($locale);
+					if($response->error->exist){
+						return $response;
 					}
+					$entity->setLanguage($response->result->set);
+					unset($response);
+					$entity->setPost($bPost);
+					foreach($translation as $column => $value){
+						$set = 'set'.$this->translateColumnName($column);
+						switch($column){
+							default:
+								if(is_object($value) || is_array($value)){
+									$value = json_encode($value);
+								}
+								$entity->$set($value);
+								break;
+						}
+					}
+					$this->em->persist($entity);
+					$insertedItems[] = $entity;
+					$countInserts++;
 				}
-				$this->em->persist($entity);
-				$insertedItems[] = $entity;
-				$countInserts++;
 			}
 		}
 		if($countInserts > 0){
@@ -1342,7 +1340,7 @@ class BlogModel extends CoreModel
 	 * @name            insertBlogPostCategoryLocalizations()
 	 *
 	 * @since           1.0.2
-	 * @version         1.0.9
+	 * @version         1.1.3
 	 * @author          Can Berkol
 	 *
 	 * @use             $this->createException()
@@ -1365,34 +1363,33 @@ class BlogModel extends CoreModel
 				$insertedItems[] = $entity;
 				$countInserts++;
 			}
-			else if(is_object($data)){
-				$entity = new BundleEntity\BlogPostCategoryLocalization();
-				foreach($data as $column => $value){
-					$set = 'set'.$this->translateColumnName($column);
-					switch($column){
-						case 'language':
-							$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
-							$response = $lModel->getLanguage($value);
-							if(!$response->error->exists){
-								$entity->$set($response->result->set);
-							}
-							unset($response, $lModel);
-							break;
-						case 'category':
-							$response = $this->getBlogPostCategory($value);
-							if(!$response->error->exists){
-								$entity->$set($response->result->set);
-							}
-							unset($response, $lModel);
-							break;
-						default:
-							$entity->$set($value);
-							break;
+			else{
+				$bpCategory = $data['entity'];
+				foreach($data['localizations'] as $locale => $translation){
+					$entity = new BundleEntity\BlogPostCategoryLocalization();
+					$lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+					$response = $lModel->getLanguage($locale);
+					if($response->error->exist){
+						return $response;
 					}
+					$entity->setCategory($response->result->set);
+					unset($response);
+					$entity->setBlof($bpCategory);
+					foreach($translation as $column => $value){
+						$set = 'set'.$this->translateColumnName($column);
+						switch($column){
+							default:
+								if(is_object($value) || is_array($value)){
+									$value = json_encode($value);
+								}
+								$entity->$set($value);
+								break;
+						}
+					}
+					$this->em->persist($entity);
+					$insertedItems[] = $entity;
+					$countInserts++;
 				}
-				$this->em->persist($entity);
-				$insertedItems[] = $entity;
-				$countInserts++;
 			}
 		}
 		if($countInserts > 0){
@@ -3313,6 +3310,14 @@ class BlogModel extends CoreModel
 
 /**
  * Change Log
+ * **************************************
+ * v1.1.3                      11.06.2015
+ * Can Berkol
+ * **************************************
+ * BF :: insertBloglocalizations() method rewritten.
+ * BF :: insertBlogPostLocalizations() method rewritten.
+ * BF :: insertBlogPostLocalizations() method rewritten.
+ *
  * **************************************
  * v1.1.2                      10.06.2015
  * Can Berkol
