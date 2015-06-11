@@ -5,7 +5,6 @@
     "keywords": [],
     "homepage": "http://github.com/biberltd/BlogBundle",
     "license": "MIT",
-	"version": "master",
     "authors": [
         {
             "name": "Can Berkol",
@@ -17,11 +16,11 @@
         }
     ],
     "require": {
-        "biberltd/core-bundle" : "~3.1",
-        "biberltd/file-management-bundle" : "~3.1",
-        "biberltd/member-management-bundle" : "~3.1",
-        "biberltd/multilanguage-support-bundle" : "~3.1",
-        "biberltd/site-management-bundle" : "~3.1"
+        "biberltd/core-bundle" : "self.version",
+        "biberltd/file-management-bundle" : "self.version",
+        "biberltd/member-management-bundle" : "self.version",
+        "biberltd/multilanguage-support-bundle" : "self.version",
+        "biberltd/site-management-bundle" : "self.version"
     },
     "autoload": {
         "psr-0": { "BiberLtd\\Bundle\\BlogBundle": "" }
