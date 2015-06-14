@@ -9,8 +9,8 @@
  *
  * @copyright   	Biber Ltd. (www.biberltd.com)
  *
- * @version     	1.1.3
- * @date        	11.06.2015
+ * @version     	1.1.5
+ * @date        	14.06.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Services;
 
@@ -555,6 +555,7 @@ class BlogModel extends CoreModel
 		}
 		$response = $this->listBlogs($filter, null, array('start' => 0, 'count' => 1));
 
+		$response->result->set = $response->result->set[0];
 		$response->stats->execution->start = $timeStamp;
 		$response->stats->execution->end = time();
 
@@ -1749,7 +1750,7 @@ class BlogModel extends CoreModel
 	 * @name            listBlogPosts()
 	 *
 	 * @since           1.0.1
-	 * @version         1.0.9
+	 * @version         1.1.4
 	 * @author          Can Berkol
 	 *
 	 * @use             $this->createException()
@@ -1769,7 +1770,7 @@ class BlogModel extends CoreModel
 
 		$qStr = 'SELECT '.$this->entity['bpl']['alias'].', '.$this->entity['bp']['alias']
 			.' FROM '.$this->entity['bpl']['name'].' '.$this->entity['bpl']['alias']
-			.' JOIN '.$this->entity['bpl']['alias'].'.post '.$this->entity['bp']['alias'];
+			.' JOIN '.$this->entity['bpl']['alias'].'.blog_post '.$this->entity['bp']['alias'];
 
 		if(!is_null($sortOrder)){
 			foreach($sortOrder as $column => $direction){
@@ -1814,9 +1815,9 @@ class BlogModel extends CoreModel
 
 		$entities = array();
 		foreach($result as $entry){
-			$id = $entry->getPost()->getId();
+			$id = $entry->getBlogPost()->getId();
 			if(!isset($unique[$id])){
-				$entities[] = $entry->getPost();
+				$entities[] = $entry->getBlogPost();
 			}
 		}
 		$totalRows = count($entities);
@@ -2354,6 +2355,60 @@ class BlogModel extends CoreModel
 		return $response;
 	}
 	/**
+	 * @name            listPostsOfBlogInSiteWithStatuses()
+	 *
+	 * @since           1.1.4
+	 * @version         1.1.4
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 * @use             $this->getBlog()
+	 * @use             $this->listPostsOfBlog()
+	 *
+	 * @param           mixed 			$blog
+	 * @param           mixed 			$site
+	 * @param           array 			$statuses
+	 * @param           array 			$filter
+	 * @param           array 			$sortOrder
+	 * @param           array 			$limit
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function listPostsOfBlogInSiteWithStatuses($blog, $site, $statuses, $filter = null, $sortOrder = null, $limit = null){
+		$timeStamp = time();
+		$response = $this->getBlog($blog);
+		if($response->error->exist){
+			return $response;
+		}
+		$blog = $response->result->set;
+		unset($response);
+		$sModel = new SMMService\SiteManagementModel($this->kernel, $this->dbConnection, $this->orm);
+		$response = $sModel->getSite($site);
+		if($response->error->exist){
+			return $response;
+		}
+		$site = $response->result->set;
+
+		$filter[] = array(
+			'glue' => 'and',
+			'condition' => array(
+				array(
+					'glue' => 'and',
+					'condition' => array('column' => $this->entity['bp']['alias'].'.site', 'comparison' => '=', 'value' => $site->getId()),
+				),
+				array(
+					'glue' => 'and',
+					'condition' => array('column' => $this->entity['bp']['alias'].'.status', 'comparison' => 'in', 'value' => $statuses),
+				)
+			)
+		);
+		$response = $this->listPostsOfBlog($blog, $filter, $sortOrder, $limit);
+
+		$response->stats->execution->start = $timeStamp;
+
+		return $response;
+	}
+	/**
 	 * @name            listPublishedPosts()
 	 *
 	 * @since           1.0.5
@@ -2545,6 +2600,47 @@ class BlogModel extends CoreModel
 		return $response;
 	}
 	/**
+	 * @name            publishBlogPosts()
+	 *
+	 * @since           1.1.4
+	 * @version         1.1.4
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 *
+	 * @param           array 			$collection
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function publishBlogPosts($collection){
+		$timeStamp = time();
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
+		$now = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
+		$toUpdate = array();
+		foreach ($collection as $post) {
+			if(!$post instanceof BundleEntity\BlogPost){
+				$response = $this->getBlogPost($post);
+				if($response->error->exist){
+					return $response;
+				}
+				$post = $response->result->set;
+				unset($response);
+			}
+			$post->setStatus('p');
+			$post->setDatePublished($now);
+			$post->setDateUnpublished(null);
+			$toUpdate[] = $post;
+		}
+		$response = $this->updateBlogPosts($toUpdate);
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
+
+		return $response;
+	}
+	/**
 	 * @name            removeCategoriesFromPost ()
 	 *
 	 * @since           1.0.2
@@ -2633,7 +2729,46 @@ class BlogModel extends CoreModel
 		}
 		return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
 	}
+	/**
+	 * @name            unpublishBlogPosts()
+	 *
+	 * @since           1.1.4
+	 * @version         1.1.4
+	 *
+	 * @author          Can Berkol
+	 *
+	 * @use             $this->createException()
+	 *
+	 * @param           array 			$collection
+	 *
+	 * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+	 */
+	public function unpublishBlogPosts($collection){
+		$timeStamp = time();
+		if (!is_array($collection)) {
+			return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+		}
+		$now = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
+		$toUpdate = array();
+		foreach ($collection as $post) {
+			if(!$post instanceof BundleEntity\BlogPost){
+				$response = $this->getBlogPost($post);
+				if($response->error->exist){
+					return $response;
+				}
+				$post = $response->result->set;
+				unset($response);
+			}
+			$post->setStatus('u');
+			$post->setDateUnpublished($now);
+			$toUpdate[] = $post;
+		}
+		$response = $this->updateBlogPosts($toUpdate);
+		$response->stats->execution->start = $timeStamp;
+		$response->stats->execution->end = time();
 
+		return $response;
+	}
 	/**
 	 * @name            updateBlog ()
 	 *
@@ -3349,6 +3484,21 @@ class BlogModel extends CoreModel
 
 /**
  * Change Log
+ * **************************************
+ * v1.1.5                      14.06.2015
+ * Can Berkol
+ * **************************************
+ * BF :: getPost calls are replaced with getBlogPost
+ * FR :: publishBlogPosts()
+ * FR :: unpublishBlogPosts()
+ *
+ * **************************************
+ * v1.1.4                      13.06.2015
+ * Can Berkol
+ * **************************************
+ * BF :: post property must be blog_post. Fixed.
+ * BF :: listPostsOfBlogInSiteWithStatuses() added.
+ *
  * **************************************
  * v1.1.3                      11.06.2015
  * Can Berkol
