@@ -194,6 +194,7 @@
       <field name="title" description="Post title." type="string" size="155" required="true" uuid="fe85deda-7768-416b-9810-c193f68cdefe"/>
       <field name="url_key" description="Url key of post title." type="string" size="255" required="true" uuid="9ba7c00f-1275-47d3-b5eb-cc5b1671afa8"/>
       <field name="summary" description="Summary of blog post." type="string" size="255" uuid="ae264671-466d-464b-b8dc-816b07330752"/>
+      <field name="meta_title" description="Meta title" type="string" size="155" uuid="c790af4f-3821-400f-9942-c25cc9e239bf"/>
       <field name="meta_description" description="Description of blog post." type="string" size="255" uuid="7d0c5880-676d-4311-9bf9-d9bbd1581d4a"/>
       <field name="meta_keywords" description="Meta keywords of blog post." type="text" uuid="67a226c9-98e3-4b45-ae1b-49c972185040"/>
       <field name="content" description="Content of blog post." type="text" uuid="48ce1f3f-4e60-45fc-97d6-2fd5cc587e9c"/>
@@ -830,7 +831,7 @@
     <entity uuid="239c27b0-2883-46e8-bcbd-010fd9235aaf" bg-color="4294967295" hdr-color="4292006610" position-x="-126" position-y="186" size-x="0" size-x2="130" size-y="0" size-y2="115"/>
     <region uuid="3449791f-06a3-4081-a8c0-4ea5cf36f46e" bg-color="4292728527" position-x="274" position-y="409" size-x="-22" size-x2="422" size-y="-9" size-y2="309"/>
     <entity uuid="37003f2f-c374-4082-855d-b3cf8a3206a7" bg-color="4294967295" hdr-color="4292006610" position-x="58" position-y="64" size-x="0" size-x2="142" size-y="0" size-y2="129"/>
-    <entity uuid="38d1693c-170e-457b-87d7-b0d358797df7" bg-color="4294967295" hdr-color="4292006610" position-x="62" position-y="368" size-x="0" size-x2="149" size-y="0" size-y2="185"/>
+    <entity uuid="38d1693c-170e-457b-87d7-b0d358797df7" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="62" position-y="368" size-x="0" size-x2="149" size-y="0" size-y2="185"/>
     <region uuid="40ef7a91-816f-4c6e-a580-0f01d93f36ee" bg-color="4292728527" position-x="446" position-y="68" size-x="0" size-x2="350" size-y="0" size-y2="300"/>
     <region uuid="440e5af7-ace6-4cec-b07e-2c516be0d5d1" bg-color="4292728527" position-x="-304" position-y="768" size-x="0" size-x2="250" size-y="0" size-y2="250"/>
     <entity uuid="51ec9be8-4890-4887-addd-6819fa8f6fb7" bg-color="4294967295" hdr-color="4292006610" position-x="-326" position-y="201" size-x="0" size-x2="147" size-y="0" size-y2="87"/>

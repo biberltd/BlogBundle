@@ -5,8 +5,8 @@
  *
  * @author		Can Berkol
  *
- * @version     1.0.0
- * @date        26.04.2015
+ * @version     1.0.1
+ * @date        14.06.2015
  *
  * @copyright   Biber Ltd. (http://www.biberltd.com)
  * @license     GPL v3.0
@@ -39,6 +39,11 @@ class BlogPostRevision extends CoreEntity{
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $summary;
+
+    /**
+     * @ORM\Column(type="string", length=155, nullable=true)
+     */
+    private $meta_title;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -404,10 +409,52 @@ class BlogPostRevision extends CoreEntity{
 		return $this;
 	}
 
+	/**
+	 * @name        getMetaTitle ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.1
+	 * @version     1.0.1
+	 *
+	 * @return      mixed
+	 */
+	public function getMetaTitle() {
+		return $this->meta_title;
+	}
+
+	/**
+	 * @name        setMetaTitle ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.1
+	 * @version     1.0.1
+	 *
+	 * @param       mixed $meta_title
+	 *
+	 * @return      $this
+	 */
+	public function setMetaTitle($meta_title) {
+		if (!$this->setModified('meta_title', $meta_title)->isModified()) {
+			return $this;
+		}
+		$this->meta_title = $meta_title;
+
+		return $this;
+	}
+
 
 }
 /**
  * Change Log:
+ * **************************************
+ * v1.0.1  					   14.06.2015
+ * Can Berkol
+ * **************************************
+ * FR :: meta_title property added.
+ * FR :: get/setMetaTitle methods implemented.
+ *
  * **************************************
  * v1.0.0  					   26.04.2015
  * TW #3568845
