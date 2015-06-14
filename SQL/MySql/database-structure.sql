@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50505
 File Encoding         : 65001
 
-Date: 2015-05-10 17:25:57
+Date: 2015-06-14 08:37:41
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -235,6 +235,7 @@ CREATE TABLE `blog_post_localization` (
   `title` varchar(155) COLLATE utf8_turkish_ci DEFAULT NULL COMMENT 'Localized title of blog.',
   `url_key` varchar(255) COLLATE utf8_turkish_ci DEFAULT NULL COMMENT 'Localized url key of the blog',
   `summary` varchar(255) COLLATE utf8_turkish_ci DEFAULT NULL COMMENT 'Localized description of blog.',
+  `meta_title` varchar(155) COLLATE utf8_turkish_ci DEFAULT NULL COMMENT 'Meta title of blog post.',
   `meta_description` varchar(255) COLLATE utf8_turkish_ci DEFAULT NULL COMMENT 'Localized meta description of blog.',
   `meta_keywords` varchar(155) COLLATE utf8_turkish_ci DEFAULT NULL COMMENT 'Localized meta keywords.',
   `content` text COLLATE utf8_turkish_ci COMMENT 'Blog content.',

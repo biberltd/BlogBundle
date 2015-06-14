@@ -61,10 +61,7 @@ class BlogPostModeration extends CoreEntity
     public $date_updated;
 
     /**
-     * @ORM\OneToMany(
-     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostModerationReply",
-     *     mappedBy="moderation"
-     * )
+     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostModerationReply", mappedBy="moderation")
      */
     private $replies;
 
