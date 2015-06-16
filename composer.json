@@ -15,7 +15,7 @@
             "email": "said.imamoglu@biberltd.com"
         }
     ],
-    "require":
+    "require":{
         "biberltd/core-bundle" : "~3.3",
         "biberltd/file-management-bundle" : "~3.3",
         "biberltd/member-management-bundle" : "~3.3",
