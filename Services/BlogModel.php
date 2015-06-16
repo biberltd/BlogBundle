@@ -600,8 +600,9 @@ class BlogModel extends CoreModel
      * @name            getBlogPostByUrlKey ()
      *
      * @since           1.0.9
-     * @version         1.0.9
+     * @version         1.1.6
      * @author          Can Berkol
+     * @author          Said İmamoğlu
      *
      * @use             $this->listBlogPosts()
      * @use             $this->createException()
@@ -609,7 +610,7 @@ class BlogModel extends CoreModel
      * @param           mixed 			$urlKey
      * @param			mixed			$language
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function getBlogPostByUrlKey($urlKey, $language = null){
         $timeStamp = time();
@@ -641,11 +642,10 @@ class BlogModel extends CoreModel
             }
         }
         $response = $this->listBlogPosts($filter, null, array('start' => 0, 'count' => 1));
-
-        $response->stats->execution->start = $timeStamp;
-        $response->stats->execution->end = time();
-
-        return $response;
+	    if ($response->error->exist) {
+		    return $response;
+	    }
+	    return new ModelResponse($response->result->set[0], 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
 
     /**
@@ -657,7 +657,7 @@ class BlogModel extends CoreModel
      *
      * @param           mixed           $category
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function getBlogPostCategory($category) {
         $timeStamp = time();
@@ -3492,6 +3492,8 @@ class BlogModel extends CoreModel
  * Said İmamoğlu
  * **************************************
  * BF :: getBlogByUrlKey() was returning wrong reponse. Fixed
+ * BF :: getBlogPostByUrlKey() was returning wrong reponse. Fixed
+ *
  * **************************************
  * v1.1.5                      14.06.2015
  * Can Berkol
