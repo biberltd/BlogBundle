@@ -514,8 +514,9 @@ class BlogModel extends CoreModel
      * @name            getBlogByUrlKey ()
      *
      * @since           1.0.9
-     * @version         1.0.9
+     * @version         1.1.6
      * @author          Can Berkol
+     * @author          Said İmamoğlu
      *
      * @use             $this->listBlogs()
      * @use             $this->createException()
@@ -554,12 +555,11 @@ class BlogModel extends CoreModel
                 );
             }
         }
-        $result = $this->listBlogs($filter, null, array('start' => 0, 'count' => 1));
-
-        if(is_null($result)){
-            return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, time());
+        $response = $this->listBlogs($filter, null, array('start' => 0, 'count' => 1));
+        if ($response->error->exist) {
+            return $response;
         }
-        return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+        return new ModelResponse($response->result->set[0], 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
     /**
      * @name 			getBlogPost()
@@ -600,9 +600,8 @@ class BlogModel extends CoreModel
      * @name            getBlogPostByUrlKey ()
      *
      * @since           1.0.9
-     * @version         1.1.6
+     * @version         1.0.9
      * @author          Can Berkol
-     * @author          Said İmamoğlu
      *
      * @use             $this->listBlogPosts()
      * @use             $this->createException()
@@ -1081,7 +1080,7 @@ class BlogModel extends CoreModel
                     }
                     $entity->setLanguage($response->result->set);
                     unset($response);
-                    $entity->setPost($bPost);
+                    $entity->setBlogPost($bPost);
                     foreach($translation as $column => $value){
                         $set = 'set'.$this->translateColumnName($column);
                         switch($column){
@@ -1126,8 +1125,9 @@ class BlogModel extends CoreModel
      * @name            insertBlogPostRevisions()
      *
      * @since           1.0.8
-     * @version         1.0.8
+     * @version         1.1.6
      * @author          Can Berkol
+     * @author          Said İmamoğlu
      *
      * @use             $this->createException()
      *
@@ -1158,7 +1158,7 @@ class BlogModel extends CoreModel
                         case 'language':
                             $lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
                             $response = $lModel->getLanguage($value);
-                            if (!$response->error->exists) {
+                            if (!$response->error->exist) {
                                 $entity->$set($response->result->set);
                             }
                             unset($response, $lModel);
@@ -1166,7 +1166,7 @@ class BlogModel extends CoreModel
                         case 'post':
                             $response = $this->getBlogPost($value);
                             if (!$response->error->exist) {
-                                $entity->$set($response->result->Set);
+                                $entity->$set($response->result->set);
                             }
                             unset($response);
                             break;
@@ -1315,7 +1315,7 @@ class BlogModel extends CoreModel
         }
         /** Now handle localizations */
         if ($countInserts > 0 && $countLocalizations > 0) {
-            $response = $this->insertBlogLocalizations($localizations);
+            $response = $this->insertBlogPostLocalizations($localizations);
         }
         if($countInserts > 0){
             $this->em->flush();
@@ -1887,7 +1887,6 @@ class BlogModel extends CoreModel
         $qStr .= $wStr.$gStr.$oStr;
         $q = $this->em->createQuery($qStr);
         $q = $this->addLimit($q, $limit);
-
         $result = $q->getResult();
 
         $entities = array();
