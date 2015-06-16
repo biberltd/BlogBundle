@@ -65,7 +65,7 @@ class BlogPost extends CoreLocalizableEntity
     private $date_approved;
 
     /** 
-     * @ORM\Column(type="datetime", nullable=false)
+     * @ORM\Column(type="datetime")
      */
     private $date_published;
 
