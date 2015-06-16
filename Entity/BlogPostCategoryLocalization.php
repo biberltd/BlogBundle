@@ -19,7 +19,7 @@ namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
 use BiberLtd\Bundle\CoreBundle\CoreEntity;
 
-/** 
+/**
  * @ORM\Entity
  * @ORM\Table(
  *     name="blog_post_category_localization",
@@ -32,22 +32,22 @@ use BiberLtd\Bundle\CoreBundle\CoreEntity;
  */
 class BlogPostCategoryLocalization extends CoreEntity
 {
-    /** 
+    /**
      * @ORM\Column(type="string", length=155, nullable=false)
      */
     private $name;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=false)
      */
     private $url_key;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $description;
 
-    /** 
+    /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language")
      * @ORM\JoinColumn(name="language", referencedColumnName="id", nullable=false, onDelete="CASCADE")
@@ -57,13 +57,13 @@ class BlogPostCategoryLocalization extends CoreEntity
     /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory", inversedBy="localizations")
-     * @ORM\JoinColumn(name="category", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="post_category", referencedColumnName="id", nullable=false)
      */
     private $category;
 
     /**
      * @name            setCategory ()
-	 *
+     *
      * @author          Can Berkol
      *
      * @since           1.0.1
@@ -79,8 +79,8 @@ class BlogPostCategoryLocalization extends CoreEntity
         if(!$this->setModified('category', $blog_post_category)->isModified()) {
             return $this;
         }
-		$this->category = $blog_post_category;
-		return $this;
+        $this->category = $blog_post_category;
+        return $this;
     }
 
     /**
@@ -100,7 +100,7 @@ class BlogPostCategoryLocalization extends CoreEntity
 
     /**
      * @name            setDescription ()
-	 *
+     *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -116,13 +116,13 @@ class BlogPostCategoryLocalization extends CoreEntity
         if(!$this->setModified('description', $description)->isModified()) {
             return $this;
         }
-		$this->description = $description;
-		return $this;
+        $this->description = $description;
+        return $this;
     }
 
     /**
      * @name            getDescription ()
-	 *
+     *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -152,8 +152,8 @@ class BlogPostCategoryLocalization extends CoreEntity
         if(!$this->setModified('language', $language)->isModified()) {
             return $this;
         }
-		$this->language = $language;
-		return $this;
+        $this->language = $language;
+        return $this;
     }
 
     /**
@@ -173,7 +173,7 @@ class BlogPostCategoryLocalization extends CoreEntity
 
     /**
      * @name            setName ()
-	 *
+     *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -189,13 +189,13 @@ class BlogPostCategoryLocalization extends CoreEntity
         if(!$this->setModified('name', $name)->isModified()) {
             return $this;
         }
-		$this->name = $name;
-		return $this;
+        $this->name = $name;
+        return $this;
     }
 
     /**
-	 * @name            getName ()
-	 *                  Returns the value of name property.
+     * @name            getName ()
+     *                  Returns the value of name property.
      *
      * @author          Can Berkol
      *
@@ -210,7 +210,7 @@ class BlogPostCategoryLocalization extends CoreEntity
 
     /**
      * @name            setUrlKey ()
-	 *
+     *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -226,13 +226,13 @@ class BlogPostCategoryLocalization extends CoreEntity
         if(!$this->setModified('url_key', $url_key)->isModified()) {
             return $this;
         }
-		$this->url_key = $url_key;
-		return $this;
+        $this->url_key = $url_key;
+        return $this;
     }
 
     /**
      * @name            getUrlKey ()
-	 *
+     *
      * @author          Can Berkol
      *
      * @since           1.0.0

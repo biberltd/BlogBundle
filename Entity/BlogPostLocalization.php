@@ -19,7 +19,7 @@ namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
 use BiberLtd\Bundle\CoreBundle\CoreEntity;
 
-/** 
+/**
  * @ORM\Entity
  * @ORM\Table(
  *     name="blog_post_localization",
@@ -32,27 +32,27 @@ use BiberLtd\Bundle\CoreBundle\CoreEntity;
  */
 class BlogPostLocalization extends CoreEntity
 {
-    /** 
+    /**
      * @ORM\Column(type="string", length=155, nullable=false)
      */
     private $title;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=false)
      */
     private $url_key;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $summary;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $meta_description;
 
-    /** 
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $meta_keywords;
@@ -67,7 +67,7 @@ class BlogPostLocalization extends CoreEntity
      */
     private $meta_title;
 
-    /** 
+    /**
      * @ORM\Id
      * @ORM\ManyToOne(
      *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost",
@@ -78,7 +78,7 @@ class BlogPostLocalization extends CoreEntity
      */
     private $blog_post;
 
-    /** 
+    /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language")
      * @ORM\JoinColumn(name="language", referencedColumnName="id", nullable=false, onDelete="CASCADE")
@@ -105,8 +105,8 @@ class BlogPostLocalization extends CoreEntity
         if(!$this->setModified('blog_post', $blog_post)->isModified()) {
             return $this;
         }
-		$this->blog_post = $blog_post;
-		return $this;
+        $this->blog_post = $blog_post;
+        return $this;
     }
 
     /**
@@ -144,8 +144,8 @@ class BlogPostLocalization extends CoreEntity
         if(!$this->setModified('language', $language)->isModified()) {
             return $this;
         }
-		$this->language = $language;
-		return $this;
+        $this->language = $language;
+        return $this;
     }
 
     /**
@@ -183,8 +183,8 @@ class BlogPostLocalization extends CoreEntity
         if(!$this->setModified('meta_description', $meta_description)->isModified()) {
             return $this;
         }
-		$this->meta_description = $meta_description;
-		return $this;
+        $this->meta_description = $meta_description;
+        return $this;
     }
 
     /**
@@ -222,8 +222,8 @@ class BlogPostLocalization extends CoreEntity
         if(!$this->setModified('meta_keywords', $meta_keywords)->isModified()) {
             return $this;
         }
-		$this->meta_keywords = $meta_keywords;
-		return $this;
+        $this->meta_keywords = $meta_keywords;
+        return $this;
     }
 
     /**
@@ -261,8 +261,8 @@ class BlogPostLocalization extends CoreEntity
         if(!$this->setModified('summary', $summary)->isModified()) {
             return $this;
         }
-		$this->summary = $summary;
-		return $this;
+        $this->summary = $summary;
+        return $this;
     }
 
     /**
@@ -300,8 +300,8 @@ class BlogPostLocalization extends CoreEntity
         if(!$this->setModified('title', $title)->isModified()) {
             return $this;
         }
-		$this->title = $title;
-		return $this;
+        $this->title = $title;
+        return $this;
     }
 
     /**
@@ -339,8 +339,8 @@ class BlogPostLocalization extends CoreEntity
         if(!$this->setModified('url_key', $url_key)->isModified()) {
             return $this;
         }
-		$this->url_key = $url_key;
-		return $this;
+        $this->url_key = $url_key;
+        return $this;
     }
 
     /**
@@ -397,40 +397,40 @@ class BlogPostLocalization extends CoreEntity
         return $this->content;
     }
 
-	/**
-	 * @name        getMetaTitle ()
-	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.1
-	 * @version     1.0.1
-	 *
-	 * @return      mixed
-	 */
-	public function getMetaTitle() {
-		return $this->meta_title;
-	}
+    /**
+     * @name        getMetaTitle ()
+     *
+     * @author      Can Berkol
+     *
+     * @since       1.0.1
+     * @version     1.0.1
+     *
+     * @return      mixed
+     */
+    public function getMetaTitle() {
+        return $this->meta_title;
+    }
 
-	/**
-	 * @name        setMetaTitle ()
-	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.1
-	 * @version     1.0.1
-	 *
-	 * @param       mixed $meta_title
-	 *
-	 * @return      $this
-	 */
-	public function setMetaTitle($meta_title) {
-		if (!$this->setModified('meta_title', $meta_title)->isModified()) {
-			return $this;
-		}
-		$this->meta_title = $meta_title;
+    /**
+     * @name        setMetaTitle ()
+     *
+     * @author      Can Berkol
+     *
+     * @since       1.0.1
+     * @version     1.0.1
+     *
+     * @param       mixed $meta_title
+     *
+     * @return      $this
+     */
+    public function setMetaTitle($meta_title) {
+        if (!$this->setModified('meta_title', $meta_title)->isModified()) {
+            return $this;
+        }
+        $this->meta_title = $meta_title;
 
-		return $this;
-	}
+        return $this;
+    }
 
 
 }
