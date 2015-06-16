@@ -110,7 +110,7 @@ class BlogPost extends CoreLocalizableEntity
 	public $moderations;
 
     /**
-     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostLocalization", mappedBy="blog_post", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostLocalization", mappedBy="blog_post")
      */
     protected $localizations;
 
@@ -126,7 +126,7 @@ class BlogPost extends CoreLocalizableEntity
 
     /**
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\FileManagementBundle\Entity\File")
-     * @ORM\JoinColumn(name="preview_image", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="preview_image", referencedColumnName="id", onDelete="CASCADE")
      */
     private $preview_image;
 

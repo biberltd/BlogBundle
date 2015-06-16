@@ -81,6 +81,11 @@ class BlogPostRevision extends CoreEntity{
     private $revision_number;
 
     /**
+     * @ORM\Column(type="string", length=1, nullable=true, options={"default":"w"})
+     */
+    private $status;
+
+    /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language")
      * @ORM\JoinColumn(name="language", referencedColumnName="id", nullable=false, onDelete="CASCADE")
@@ -444,10 +449,50 @@ class BlogPostRevision extends CoreEntity{
 		return $this;
 	}
 
+	/**
+	 * @name        getStatus ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.2
+	 * @version     1.0.2
+	 *
+	 * @return      mixed
+	 */
+	public function getStatus() {
+		return $this->status;
+	}
+
+	/**
+	 * @name        setStatus ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.2
+	 * @version     1.0.2
+	 *
+	 * @param       mixed $status
+	 *
+	 * @return      $this
+	 */
+	public function setStatus($status) {
+		if (!$this->setModified('status', $status)->isModified()) {
+			return $this;
+		}
+		$this->status = $status;
+
+		return $this;
+	}
 
 }
 /**
  * Change Log:
+ * **************************************
+ * v1.0.2  					   16.06.2015
+ * Can Berkol
+ * **************************************
+ * FR :: status property added.
+ *
  * **************************************
  * v1.0.1  					   14.06.2015
  * Can Berkol

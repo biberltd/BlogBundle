@@ -78,7 +78,7 @@
       <field name="blog" description="Blog that post is written for." type="integer" size="10" required="true" uuid="887a1547-80dc-447f-9146-3780e7447e33"/>
       <field name="site" description="Site that blog post belongs to." type="integer" size="10" uuid="2865ba9c-7206-495d-adb8-25bd9da5bb5f"/>
       <field name="type" description="a:article;i:image;g:gallery;v:video;d:document;" type="string" size="1" default="a" required="true" uuid="29ae9e85-3ca1-487d-9c96-4ee8be075c55"/>
-      <field name="preview_image" description="Associated file for preview image." type="integer" size="15" required="true" uuid="047df1ba-7af9-4afe-b342-57ef89703b8a"/>
+      <field name="preview_image" description="Associated file for preview image." type="integer" size="15" uuid="047df1ba-7af9-4afe-b342-57ef89703b8a"/>
       <field name="status" description="o:open,c:closed,p:published,m:modetation;u:unpublished" type="string" size="1" default="o" required="true" uuid="eefbd9c5-4f15-43ae-b109-a80f52193c7d"/>
       <field name="date_added" description="Date when the blog post is added." type="datetime" required="true" uuid="e8450f66-5163-48b6-bbc6-d796a127a3eb"/>
       <field name="date_approved" description="Date when the blog post  is approved" type="datetime" uuid="029f174c-d24a-46f5-ab3f-0d3609ee9015"/>
@@ -121,7 +121,7 @@
         <attribute name="export-file-name">BlogPost.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" to="\BiberLtd\Bundle\FileManagementBundle\Entity\File" caption="idxFPrevieImageOfBlogPost" inverse-alias="preview_image" many-owner="true" many-inverse="false" parent-required="true" uuid="ae7f15da-67f8-4011-86f2-3f040542cf19">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" to="\BiberLtd\Bundle\FileManagementBundle\Entity\File" caption="idxFPrevieImageOfBlogPost" inverse-alias="preview_image" many-owner="true" many-inverse="false" uuid="ae7f15da-67f8-4011-86f2-3f040542cf19">
       <association-field from="preview_image" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -204,6 +204,7 @@
       <field name="revision_number" description="Revision number." type="integer" size="10" required="true" uuid="98db0b28-ad4a-4c45-91c7-1a456c6db5b4"/>
       <field name="language" description="Language of revision." type="integer" size="5" required="true" primary="true" uuid="78c85179-19bb-4f86-9ec8-6499307ea896"/>
       <field name="post" description="Post in revision." type="integer" size="10" required="true" primary="true" uuid="9a7c46e5-f45a-4ce5-a67b-0901bd6738e7"/>
+      <field name="status" description="a:approved,n:not approved,p:published,w:waiting for approval" type="string" size="1" default="w" uuid="eb2cd9d8-3f0f-4acc-8828-462a1d5465bd"/>
       <index name="idxUBlogPostRevision" unique="true">
         <index-field name="language"/>
         <index-field name="post"/>
