@@ -1,12 +1,13 @@
 <?php
 /**
  * @name        BlogPostModerationReply
- * @package		BiberLtd\Bundle\CoreBundle\BlogBundle
+ * @package		BiberLtd\Core\BlogBundle
  *
+ * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.0
- * @date        13.09.2013
+ * @version     1.0.1
+ * @date        26.04.2015
  *
  * @copyright   Biber Ltd. (http://www.biberltd.com)
  * @license     GPL v3.0
@@ -23,8 +24,8 @@ use BiberLtd\Bundle\CoreBundle\CoreEntity;
  * @ORM\Table(
  *     name="blog_post_moderation_reply",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
- *     indexes={@ORM\Index(name="idx_n_blog_post_moderation_reply_date_replied", columns={"date_replied"})},
- *     uniqueConstraints={@ORM\UniqueConstraint(name="idx_u_blog_post_moderation_reply_id", columns={"id"})}
+ *     indexes={@ORM\Index(name="idxNBlogPostModerationDateReplied", columns={"date_replied"})},
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="idxUBlogPostModerationReplyId", columns={"id"})}
  * )
  */
 class BlogPostModerationReply extends CoreEntity
@@ -47,27 +48,24 @@ class BlogPostModerationReply extends CoreEntity
     private $comment;
 
     /** 
-     * @ORM\Column(type="string", length=1, nullable=false)
+     * @ORM\Column(type="string", length=1, nullable=false, options={"default":"a"})
      */
     private $sent_from;
 
     /** 
-     * @ORM\Column(type="string", length=1, nullable=false)
+     * @ORM\Column(type="string", length=1, nullable=false, options={"default":"n"})
      */
     private $is_read;
 
-    /** 
-     * @ORM\ManyToOne(
-     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostModeration",
-     *     inversedBy="blog_post_moderation_replies"
-     * )
+    /**
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostModeration", inversedBy="replies")
      * @ORM\JoinColumn(name="moderation", referencedColumnName="id", nullable=false)
      */
-    private $blog_post_moderation;
+    private $moderation;
 
     /** 
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MemberManagementBundle\Entity\Member")
-     * @ORM\JoinColumn(name="author", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="author", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $member;
     /******************************************************************
@@ -88,49 +86,44 @@ class BlogPostModerationReply extends CoreEntity
     }
 
     /**
-     * @name                  setBlogPostModeration ()
-     *                                              Sets the blog_post_moderation property.
-     *                                              Updates the data only if stored value and value to be set are different.
+     * @name            setModeration()
      *
      * @author          Can Berkol
      *
-     * @since           1.0.0
-     * @version         1.0.0
+     * @since           1.0.1
+     * @version         1.0.1
      *
      * @use             $this->setModified()
      *
-     * @param           mixed $blog_post_moderation
+     * @param           mixed $moderation
      *
      * @return          object                $this
      */
-    public function setBlogPostModeration($blog_post_moderation) {
-        if(!$this->setModified('blog_post_moderation', $blog_post_moderation)->isModified()) {
+    public function setModeration($moderation) {
+        if(!$this->setModified('moderation', $moderation)->isModified()) {
             return $this;
         }
-		$this->blog_post_moderation = $blog_post_moderation;
+		$this->moderation = $moderation;
 		return $this;
     }
 
     /**
-     * @name            getBlogPostModeration ()
-     *                                        Returns the value of blog_post_moderation property.
+     * @name            getModeration()
      *
      * @author          Can Berkol
      *
-     * @since           1.0.0
-     * @version         1.0.0
+     * @since           1.0.1
+     * @version         1.0.1
      *
-     * @return          mixed           $this->blog_post_moderation
+     * @return          mixed           $this->moderation
      */
-    public function getBlogPostModeration() {
-        return $this->blog_post_moderation;
+    public function getModeration() {
+        return $this->moderation;
     }
 
     /**
-     * @name                  setComment ()
-     *                                   Sets the comment property.
-     *                                   Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setComment()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -151,9 +144,8 @@ class BlogPostModerationReply extends CoreEntity
     }
 
     /**
-     * @name            getComment ()
-     *                             Returns the value of comment property.
-     *
+     * @name            getComment()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -166,10 +158,8 @@ class BlogPostModerationReply extends CoreEntity
     }
 
     /**
-     * @name                  setDateReplied ()
-     *                                       Sets the date_replied property.
-     *                                       Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setDateReplied()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -190,9 +180,8 @@ class BlogPostModerationReply extends CoreEntity
     }
 
     /**
-     * @name            getDateReplied ()
-     *                                 Returns the value of date_replied property.
-     *
+     * @name            getDateReplied()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -205,10 +194,8 @@ class BlogPostModerationReply extends CoreEntity
     }
 
     /**
-     * @name                  set İsRead()
-     *                            Sets the is_read property.
-     *                            Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setIsRead()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -229,9 +216,8 @@ class BlogPostModerationReply extends CoreEntity
     }
 
     /**
-     * @name            get İsRead()
-     *                      Returns the value of is_read property.
-     *
+     * @name            getIsRead()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -244,10 +230,8 @@ class BlogPostModerationReply extends CoreEntity
     }
 
     /**
-     * @name                  setMember ()
-     *                                  Sets the member property.
-     *                                  Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setMember()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -268,9 +252,8 @@ class BlogPostModerationReply extends CoreEntity
     }
 
     /**
-     * @name            getMember ()
-     *                            Returns the value of member property.
-     *
+     * @name            getMember()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -283,10 +266,8 @@ class BlogPostModerationReply extends CoreEntity
     }
 
     /**
-     * @name                  setSentFrom ()
-     *                                    Sets the sent_from property.
-     *                                    Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setSentFrom()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -307,9 +288,8 @@ class BlogPostModerationReply extends CoreEntity
     }
 
     /**
-     * @name            getSentFrom ()
-     *                              Returns the value of sent_from property.
-     *
+     * @name            getSentFrom()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -323,6 +303,13 @@ class BlogPostModerationReply extends CoreEntity
 }
 /**
  * Change Log:
+ * **************************************
+ * v1.0.1  					   26.04.2015
+ * TW #3568845
+ * Can Berkol
+ * **************************************
+ * Major changes!!
+ *
  * **************************************
  * v1.0.0                      Murat Ünal
  * 13.09.2013

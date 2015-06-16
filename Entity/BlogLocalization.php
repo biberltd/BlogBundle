@@ -1,7 +1,7 @@
 <?php
 /**
  * @name        BlogLocalization
- * @package		BiberLtd\Bundle\CoreBundle\BlogBundle
+ * @package		BiberLtd\Core\BlogBundle
  *
  * @author		Murat Ünal
  *
@@ -23,8 +23,8 @@ use BiberLtd\Bundle\CoreBundle\CoreEntity;
  * @ORM\Table(
  *     name="blog_localization",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
- *     indexes={@ORM\Index(name="idx_u_blog_localization_url_key", columns={"language","url_key"})},
- *     uniqueConstraints={@ORM\UniqueConstraint(name="idx_u_blog_localization", columns={"blog","language"})}
+ *     indexes={@ORM\Index(name="idxUBlogUrlKey", columns={"language","url_key"})},
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="idxUBlogLocalization", columns={"blog","language"})}
  * )
  */
 class BlogLocalization extends CoreEntity
@@ -340,10 +340,6 @@ class BlogLocalization extends CoreEntity
     public function getUrlKey() {
         return $this->url_key;
     }
-    /******************************************************************
-     * PUBLIC SET AND GET FUNCTIONS                                   *
-     ******************************************************************/
-
 }
 /**
  * Change Log:

@@ -1,7 +1,7 @@
 <?php
 /**
  * @name        CategoriesOfBlogPost
- * @package		BiberLtd\Bundle\CoreBundle\BlogBundle
+ * @package		BiberLtd\Core\BlogBundle
  *
  * @author		Murat Ünal
  *
@@ -23,8 +23,8 @@ use BiberLtd\Bundle\CoreBundle\CoreEntity;
  * @ORM\Table(
  *     name="categories_of_blog_post",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
- *     indexes={@ORM\Index(name="idx_n_Categories_of_blog_post_date_added", columns={"date_added"})},
- *     uniqueConstraints={@ORM\UniqueConstraint(name="idx_u_categories_of_blog_post", columns={"post","category"})}
+ *     indexes={@ORM\Index(name="idxNCategoriesOfBlogPostDateAdded", columns={"date_added"})},
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="idxUCategoriesOfBlogPost", columns={"post","category"})}
  * )
  */
 class CategoriesOfBlogPost extends CoreEntity
@@ -35,7 +35,7 @@ class CategoriesOfBlogPost extends CoreEntity
     public $date_added;
 
     /**
-     * @ORM\Column(type="string", length=1, nullable=false)
+     * @ORM\Column(type="string", length=1, nullable=false, options={"default":"y"})
      */
     private $is_primary;
 
@@ -66,7 +66,7 @@ class CategoriesOfBlogPost extends CoreEntity
      *
      * @use             $this->setModified()
      *
-     * @param           mixed $blog_post_categories
+     * @param           mixed $category
      *
      * @return          object                $this
      */
@@ -105,7 +105,7 @@ class CategoriesOfBlogPost extends CoreEntity
      *
      * @use             $this->setModified()
      *
-     * @param           mixed $blog_posts
+     * @param           mixed $post
      *
      * @return          object                $this
      */

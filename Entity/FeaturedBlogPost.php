@@ -1,12 +1,13 @@
 <?php
 /**
  * @name        FeaturedBlogPost
- * @package		BiberLtd\Bundle\CoreBundle\BlogBundle
+ * @package		BiberLtd\Core\BlogBundle
  *
+ * @author		Can Berkol
  * @author		Murat Ünal
  *
  * @version     1.0.1
- * @date        10.10.2013
+ * @date        26.04.2015
  *
  * @copyright   Biber Ltd. (http://www.biberltd.com)
  * @license     GPL v3.0
@@ -24,11 +25,13 @@ use BiberLtd\Bundle\CoreBundle\CoreEntity;
  *     name="featured_blog_post",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
  *     indexes={
- *         @ORM\Index(name="idx_n_featured_blog_post_date_added", columns={"date_added"}),
- *         @ORM\Index(name="idx_n_featured_blog_post_date_published", columns={"date_published"}),
- *         @ORM\Index(name="idx_n_featured_blog_post_unpublished", columns={"date_unpublished"})
+ *         @ORM\Index(name="idxNFeaturedBlogPostDateAdded", columns={"date_added"}),
+ *         @ORM\Index(name="idxNFeaturedBlogPostDatePublished", columns={"date_published"}),
+ *         @ORM\Index(name="idxNFeaturedBlogPostDateUnpublished", columns={"date_unpublished"}),
+ *         @ORM\Index(name="idxNFeaturedBlogPostDateUpdated", columns={"date_updated"}),
+ *         @ORM\Index(name="idxNFeaturedBlogPostDateRemoved", columns={"date_removed"})
  *     },
- *     uniqueConstraints={@ORM\UniqueConstraint(name="idx_u_featured_blog_post_id", columns={"id"})}
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="idxUFeaturedBlogPostId", columns={"id"})}
  * )
  */
 class FeaturedBlogPost extends CoreEntity
@@ -56,26 +59,25 @@ class FeaturedBlogPost extends CoreEntity
     private $date_unpublished;
 
     /** 
-     * @ORM\Column(type="integer", length=10, nullable=false)
+     * @ORM\Column(type="integer", length=10, nullable=false, options={"default":1})
      */
     private $sort_order;
 
-    /** 
-     * @ORM\OneToMany(
-     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPostLocalization",
-     *     mappedBy="featured_blog_post"
-     * )
+    /**
+     * @ORM\Column(type="datetime", nullable=false)
      */
-    protected $localizations;
+    public $date_updated;
 
-    /** 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+	public $date_removed;
+
+    /**
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost")
      * @ORM\JoinColumn(name="post", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
-    private $blog_post;
-    /******************************************************************
-     * PUBLIC SET AND GET FUNCTIONS                                   *
-     ******************************************************************/
+    private $post;
 
     /**
      * @name            getId()
@@ -92,49 +94,44 @@ class FeaturedBlogPost extends CoreEntity
     }
 
     /**
-     * @name                  setBlogPost ()
-     *                                    Sets the blog_post property.
-     *                                    Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setPost()
+	 *
      * @author          Can Berkol
      *
-     * @since           1.0.0
-     * @version         1.0.0
+     * @since           1.0.1
+     * @version         1.0.1
      *
      * @use             $this->setModified()
      *
-     * @param           mixed $blog_post
+     * @param           mixed 		$blog_post
      *
      * @return          object                $this
      */
-    public function setBlogPost($blog_post) {
-        if(!$this->setModified('blog_post', $blog_post)->isModified()) {
+    public function setPost($blog_post) {
+        if(!$this->setModified('post', $blog_post)->isModified()) {
             return $this;
         }
-		$this->blog_post = $blog_post;
+		$this->post = $blog_post;
 		return $this;
     }
 
     /**
-     * @name            getBlogPost ()
-     *                              Returns the value of blog_post property.
-     *
+     * @name            getPost()
+	 *
      * @author          Can Berkol
      *
-     * @since           1.0.0
-     * @version         1.0.0
+     * @since           1.0.1
+     * @version         1.0.1
      *
-     * @return          mixed           $this->blog_post
+     * @return          mixed           $this->post
      */
-    public function getBlogPost() {
-        return $this->blog_post;
+    public function getPost() {
+        return $this->post;
     }
 
     /**
-     * @name                  setDatePublished ()
-     *                                         Sets the date_published property.
-     *                                         Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setDatePublished ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -156,8 +153,7 @@ class FeaturedBlogPost extends CoreEntity
 
     /**
      * @name            getDatePublished ()
-     *                                   Returns the value of date_published property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -170,10 +166,8 @@ class FeaturedBlogPost extends CoreEntity
     }
 
     /**
-     * @name                  setDateUnpublished ()
-     *                                           Sets the date_unpublished property.
-     *                                           Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setDateUnpublished ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -195,8 +189,7 @@ class FeaturedBlogPost extends CoreEntity
 
     /**
      * @name            getDateUnpublished ()
-     *                                     Returns the value of date_unpublished property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -209,10 +202,8 @@ class FeaturedBlogPost extends CoreEntity
     }
 
     /**
-     * @name                  setSortOrder ()
-     *                                     Sets the sort_order property.
-     *                                     Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setSortOrder ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -234,8 +225,7 @@ class FeaturedBlogPost extends CoreEntity
 
     /**
      * @name            getSortOrder ()
-     *                               Returns the value of sort_order property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -249,6 +239,13 @@ class FeaturedBlogPost extends CoreEntity
 }
 /**
  * Change Log:
+ * **************************************
+ * v1.0.1  					   26.04.2015
+ * TW #3568845
+ * Can Berkol
+ * **************************************
+ * Major changes!!
+ *
  * **************************************
  * v1.0.1                      Murat Ünal
  * 10.10.2013

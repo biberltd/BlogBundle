@@ -1,7 +1,7 @@
 <?php
 /**
  * @name        BlogPostCommentAct,on
- * @package		BiberLtd\Bundle\CoreBundle\BlogBundle
+ * @package		BiberLtd\Core\BlogBundle
  *
  * @author		Murat Ünal
  *
@@ -23,10 +23,10 @@ use BiberLtd\Bundle\CoreBundle\CoreEntity;
  * @ORM\Table(
  *     name="blog_post_comment_action",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
- *     indexes={@ORM\Index(name="idx_n_blog_post_comment_action_date_added", columns={"date_added"})},
+ *     indexes={@ORM\Index(name="idxNBlogPostCommentActionDateAdded", columns={"date_added"})},
  *     uniqueConstraints={
- *         @ORM\UniqueConstraint(name="idx_u_blog_post_comment_action_id", columns={"id"}),
- *         @ORM\UniqueConstraint(name="idx_u_blog_post_comment_member", columns={"comment","member","post"})
+ *         @ORM\UniqueConstraint(name="idxUBlogPostCommentActionId", columns={"id"}),
+ *         @ORM\UniqueConstraint(name="idxUBlogPostCommentAction", columns={"comment","member","post"})
  *     }
  * )
  */
@@ -40,7 +40,7 @@ class BlogPostCommentAction extends CoreEntity
     private $id;
 
     /** 
-     * @ORM\Column(type="string", length=1, nullable=false)
+     * @ORM\Column(type="string", length=1, nullable=false, options={"default":"l"})
      */
     private $action;
 

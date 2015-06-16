@@ -1,12 +1,13 @@
 <?php
 /**
  * @name        BlogPostAction
- * @package		BiberLtd\Bundle\CoreBundle\BlogBundle
+ * @package		BiberLtd\Core\BlogBundle
  *
+ * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.0
- * @date        13.09.2013
+ * @version     1.0.1
+ * @date        26.04.2015
  *
  * @copyright   Biber Ltd. (http://www.biberltd.com)
  * @license     GPL v3.0
@@ -24,8 +25,8 @@ use BiberLtd\Bundle\CoreBundle\CoreEntity;
  *     name="blog_post_action",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
  *     indexes={
- *         @ORM\Index(name="idx_u_blog_post_action_id", columns={"id"}),
- *         @ORM\Index(name="idx_n_blog_post_action_date_added", columns={"date_added"})
+ *         @ORM\Index(name="idxUBlogPostActionID", columns={"id"}),
+ *         @ORM\Index(name="idxNBlogPostActionDateAdded", columns={"date_added"})
  *     }
  * )
  */
@@ -39,7 +40,7 @@ class BlogPostAction extends CoreEntity
     private $id;
 
     /** 
-     * @ORM\Column(type="string", length=1, nullable=false)
+     * @ORM\Column(type="string", length=1, nullable=false, options={"default":"v"})
      */
     private $action;
 
@@ -48,11 +49,11 @@ class BlogPostAction extends CoreEntity
      */
     public $date_added;
 
-    /** 
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost", inversedBy="blog_post_actions")
+    /**
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost", inversedBy="actions")
      * @ORM\JoinColumn(name="post", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
-    private $blog_post;
+    private $post;
 
     /** 
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MemberManagementBundle\Entity\Member")
@@ -78,10 +79,8 @@ class BlogPostAction extends CoreEntity
     }
 
     /**
-     * @name                  setAction ()
-     *                                  Sets the action property.
-     *                                  Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setAction ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -103,8 +102,7 @@ class BlogPostAction extends CoreEntity
 
     /**
      * @name            getAction ()
-     *                            Returns the value of action property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -117,14 +115,12 @@ class BlogPostAction extends CoreEntity
     }
 
     /**
-     * @name                  setBlogPost ()
-     *                                    Sets the blog_post property.
-     *                                    Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setPost ()
+	 *
      * @author          Can Berkol
      *
-     * @since           1.0.0
-     * @version         1.0.0
+     * @since           1.0.1
+     * @version         1.0.1
      *
      * @use             $this->setModified()
      *
@@ -132,33 +128,32 @@ class BlogPostAction extends CoreEntity
      *
      * @return          object                $this
      */
-    public function setBlogPost($blog_post) {
-        if(!$this->setModified('blog_post', $blog_post)->isModified()) {
+    public function setPost($blog_post) {
+        if(!$this->setModified('post', $blog_post)->isModified()) {
             return $this;
         }
-		$this->blog_post = $blog_post;
+		$this->post = $blog_post;
 		return $this;
     }
 
     /**
-     * @name            getBlogPost ()
-     *                              Returns the value of blog_post property.
-     *
+     * @name            getPost ()
+	 *
      * @author          Can Berkol
      *
-     * @since           1.0.0
-     * @version         1.0.0
+     * @since           1.0.1
+     * @version         1.0.1
      *
      * @return          mixed           $this->blog_post
      */
-    public function getBlogPost() {
-        return $this->blog_post;
+    public function getPost() {
+        return $this->post;
     }
 
     /**
-     * @name                  setMember ()
-     *                                  Sets the member property.
-     *                                  Updates the data only if stored value and value to be set are different.
+     * @name            setMember ()
+     *                  Sets the member property.
+     *                  Updates the data only if stored value and value to be set are different.
      *
      * @author          Can Berkol
      *
@@ -197,6 +192,16 @@ class BlogPostAction extends CoreEntity
 }
 /**
  * Change Log:
+ * **************************************
+ * v1.0.1                      26.04.2015
+ * TW #3568845
+ * Can Berkol
+ * **************************************
+ * A getPost()
+ * A setPost()
+ * D getBlogPost()
+ * D setBlogPost()
+ *
  * **************************************
  * v1.0.0                      Murat Ünal
  * 13.09.2013

@@ -15,12 +15,12 @@
             "email": "said.imamoglu@biberltd.com"
         }
     ],
-    "require": {
-        "biberltd/core-bundle" : "self.version",
-        "biberltd/file-management-bundle" : "self.version",
-        "biberltd/member-management-bundle" : "self.version",
-        "biberltd/multilanguage-support-bundle" : "self.version",
-        "biberltd/site-management-bundle" : "self.version"
+    "require":
+        "biberltd/core-bundle" : "~3.3",
+        "biberltd/file-management-bundle" : "~3.3",
+        "biberltd/member-management-bundle" : "~3.3",
+        "biberltd/multilanguage-support-bundle" : "~3.3",
+        "biberltd/site-management-bundle" : "~3.3"
     },
     "autoload": {
         "psr-0": { "BiberLtd\\Bundle\\BlogBundle": "" }

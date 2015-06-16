@@ -1,12 +1,13 @@
 <?php
 /**
- * @name        BlogPostPostlocalization
- * @package		BiberLtd\Bundle\CoreBundle\BlogBundle
+ * @name        BlogPostPostLocalization
+ * @package		BiberLtd\Core\BlogBundle
  *
+ * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.0
- * @date        13.09.2013
+ * @version     1.0.1
+ * @date        14.06.2015
  *
  * @copyright   Biber Ltd. (http://www.biberltd.com)
  * @license     GPL v3.0
@@ -23,9 +24,9 @@ use BiberLtd\Bundle\CoreBundle\CoreEntity;
  * @ORM\Table(
  *     name="blog_post_localization",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
- *     indexes={
- *         @ORM\Index(name="idx_u_blog_post_localization", columns={"post","language"}),
- *         @ORM\Index(name="idx_u_blog_post_localization_url_key", columns={"language","url_key"})
+ *     uniqueConstraints={
+ *         @ORM\UniqueConstraint(name="idxUBlogPostLocalization", columns={"post","language"}),
+ *         @ORM\UniqueConstraint(name="idxUBlogPostUrlKey", columns={"language","url_key"})
  *     }
  * )
  */
@@ -60,6 +61,11 @@ class BlogPostLocalization extends CoreEntity
      * @ORM\Column(type="text", nullable=true)
      */
     private $content;
+
+    /**
+     * @ORM\Column(type="string", length=155, nullable=true)
+     */
+    private $meta_title;
 
     /** 
      * @ORM\Id
@@ -391,13 +397,52 @@ class BlogPostLocalization extends CoreEntity
         return $this->content;
     }
 
-    /******************************************************************
-     * PUBLIC SET AND GET FUNCTIONS                                   *
-     ******************************************************************/
+	/**
+	 * @name        getMetaTitle ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.1
+	 * @version     1.0.1
+	 *
+	 * @return      mixed
+	 */
+	public function getMetaTitle() {
+		return $this->meta_title;
+	}
+
+	/**
+	 * @name        setMetaTitle ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.1
+	 * @version     1.0.1
+	 *
+	 * @param       mixed $meta_title
+	 *
+	 * @return      $this
+	 */
+	public function setMetaTitle($meta_title) {
+		if (!$this->setModified('meta_title', $meta_title)->isModified()) {
+			return $this;
+		}
+		$this->meta_title = $meta_title;
+
+		return $this;
+	}
+
 
 }
 /**
  * Change Log:
+ * **************************************
+ * v1.0.1                      14.06.2015
+ * Can Berkol
+ * **************************************
+ * FR :: meta_title property added.
+ * FR :: get/setMetaTitle() implemented
+ *
  * **************************************
  * v1.0.0                      Murat Ünal
  * 13.09.2013

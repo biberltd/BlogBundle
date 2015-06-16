@@ -1,12 +1,13 @@
 <?php
 /**
  * @name        BlogPostCategory
- * @package		BiberLtd\Bundle\CoreBundle\BlogBundle
+ * @package		BiberLtd\Core\BlogBundle
  *
+ * @author		Can Berkol
  * @author		Murat Ünal
  *
  * @version     1.0.1
- * @date        10.10.2013
+ * @date        26.04.2014
  *
  * @copyright   Biber Ltd. (http://www.biberltd.com)
  * @license     GPL v3.0
@@ -23,8 +24,12 @@ use Doctrine\ORM\Mapping AS ORM;
  * @ORM\Table(
  *     name="blog_post_category",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
- *     indexes={@ORM\Index(name="idx_n_blog_post_category_date_added", columns={"date_added"})},
- *     uniqueConstraints={@ORM\UniqueConstraint(name="idx_u_blog_post_category_id", columns={"id"})}
+ *     indexes={
+ *         @ORM\Index(name="idxNBlogPostCategoryDateAdded", columns={"date_added"}),
+ *         @ORM\Index(name="idxNBlogPostCategoryDateUpdated", columns={"date_updated"}),
+ *         @ORM\Index(name="idxNBlogPostCategoryDateRemoved", columns={"date_removed"})
+ *     },
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="idxUBlogPostCategoryId", columns={"id"})}
  * )
  */
 class BlogPostCategory extends CoreLocalizableEntity
@@ -41,13 +46,20 @@ class BlogPostCategory extends CoreLocalizableEntity
      */
     public $date_added;
 
-    /** 
-     * @ORM\OneToMany(
-     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogModerator",
-     *     mappedBy="blog_post_category"
-     * )
+    /**
+     * @ORM\Column(type="datetime", nullable=false)
      */
-    private $blog_moderators;
+    public $date_updated;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+	public $date_removed;
+
+    /**
+     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogModerator", mappedBy="category")
+     */
+    private $moderators;
 
     /** 
      * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory", mappedBy="parents")
@@ -57,7 +69,7 @@ class BlogPostCategory extends CoreLocalizableEntity
     /** 
      * @ORM\OneToMany(
      *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategoryLocalization",
-     *     mappedBy="post_category"
+     *     mappedBy="category"
      * )
      */
     protected $localizations;
@@ -69,7 +81,7 @@ class BlogPostCategory extends CoreLocalizableEntity
     private $site;
 
     /** 
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\Blog", inversedBy="blog_post_categories")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\Blog")
      * @ORM\JoinColumn(name="blog", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $blog;
@@ -98,10 +110,8 @@ class BlogPostCategory extends CoreLocalizableEntity
     }
 
     /**
-     * @name                  setBlog ()
-     *                                Sets the blog property.
-     *                                Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setBlog ()
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -123,8 +133,7 @@ class BlogPostCategory extends CoreLocalizableEntity
 
     /**
      * @name            getBlog ()
-     *                          Returns the value of blog property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -137,14 +146,12 @@ class BlogPostCategory extends CoreLocalizableEntity
     }
 
     /**
-     * @name                  setBlogModerators ()
-     *                                          Sets the blog_moderators property.
-     *                                          Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setModerators()
+	 *
      * @author          Can Berkol
      *
-     * @since           1.0.0
-     * @version         1.0.0
+     * @since           1.0.1
+     * @version         1.0.1
      *
      * @use             $this->setModified()
      *
@@ -152,33 +159,31 @@ class BlogPostCategory extends CoreLocalizableEntity
      *
      * @return          object                $this
      */
-    public function setBlogModerators($blog_moderators) {
-        if(!$this->setModified('blog_moderators', $blog_moderators)->isModified()) {
+    public function setModerators($blog_moderators) {
+        if(!$this->setModified('moderators', $blog_moderators)->isModified()) {
             return $this;
         }
-		$this->blog_moderators = $blog_moderators;
+		$this->moderators = $blog_moderators;
 		return $this;
     }
 
     /**
-     * @name            getBlogModerators ()
-     *                                    Returns the value of blog_moderators property.
-     *
+     * @name            getModerators()
      * @author          Can Berkol
      *
-     * @since           1.0.0
-     * @version         1.0.0
+     * @since           1.0.1
+     * @version         1.0.1
      *
      * @return          mixed           $this->blog_moderators
      */
-    public function getBlogModerators() {
-        return $this->blog_moderators;
+    public function getModerators() {
+        return $this->moderators;
     }
 
     /**
-     * @name                  setChildren ()
-     *                                    Sets the children property.
-     *                                    Updates the data only if stored value and value to be set are different.
+     * @name            setChildren ()
+     *                  Sets the children property.
+     *                  Updates the data only if stored value and value to be set are different.
      *
      * @author          Can Berkol
      *
@@ -201,7 +206,7 @@ class BlogPostCategory extends CoreLocalizableEntity
 
     /**
      * @name            getChildren ()
-     *                              Returns the value of children property.
+     *                  Returns the value of children property.
      *
      * @author          Can Berkol
      *
@@ -215,10 +220,7 @@ class BlogPostCategory extends CoreLocalizableEntity
     }
 
     /**
-     * @name                  setParents ()
-     *                                   Sets the parents property.
-     *                                   Updates the data only if stored value and value to be set are different.
-     *
+     * @name            setParents ()
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -240,8 +242,7 @@ class BlogPostCategory extends CoreLocalizableEntity
 
     /**
      * @name            getParents ()
-     *                             Returns the value of parents property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -254,10 +255,8 @@ class BlogPostCategory extends CoreLocalizableEntity
     }
 
     /**
-     * @name                  setSite ()
-     *                                Sets the site property.
-     *                                Updates the data only if stored value and value to be set are different.
-     *
+	 * @name            setSite ()
+	 *                          *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -279,8 +278,7 @@ class BlogPostCategory extends CoreLocalizableEntity
 
     /**
      * @name            getSite ()
-     *                          Returns the value of site property.
-     *
+	 *
      * @author          Can Berkol
      *
      * @since           1.0.0
@@ -296,7 +294,15 @@ class BlogPostCategory extends CoreLocalizableEntity
 /**
  * Change Log:
  * **************************************
- * v1.0.1                      Murat Ünal
+ * v1.0.1  					   26.04.2015
+ * TW #3568845
+ * Can Berkol
+ * **************************************
+ * A getModerators()
+ * A setModerators()
+ *
+ * **************************************
+ * v1.0.0                      Murat Ünal
  * 10.10.2013
  * **************************************
  * A getBlog()
