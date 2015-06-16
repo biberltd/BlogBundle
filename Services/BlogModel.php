@@ -629,13 +629,13 @@ class BlogModel extends CoreModel
         if(!is_null($language)){
             $mModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
             $response = $mModel->getLanguage($language);
-            if(!$response->error->exists){
+            if(!$response->error->exist){
                 $filter[] = array(
                     'glue' => 'and',
                     'condition' => array(
                         array(
                             'glue' => 'and',
-                            'condition' => array('column' => $this->entity['bl']['alias'].'.language', 'comparison' => '=', 'value' => $response->result->set->getId()),
+                            'condition' => array('column' => $this->entity['bpl']['alias'].'.language', 'comparison' => '=', 'value' => $response->result->set->getId()),
                         )
                     )
                 );
