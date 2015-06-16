@@ -6,6 +6,7 @@
  * @name            BlogBundle
  *
  * @author        	Can Berkol
+ * @author        	Said İmamoğlu
  *
  * @copyright   	Biber Ltd. (www.biberltd.com)
  *
@@ -553,13 +554,12 @@ class BlogModel extends CoreModel
                 );
             }
         }
-        $response = $this->listBlogs($filter, null, array('start' => 0, 'count' => 1));
+        $result = $this->listBlogs($filter, null, array('start' => 0, 'count' => 1));
 
-        $response->result->set = $response->result->set[0];
-        $response->stats->execution->start = $timeStamp;
-        $response->stats->execution->end = time();
-
-        return $response;
+        if(is_null($result)){
+            return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, time());
+        }
+        return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
     /**
      * @name 			getBlogPost()
@@ -600,8 +600,9 @@ class BlogModel extends CoreModel
      * @name            getBlogPostByUrlKey ()
      *
      * @since           1.0.9
-     * @version         1.0.9
+     * @version         1.1.6
      * @author          Can Berkol
+     * @author          Said İmamoğlu
      *
      * @use             $this->listBlogPosts()
      * @use             $this->createException()
@@ -966,10 +967,10 @@ class BlogModel extends CoreModel
                 $localizations = array();
                 $entity = new BundleEntity\Blog;
                 if (!property_exists($data, 'date_created')) {
-                    $data->date_created = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
+                    $data->date_added = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
                 }
                 if (!property_exists($data, 'date_updated')) {
-                    $data->date_updated = $data->date_created;
+                    $data->date_updated = $data->date_added;
                 }
                 if (!property_exists($data, 'site')) {
                     $data->site = 1;
@@ -1192,7 +1193,7 @@ class BlogModel extends CoreModel
      * @name            insertBlogPosts()
      *
      * @since           1.0.2
-     * @version         1.1.6
+     * @version         1.1.0
      * @author          Can Berkol
      *
      * @use             $this->createException()
@@ -3491,7 +3492,7 @@ class BlogModel extends CoreModel
  * v1.1.6                      16.06.2015
  * Said İmamoğlu
  * **************************************
- * CR :: inserBlogPosts() updated
+ * BF :: getBlogByUrlKey() was returning wrong reponse. Fixed
  * **************************************
  * v1.1.5                      14.06.2015
  * Can Berkol
