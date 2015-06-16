@@ -729,6 +729,11 @@ class BlogModel extends CoreModel
         }
         $response = $this->listBlogPostCategories($filter, null, array('start' => 0, 'count' => 1));
         
+        if($response->error->exist){
+            return $response;
+        }
+        
+        $response->result->set = $response->result->set[0];
         $response->stats->execution->start = $timeStamp;
         $response->stats->execution->end = time();
         
@@ -1599,7 +1604,7 @@ class BlogModel extends CoreModel
         
         $found = false;
         
-        $qStr = 'SELECT COUNT(' . $this->entity['cobp']['alias'] . ')'
+        $qStr = 'SELECT COUNT(' . $this->entity['cobp']['alias'] . '.category)'
             . ' FROM ' . $this->entity['cobp']['name'] . ' ' . $this->entity['cobp']['alias']
             . ' WHERE ' . $this->entity['cobp']['alias'] . '.post = ' . $post->getId()
             . ' AND ' . $this->entity['cobp']['alias'] . '.category = ' . $category->getId();
