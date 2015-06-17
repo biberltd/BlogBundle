@@ -728,16 +728,10 @@ class BlogModel extends CoreModel
             }
         }
         $response = $this->listBlogPostCategories($filter, null, array('start' => 0, 'count' => 1));
-        
         if($response->error->exist){
             return $response;
         }
-        
-        $response->result->set = $response->result->set[0];
-        $response->stats->execution->start = $timeStamp;
-        $response->stats->execution->end = time();
-        
-        return $response;
+        return new ModelResponse($response->result->set[0], 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
     /**
      * @name            getBlogPostRevision()
