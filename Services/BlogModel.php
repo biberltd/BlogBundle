@@ -2187,7 +2187,7 @@ class BlogModel extends CoreModel
      * @param           array 			$sortOrder
      * @param           array 			$limit
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listPostsOfBlogInCategory($blog, $category, $filter = null, $sortOrder = null, $limit = null){
         $timeStamp = time();
@@ -2207,10 +2207,11 @@ class BlogModel extends CoreModel
         $q = $this->em->createQuery($qStr);
         $result = $q->getResult();
         $postsInCat = array();
-        if (count($result) > 0) {
-            foreach ($result as $cobp) {
-                $postsInCat[] = $cobp->getPost()->getId();
-            }
+        if (count($result) < 1) {
+            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+        }
+        foreach ($result as $cobp) {
+            $postsInCat[] = $cobp->getPost()->getId();
         }
         $columnI = $this->entity['bp']['alias'] . '.id';
         $conditionI = array('column' => $columnI, 'comparison' => 'in', 'value' => $postsInCat);
@@ -2368,9 +2369,9 @@ class BlogModel extends CoreModel
      * @param           array 			$sortOrder
      * @param           array 			$limit
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPostsOfBlogInCategoryWithStatuses($blog, $category, $statuses, $sortOrder = null, $limit = null){
+    public function listPostsOfBlogInCategoryWithStatuses($blog, $category, array $statuses, $sortOrder = null, $limit = null){
         $filter[] = array(
             'glue' => 'and',
             'condition' => array(
@@ -3519,6 +3520,7 @@ class BlogModel extends CoreModel
  * BF :: getBlogByUrlKey() was returning wrong reponse. Fixed
  * BF :: getBlogPostByUrlKey() was returning wrong reponse. Fixed
  * BF :: listPostsOfBlogInCategory() had invalid filter, fixed.
+ * BF :: listPostsOfBlogInCategory() now returns ModelResponse if no posts found.
  * BF :: listPostsOfBlog() was resetting filters, fixed.
  * FR :: listPostsOfBlogInCategoryWithStatuses() added.
  *
