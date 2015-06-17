@@ -2158,7 +2158,6 @@ class BlogModel extends CoreModel
         $blog = $response->result->set;
         
         $column = $this->entity['bp']['alias'] . '.blog';
-        $filter = array();
         $filter[] = array(
             'glue' => 'and',
             'condition' => array(
@@ -2193,12 +2192,12 @@ class BlogModel extends CoreModel
     public function listPostsOfBlogInCategory($blog, $category, $filter = null, $sortOrder = null, $limit = null){
         $timeStamp = time();
         $response = $this->getBlog($blog);
-        if($this->error->exist){
+        if($response->error->exist){
             return $response;
         }
         $blog = $response->result->set;
         $response = $this->getBlogPostCategory($category);
-        if($this->error->exist){
+        if($response->error->exist){
             return $response;
         }
         $category = $response->result->set;
@@ -2207,16 +2206,14 @@ class BlogModel extends CoreModel
             . ' WHERE ' . $this->entity['cobp']['alias'] . '.category = ' . $category->getId();
         $q = $this->em->createQuery($qStr);
         $result = $q->getResult();
-        
         $postsInCat = array();
         if (count($result) > 0) {
             foreach ($result as $cobp) {
                 $postsInCat[] = $cobp->getPost()->getId();
             }
         }
-        $selectedIds = implode(',', $postsInCat);
         $columnI = $this->entity['bp']['alias'] . '.id';
-        $conditionI = array('column' => $columnI, 'comparison' => '=', 'in' => $selectedIds);
+        $conditionI = array('column' => $columnI, 'comparison' => 'in', 'value' => $postsInCat);
         $filter[] = array(
             'glue' => 'and',
             'condition' => array(
@@ -2355,6 +2352,35 @@ class BlogModel extends CoreModel
         $response->stats->execution->start = $timeStamp;
         
         return $response;
+    }
+    /**
+     * @name            listPostsOfBlogInCategoryWithStatuses()
+     *
+     * @since           1.1.6
+     * @version         1.1.6
+     * @author          Can Berkol
+     * @use             $this->getBlog()
+     * @use             $this->listPostsOfBlog()
+     *
+     * @param           mixed 			$blog
+     * @param           mixed 			$category
+     * @param           array 			$statuses
+     * @param           array 			$sortOrder
+     * @param           array 			$limit
+     *
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     */
+    public function listPostsOfBlogInCategoryWithStatuses($blog, $category, $statuses, $sortOrder = null, $limit = null){
+        $filter[] = array(
+            'glue' => 'and',
+            'condition' => array(
+                array(
+                    'glue' => 'and',
+                    'condition' => array('column' => $this->entity['bp']['alias'].'.status', 'comparison' => 'in', 'value' => $statuses),
+                )
+            )
+        );
+        return $this->listPostsOfBlogInCategory($blog, $category, $filter, $sortOrder, $limit);
     }
     /**
      * @name            listPostsOfBlogInSiteWithStatuses()
@@ -3488,10 +3514,13 @@ class BlogModel extends CoreModel
  * Change Log
  * **************************************
  * v1.1.6                      16.06.2015
- * Said İmamoğlu
+ * Said İmamoğlu, Can Berkol
  * **************************************
  * BF :: getBlogByUrlKey() was returning wrong reponse. Fixed
  * BF :: getBlogPostByUrlKey() was returning wrong reponse. Fixed
+ * BF :: listPostsOfBlogInCategory() had invalid filter, fixed.
+ * BF :: listPostsOfBlog() was resetting filters, fixed.
+ * FR :: listPostsOfBlogInCategoryWithStatuses() added.
  *
  * **************************************
  * v1.1.5                      14.06.2015
