@@ -10,8 +10,8 @@
  *
  * @copyright   	Biber Ltd. (www.biberltd.com)
  *
- * @version     	1.1.6
- * @date        	16.06.2015
+ * @version     	1.1.7
+ * @date        	18.06.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Services;
 
@@ -2673,13 +2673,13 @@ class BlogModel extends CoreModel
      * @name            removeCategoriesFromPost ()
      *
      * @since           1.0.2
-     * @version         1.0.9
+     * @version         1.1.7
      * @author          Can Berkol
      *
      * @param           array 			$categories
      * @param           mixed			$post
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function removeCategoriesFromPost($categories, $post){
         $timeStamp = time();
@@ -2698,7 +2698,7 @@ class BlogModel extends CoreModel
         }
         $in = ' IN (' . implode(',', $idsToRemove) . ')';
         $qStr = 'DELETE FROM '.$this->entity['cobp']['name'].' '.$this->entity['cobp']['alias']
-            .' WHERE '.$this->entity['cobp']['alias'].'.post '.$post->getId()
+            .' WHERE '.$this->entity['cobp']['alias'].'.post = '.$post->getId()
             .' AND '.$this->entity['cobp']['alias'].'.category '.$in;
         
         $q = $this->em->createQuery($qStr);
@@ -2718,13 +2718,13 @@ class BlogModel extends CoreModel
      * @name            removePostsFromCategory ()
      *
      * @since           1.0.2
-     * @version         1.0.9
+     * @version         1.1.7
      * @author          Can Berkol
      *
      * @param           array 			$posts
      * @param           mixed			$category
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function removePostsFromCategory($posts, $category){
         $timeStamp = time();
@@ -2743,7 +2743,7 @@ class BlogModel extends CoreModel
         }
         $in = ' IN (' . implode(',', $idsToRemove) . ')';
         $qStr = 'DELETE FROM '.$this->entity['cobp']['name'].' '.$this->entity['cobp']['alias']
-            .' WHERE '.$this->entity['cobp']['alias'].'.category '.$category->getId()
+            .' WHERE '.$this->entity['cobp']['alias'].'.category = '.$category->getId()
             .' AND '.$this->entity['cobp']['alias'].'.post '.$in;
         
         $q = $this->em->createQuery($qStr);
@@ -3513,6 +3513,12 @@ class BlogModel extends CoreModel
 
 /**
  * Change Log
+ * **************************************
+ * v1.1.7                      08.06.2015
+ * Can Berkol
+ * **************************************
+ * BF :: remove.. methods had invalid DQL syntax. Fixed.
+ *
  * **************************************
  * v1.1.6                      16.06.2015
  * Said İmamoğlu, Can Berkol
