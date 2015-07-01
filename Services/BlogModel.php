@@ -10,8 +10,8 @@
  *
  * @copyright   	Biber Ltd. (www.biberltd.com)
  *
- * @version     	1.1.7
- * @date        	18.06.2015
+ * @version     	1.1.8
+ * @date        	01.07.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Services;
 
@@ -682,6 +682,56 @@ class BlogModel extends CoreModel
         }
         
         return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+    }
+    /**
+     * @name            getBlogPostByMetaTitle ()
+     *
+     * @since           1.1.8
+     * @version         1.1.8
+     * @author          Said İmamoğlu
+     *
+     * @use             $this->listBlogPosts()
+     * @use             $this->createException()
+     *
+     * @param           mixed 			$metaTitle
+     * @param			mixed			$language
+     *
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     */
+    public function getBlogPostByMetaTitle($metaTitle, $language = null){
+        $timeStamp = time();
+        if(!is_string($metaTitle)){
+            return $this->createException('InvalidParameterValueException', '$metaTitle must be a string.', 'E:S:007');
+        }
+        $filter[] = array(
+            'glue' => 'and',
+            'condition' => array(
+                array(
+                    'glue' => 'and',
+                    'condition' => array('column' => $this->entity['bpl']['alias'].'.meta_title', 'comparison' => '=', 'value' => $metaTitle),
+                )
+            )
+        );
+        if(!is_null($language)){
+            $mModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+            $response = $mModel->getLanguage($language);
+            if(!$response->error->exist){
+                $filter[] = array(
+                    'glue' => 'and',
+                    'condition' => array(
+                        array(
+                            'glue' => 'and',
+                            'condition' => array('column' => $this->entity['bpl']['alias'].'.language', 'comparison' => '=', 'value' => $response->result->set->getId()),
+                        )
+                    )
+                );
+            }
+        }
+        $response = $this->listBlogPosts($filter, null, array('start' => 0, 'count' => 1));
+        if ($response->error->exist) {
+            return $response;
+        }
+        return new ModelResponse($response->result->set[0], 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
     /**
      * @name            getBlogPostCategoryByUrlKey ()
@@ -1753,8 +1803,9 @@ class BlogModel extends CoreModel
      * @name            listBlogPosts()
      *
      * @since           1.0.1
-     * @version         1.1.4
+     * @version         1.1.8
      * @author          Can Berkol
+     * @author          Said İmamoğlu
      *
      * @use             $this->createException()
      *
@@ -1820,6 +1871,7 @@ class BlogModel extends CoreModel
         foreach($result as $entry){
             $id = $entry->getBlogPost()->getId();
             if(!isset($unique[$id])){
+                $unique[$id] = '';
                 $entities[] = $entry->getBlogPost();
             }
         }
@@ -2939,9 +2991,10 @@ class BlogModel extends CoreModel
      * @name            updateBlogPosts()
      *
      * @since           1.0.2
-     * @version         1.0.9
+     * @version         1.1.8
      *
      * @author          Can Berkol
+     * @author          Said İmamoğlu
      *
      * @use             $this->createException()
      *
@@ -3000,6 +3053,19 @@ class BlogModel extends CoreModel
                                 $localizations[] = $localization;
                             }
                             $oldEntity->setLocalizations($localizations);
+                            break;
+                        case 'blog':
+                            if ($value instanceof BundleEntity\Blog) {
+                                $oldEntity->$set($value);
+                            }else{
+                                $response = $this->getBlog($value);
+                                if (!$response->error->exist) {
+                                    $oldEntity->$set($response->result->set);
+                                } else {
+                                    return $this->createException('EntityDoesNotExist', 'The blog with the id / url_key  "' . $value . '" does not exist in database.', 'E:D:002');
+                                }
+                                unset($response);
+                            }
                             break;
                         case 'author':
                             $mModel = $this->kernel->getContainer()->get('membermanagement.model');
@@ -3513,6 +3579,13 @@ class BlogModel extends CoreModel
 
 /**
  * Change Log
+ * **************************************
+ * v1.1.8                      01.07.2015
+ * Said İmamoğlu
+ * **************************************
+ * FR :: getBlogPostByMetaTitle() method added.
+ * BF :: updateBlogPosts() does not update blog column. Fixed
+ * BF :: listBlogPosts() was listing wrong. Fixed.
  * **************************************
  * v1.1.7                      08.06.2015
  * Can Berkol
