@@ -10,8 +10,8 @@
  *
  * @copyright   	Biber Ltd. (www.biberltd.com)
  *
- * @version     	1.1.8
- * @date        	01.07.2015
+ * @version     	1.1.9
+ * @date        	06.07.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Services;
 
@@ -212,7 +212,7 @@ class BlogModel extends CoreModel
      * @param           mixed			$category
      * @param           string 			$isPrimary
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function addPostsToCategory(array $posts, $category, $isPrimary = 'n'){
         $timeStamp = time();
@@ -268,7 +268,7 @@ class BlogModel extends CoreModel
      * @use				$this->deleteBlogs()
      * @param           array 			$blog
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function deleteBlog($blog){
         return $this->deleteBlogs(array($blog));
@@ -322,7 +322,7 @@ class BlogModel extends CoreModel
      * @use				$this->deleteBlogPosts()
      * @param           array 			$post
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function deleteBlogPost($post){
         return $this->deleteBlogPosts(array($post));
@@ -338,7 +338,7 @@ class BlogModel extends CoreModel
      *
      * @param           array 			$collection
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function deleteBlogPosts($collection){
         $timeStamp = time();
@@ -2154,12 +2154,12 @@ class BlogModel extends CoreModel
      * @param           array 			$sortOrder
      * @param           array 			$limit
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listPostCategoriesOfBlog($blog, $filter = null, $sortOrder = null, $limit = null){
         $timeStamp = time();
         $response = $this->getBlog($blog);
-        if($this->error->exist){
+        if($response->error->exist){
             return $response;
         }
         $blog = $response->result->set;
@@ -3580,12 +3580,19 @@ class BlogModel extends CoreModel
 /**
  * Change Log
  * **************************************
+ * v1.1.9                      16.07.2015
+ * Can Berkol
+ * **************************************
+ * BF :: listPostCategoriesOfBlog() method fixed.
+ *
+ * **************************************
  * v1.1.8                      01.07.2015
  * Said İmamoğlu
  * **************************************
  * FR :: getBlogPostByMetaTitle() method added.
  * BF :: updateBlogPosts() does not update blog column. Fixed
  * BF :: listBlogPosts() was listing wrong. Fixed.
+ *
  * **************************************
  * v1.1.7                      08.06.2015
  * Can Berkol
