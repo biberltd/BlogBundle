@@ -1102,7 +1102,7 @@ class BlogModel extends CoreModel
      *
      * @param           array $collection Collection of entities or post data.
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function insertBlogPostLocalizations($collection){
         $timeStamp = time();
@@ -1680,7 +1680,7 @@ class BlogModel extends CoreModel
      * @param           array 			$sortOrder
      * @param           array 			$limit
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listBlogPostCategories($filter = null, $sortOrder = null, $limit = null){
         $timeStamp = time();
@@ -1732,6 +1732,7 @@ class BlogModel extends CoreModel
             $id = $entry->getCategory()->getId();
             if(!isset($unique[$id])){
                 $entities[] = $entry->getCategory();
+				$unique[$id] = '';
             }
         }
         $totalRows = count($entities);
@@ -1752,7 +1753,7 @@ class BlogModel extends CoreModel
      * @param			array			$sortOrder
      * @param			array			$limit
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listBlogPostRevisions($filter = null, $sortOrder = null, $limit = null){
         $timeStamp = time();
@@ -1813,7 +1814,7 @@ class BlogModel extends CoreModel
      * @param           array 			$sortOrder
      * @param           array 			$limit
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listBlogPosts($filter = null, $sortOrder = null, $limit = null){
         $timeStamp = time();
@@ -1895,7 +1896,7 @@ class BlogModel extends CoreModel
      * @param           array 			$sortOrder
      * @param           array 			$limit
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listBlogs($filter = null, $sortOrder = null, $limit = null){
         $timeStamp = time();
@@ -1941,10 +1942,12 @@ class BlogModel extends CoreModel
         $result = $q->getResult();
         
         $entities = array();
+        $unique = array();
         foreach($result as $entry){
             $id = $entry->getBlog()->getId();
             if(!isset($unique[$id])){
                 $entities[] = $entry->getBlog();
+                $unique[$id] = '';
             }
         }
         $totalRows = count($entities);
@@ -1970,7 +1973,7 @@ class BlogModel extends CoreModel
      * @param           array 			$sortOrder
      * @param           array 			$limit
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listCategoriesOfPost($post, $filter = null, $sortOrder = null, $limit = null){
         $timeStamp = time();
@@ -3133,7 +3136,7 @@ class BlogModel extends CoreModel
      *
      * @param           mixed 			$category
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function updateBlogPostCategory($category){
         return $this->updateBlogPostCategories(array($category));
@@ -3150,7 +3153,7 @@ class BlogModel extends CoreModel
      *
      * @param           array 				$collection
      *
-     * @return         	BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return         	\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function updateBlogPostCategories($collection){
         $timeStamp = time();
@@ -3584,6 +3587,7 @@ class BlogModel extends CoreModel
  * Can Berkol
  * **************************************
  * BF :: listPostCategoriesOfBlog() method fixed.
+ * BF :: list methods were returning duplicate values. fixed.
  *
  * **************************************
  * v1.1.8                      01.07.2015
