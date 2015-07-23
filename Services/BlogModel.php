@@ -10,8 +10,8 @@
  *
  * @copyright   	Biber Ltd. (www.biberltd.com)
  *
- * @version     	1.1.9
- * @date        	06.07.2015
+ * @version     	1.2.0
+ * @date        	23.07.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Services;
 
@@ -46,7 +46,7 @@ class BlogModel extends CoreModel
      */
     public function __construct($kernel, $dbConnection = 'default', $orm = 'doctrine')    {
         parent::__construct($kernel, $dbConnection, $orm);
-        
+
         $this->entity = array(
             'b' 		=> array('name' => 'BlogBundle:Blog', 'alias' => 'b'),
             'bl'		=> array('name' => 'BlogBundle:BlogLocalization', 'alias' => 'bl'),
@@ -60,6 +60,7 @@ class BlogModel extends CoreModel
             'bpl' 		=> array('name' => 'BlogBundle:BlogPostLocalization', 'alias' => 'bpl'),
             'bpm' 		=> array('name' => 'BlogBundle:BlogPostModeration', 'alias' => 'bpmo'),
             'bpmr' 		=> array('name' => 'BlogBundle:BlogPostModerationReply', 'alias' => 'bpmor'),
+            'bpr' 		=> array('name' => 'BlogBundle:BlogPostRevision', 'alias' => 'bpr'),
             'bpt' 		=> array('name' => 'BlogBundle:BlogPostTag', 'alias' => 'bpt'),
             'bptl' 		=> array('name' => 'BlogBundle:BlogPostTagLocalization', 'alias' => 'bptl'),
             'cobp' 		=> array('name' => 'BlogBundle:CategoriesOfBlogPost', 'alias' => 'cobp'),
@@ -70,7 +71,7 @@ class BlogModel extends CoreModel
             'tobp' 		=> array('name' => 'BlogBundle:TagsOfBlogPost', 'alias' => 'tobp'),
         );
     }
-    
+
     /**
      * @name            __destruct()
      *
@@ -85,7 +86,7 @@ class BlogModel extends CoreModel
             $this->$property = null;
         }
     }
-    
+
     /**
      * @name            addCategoriesToPost()
      *
@@ -124,7 +125,7 @@ class BlogModel extends CoreModel
                 break;
             }
             $category = $response->result->set;
-            
+
             /** Check if association exists */
             if ($this->isPostAssociatedWithCategory($post, $category, true)) {
                 break;
@@ -236,7 +237,7 @@ class BlogModel extends CoreModel
                 break;
             }
             $post = $response->result->set;
-            
+
             /** Check if association exists */
             if ($this->isPostAssociatedWithCategory($post, $category, true)) {
                 break;
@@ -257,7 +258,7 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
     }
-    
+
     /**
      * @name            deleteBlog ()
      *
@@ -273,7 +274,7 @@ class BlogModel extends CoreModel
     public function deleteBlog($blog){
         return $this->deleteBlogs(array($blog));
     }
-    
+
     /**
      * @name            deleteBlogs()
      *
@@ -309,7 +310,7 @@ class BlogModel extends CoreModel
             return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
         }
         $this->em->flush();
-        
+
         return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
     }
     /**
@@ -327,7 +328,7 @@ class BlogModel extends CoreModel
     public function deleteBlogPost($post){
         return $this->deleteBlogPosts(array($post));
     }
-    
+
     /**
      * @name            deleteBlogPosts()
      *
@@ -363,10 +364,10 @@ class BlogModel extends CoreModel
             return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
         }
         $this->em->flush();
-        
+
         return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
     }
-    
+
     /**
      * @name            deleteBlogPostCategory()
      *
@@ -382,7 +383,7 @@ class BlogModel extends CoreModel
     public function deleteBlogPostCategory($category){
         return $this->deleteBlogPostCategories(array($category));
     }
-    
+
     /**
      * @name            deleteBlogPostCategories()
      *
@@ -418,7 +419,7 @@ class BlogModel extends CoreModel
             return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
         }
         $this->em->flush();
-        
+
         return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
     }
     /**
@@ -436,7 +437,7 @@ class BlogModel extends CoreModel
     public function deleteBlogPostRevision($revision){
         return $this->deleteBlogPostRevisions(array($revision));
     }
-    
+
     /**
      * @name            deleteBlogPostRevisions()
      *
@@ -472,7 +473,7 @@ class BlogModel extends CoreModel
             return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
         }
         $this->em->flush();
-        
+
         return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
     }
     /**
@@ -507,7 +508,7 @@ class BlogModel extends CoreModel
         if(is_null($result)){
             return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, time());
         }
-        
+
         return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
     /**
@@ -593,7 +594,7 @@ class BlogModel extends CoreModel
         if(is_null($result)){
             return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, time());
         }
-        
+
         return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
     /**
@@ -647,7 +648,7 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse($response->result->set[0], 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
-    
+
     /**
      * @name 			getBlogPostCategory()
      *
@@ -680,7 +681,7 @@ class BlogModel extends CoreModel
         if(is_null($result)){
             return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, time());
         }
-        
+
         return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
     /**
@@ -803,34 +804,34 @@ class BlogModel extends CoreModel
      */
     public function getBlogPostRevision($post, $language, $revisionNumber){
         $timeStamp = time();
-        
+
         $response = $this->getBlogPost($post);
         if($response->error->exist){
             return $response;
         }
         $post = $response->result->set;
-        
+
         $mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
         $response = $mlsModel->getLanguage($language);
         if($response->error->exist){
             return $response;
         }
         $language = $response->result->set;
-        
+
         $qStr = 'SELECT '.$this->entity['bpr']['alias']
             .' FROM '.$this->entity['bpr']['name'].' '.$this->entity['bpr']['alias']
             .' WHERE '.$this->entity['bpr']['alias'].'.post = '.$post->getId()
             .' AND '.$this->entity['bpr']['alias'].'.language = '.$language->getId()
             .' AND '.$this->entity['bpr']['alias'].'.revision_number = '.$revisionNumber;
-        
+
         $q = $this->em->createQuery($qStr);
-        
+
         $result = $q->getResult();
-        
+
         if(is_null($result)){
             return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, time());
         }
-        
+
         return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
     /**
@@ -850,25 +851,27 @@ class BlogModel extends CoreModel
         if($response->error->exist){
             return $response;
         }
-        $page = $response->result->set;
-        
+        $post = $response->result->set;
+
         $filter[] = array(
             'glue' => 'and',
             'condition' => array(
                 array(
                     'glue' => 'and',
-                    'condition' => array('column' =>$this->entity['bpr']['alias']. '.post', 'comparison' => '=', 'value' => $page->getId()),
+                    'condition' => array('column' =>$this->entity['bpr']['alias']. '.post', 'comparison' => '=', 'value' => $post->getId()),
                 )
             )
         );
-        $response = $this->listPageRevisions($filter, array('date_added' => 'desc'), array('start' => 0, 'count' => 1));
-        
+        $response = $this->listBlogPostRevisions($filter, array('date_added' => 'desc'), array('start' => 0, 'count' => 1));
+        if ($response->error->exist) {
+            return $response;
+        }
         $response->stats->execution->start = $timeStamp;
         $response->stats->execution->end = time();
-        
+        $response->result->set = $response->result->set[0];
         return $response;
     }
-    
+
     /**
      * @name            getMaxSortOrderOfBlogPostFile()
      *
@@ -890,16 +893,16 @@ class BlogModel extends CoreModel
         }
         $qStr = 'SELECT MAX('.$this->entity['fobp']['alias'].'.sort_order) FROM '.$this->entity['fobp']['name'].' '.$this->entity['fobp']['alias']
             .' WHERE '.$this->entity['fobp']['alias'].'.post = '.$post->getId();
-        
+
         $q = $this->em->createQuery($qStr);
         $result = $q->getSingleScalarResult();
-        
+
         if ($bypass) {
             return $result;
         }
         return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
-    
+
     /**
      * @name            insertBlog()
      *
@@ -917,7 +920,7 @@ class BlogModel extends CoreModel
     public function insertBlog($blog){
         return $this->insertBlogs(array($blog));
     }
-    
+
     /**
      * @name            insertBlogLocalizations()
      *
@@ -980,7 +983,7 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
     }
-    
+
     /**
      * @name            insertBlogs()
      *
@@ -1056,7 +1059,7 @@ class BlogModel extends CoreModel
                 }
                 $this->em->persist($entity);
                 $insertedItems[] = $entity;
-                
+
                 $countInserts++;
             }
         }
@@ -1073,7 +1076,7 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
     }
-    
+
     /**
      * @name            insertBlogPost()
      *
@@ -1090,7 +1093,7 @@ class BlogModel extends CoreModel
     public function insertBlogPost($post){
         return $this->insertBlogPosts(array($post));
     }
-    
+
     /**
      * @name            insertBlogPostLocalizations()
      *
@@ -1169,7 +1172,7 @@ class BlogModel extends CoreModel
     public function insertBlogPostRevision($revision){
         return $this->insertBlogPostRevisions(array($revision));
     }
-    
+
     /**
      * @name            insertBlogPostRevisions()
      *
@@ -1226,7 +1229,7 @@ class BlogModel extends CoreModel
                 }
                 $this->em->persist($entity);
                 $insertedItems[] = $entity;
-                
+
                 $countInserts++;
             } else {
                 new CoreExceptions\InvalidDataException($this->kernel);
@@ -1358,7 +1361,7 @@ class BlogModel extends CoreModel
                 }
                 $this->em->persist($entity);
                 $insertedItems[] = $entity;
-                
+
                 $countInserts++;
             }
         }
@@ -1372,7 +1375,7 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
     }
-    
+
     /**
      * @name            insertBlogPostCategory ()
      *
@@ -1389,7 +1392,7 @@ class BlogModel extends CoreModel
     public function insertBlogPostCategory($category){
         return $this->insertBlogPostCategories(array($category));
     }
-    
+
     /**
      * @name            insertBlogPostCategoryLocalizations()
      *
@@ -1452,7 +1455,7 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
     }
-    
+
     /**
      * @name            insertBlogPostCategories ()
      *
@@ -1545,7 +1548,7 @@ class BlogModel extends CoreModel
                 }
                 $this->em->persist($entity);
                 $insertedItems[] = $entity;
-                
+
                 $countInserts++;
             }
         }
@@ -1562,7 +1565,7 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
     }
-    
+
     /**
      * @name            isFileAssociatedWithBlogPost()
      *
@@ -1581,30 +1584,30 @@ class BlogModel extends CoreModel
     public function isFileAssociatedWithBlogPost($file, $post, $bypass = false){
         $timeStamp = time();
         $fModel = new FileService\FileManagementModel($this->kernel, $this->dbConnection, $this->orm);
-        
+
         $response = $fModel->getFile($file);
         if($response->error->exist){
             return $response;
         }
         $post = $response->result->set;
-        
+
         $response = $this->getBlogPost($post);
-        
+
         if($response->error->exist){
             return $response;
         }
         $post = $response->result->set;
-        
+
         $found = false;
-        
+
         $qStr = 'SELECT COUNT(' . $this->entity['fobp']['alias'] . ')'
             . ' FROM ' . $this->entity['fobp']['name'] . ' ' . $this->entity['fobp']['alias']
             . ' WHERE ' . $this->entity['fobp']['alias'] . '.file = ' . $file->getId()
             . ' AND ' . $this->entity['fobp']['alias'] . '.post = ' . $post->getId();
         $query = $this->em->createQuery($qStr);
-        
+
         $result = $query->getSingleScalarResult();
-        
+
         /** flush all into database */
         if ($result > 0) {
             $found = true;
@@ -1612,10 +1615,10 @@ class BlogModel extends CoreModel
         if ($bypass) {
             return $found;
         }
-        
+
         return new ModelResponse($found, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
-    
+
     /**
      * @name            isPostAssociatedWithCategory()
      *
@@ -1638,24 +1641,24 @@ class BlogModel extends CoreModel
             return $response;
         }
         $post = $response->result->set;
-        
+
         $response = $this->getBlogPostCategory($category);
-        
+
         if($response->error->exist){
             return $response;
         }
         $category = $response->result->set;
-        
+
         $found = false;
-        
+
         $qStr = 'SELECT COUNT(' . $this->entity['cobp']['alias'] . '.category)'
             . ' FROM ' . $this->entity['cobp']['name'] . ' ' . $this->entity['cobp']['alias']
             . ' WHERE ' . $this->entity['cobp']['alias'] . '.post = ' . $post->getId()
             . ' AND ' . $this->entity['cobp']['alias'] . '.category = ' . $category->getId();
         $query = $this->em->createQuery($qStr);
-        
+
         $result = $query->getSingleScalarResult();
-        
+
         /** flush all into database */
         if ($result > 0) {
             $found = true;
@@ -1665,7 +1668,7 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse($found, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
-    
+
     /**
      * @name            listBlogPostCategories ()
      *                  List blog posts.
@@ -1688,11 +1691,11 @@ class BlogModel extends CoreModel
             return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
         }
         $oStr = $wStr = $gStr = $fStr = '';
-        
+
         $qStr = 'SELECT '.$this->entity['bpc']['alias'].', '.$this->entity['bpcl']['alias']
             .' FROM '.$this->entity['bpcl']['name'].' '.$this->entity['bpcl']['alias']
             .' JOIN '.$this->entity['bpcl']['alias'].'.category '.$this->entity['bpc']['alias'];
-        
+
         if(!is_null($sortOrder)){
             foreach($sortOrder as $column => $direction){
                 switch($column){
@@ -1715,24 +1718,24 @@ class BlogModel extends CoreModel
             $oStr = rtrim($oStr, ', ');
             $oStr = ' ORDER BY '.$oStr.' ';
         }
-        
+
         if(!is_null($filter)){
             $fStr = $this->prepareWhere($filter);
             $wStr .= ' WHERE '.$fStr;
         }
-        
+
         $qStr .= $wStr.$gStr.$oStr;
         $q = $this->em->createQuery($qStr);
         $q = $this->addLimit($q, $limit);
-        
+
         $result = $q->getResult();
-        
+
         $entities = array();
         foreach($result as $entry){
             $id = $entry->getCategory()->getId();
             if(!isset($unique[$id])){
                 $entities[] = $entry->getCategory();
-				$unique[$id] = '';
+                $unique[$id] = '';
             }
         }
         $totalRows = count($entities);
@@ -1761,10 +1764,10 @@ class BlogModel extends CoreModel
             return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
         }
         $oStr = $wStr = $gStr = $fStr = '';
-        
+
         $qStr = 'SELECT '.$this->entity['bpr']['alias'].', '.$this->entity['bpr']['alias']
             .' FROM '.$this->entity['bpr']['name'].' '.$this->entity['bpr']['alias'];
-        
+
         if(!is_null($sortOrder)){
             foreach($sortOrder as $column => $direction){
                 switch($column){
@@ -1782,18 +1785,18 @@ class BlogModel extends CoreModel
             $oStr = rtrim($oStr, ', ');
             $oStr = ' ORDER BY '.$oStr.' ';
         }
-        
+
         if(!is_null($filter)){
             $fStr = $this->prepareWhere($filter);
             $wStr .= ' WHERE '.$fStr;
         }
-        
+
         $qStr .= $wStr.$gStr.$oStr;
         $q = $this->em->createQuery($qStr);
         $q = $this->addLimit($q, $limit);
-        
+
         $result = $q->getResult();
-        
+
         $totalRows = count($result);
         if ($totalRows < 1) {
             return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
@@ -1822,11 +1825,11 @@ class BlogModel extends CoreModel
             return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
         }
         $oStr = $wStr = $gStr = $fStr = '';
-        
+
         $qStr = 'SELECT '.$this->entity['bpl']['alias'].', '.$this->entity['bp']['alias']
             .' FROM '.$this->entity['bpl']['name'].' '.$this->entity['bpl']['alias']
             .' JOIN '.$this->entity['bpl']['alias'].'.blog_post '.$this->entity['bp']['alias'];
-        
+
         if(!is_null($sortOrder)){
             foreach($sortOrder as $column => $direction){
                 switch($column){
@@ -1857,17 +1860,17 @@ class BlogModel extends CoreModel
             $oStr = rtrim($oStr, ', ');
             $oStr = ' ORDER BY '.$oStr.' ';
         }
-        
+
         if(!is_null($filter)){
             $fStr = $this->prepareWhere($filter);
             $wStr .= ' WHERE '.$fStr;
         }
-        
+
         $qStr .= $wStr.$gStr.$oStr;
         $q = $this->em->createQuery($qStr);
         $q = $this->addLimit($q, $limit);
         $result = $q->getResult();
-        
+
         $entities = array();
         foreach($result as $entry){
             $id = $entry->getBlogPost()->getId();
@@ -1882,7 +1885,7 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
-    
+
     /**
      * @name            listBlogs()
      *
@@ -1904,11 +1907,11 @@ class BlogModel extends CoreModel
             return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
         }
         $oStr = $wStr = $gStr = $fStr = '';
-        
+
         $qStr = 'SELECT '.$this->entity['b']['alias'].', '.$this->entity['bl']['alias']
             .' FROM '.$this->entity['bl']['name'].' '.$this->entity['bl']['alias']
             .' JOIN '.$this->entity['bl']['alias'].'.blog '.$this->entity['b']['alias'];
-        
+
         if(!is_null($sortOrder)){
             foreach($sortOrder as $column => $direction){
                 switch($column){
@@ -1930,17 +1933,17 @@ class BlogModel extends CoreModel
             $oStr = rtrim($oStr, ', ');
             $oStr = ' ORDER BY '.$oStr.' ';
         }
-        
+
         if(!is_null($filter)){
             $fStr = $this->prepareWhere($filter);
             $wStr .= ' WHERE '.$fStr;
         }
-        
+
         $qStr .= $wStr.$gStr.$oStr;
         $q = $this->em->createQuery($qStr);
         $q = $this->addLimit($q, $limit);
         $result = $q->getResult();
-        
+
         $entities = array();
         $unique = array();
         foreach($result as $entry){
@@ -1956,7 +1959,7 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
-    
+
     /**
      * @name            listCategoriesOfPost(
      *
@@ -1987,7 +1990,7 @@ class BlogModel extends CoreModel
             . ' WHERE ' . $this->entity['cobp']['alias'] . '.post = ' . $post->getId();
         $query = $this->em->createQuery($query_str);
         $result = $query->getResult();
-        
+
         $catsInPost = array();
         if (count($result) > 0) {
             foreach ($result as $cobp) {
@@ -2050,14 +2053,14 @@ class BlogModel extends CoreModel
             $whereStr = ' AND '.$this->entity['fobp']['alias'].".type = '".$mediaType."'";
         }
         $qStr .= $whereStr;
-        
+
         $q = $this->em->createQuery($qStr);
-        
+
         $result = $q->getResult();
-        
+
         $fileIds = array();
         $totalRows = count($result);
-        
+
         if($totalRows > 0){
             foreach($result as $gm){
                 $fileIds[] = $gm->getFile()->getId();
@@ -2066,22 +2069,68 @@ class BlogModel extends CoreModel
         else{
             return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
         }
-        
+
         $filter[] = array('glue' => 'and',
-                          'condition' => array(
-                              array(
-                                  'glue' => 'and',
-                                  'condition' => array('column' => 'f.id', 'comparison' => 'in', 'value' => $fileIds),
-                              )
-                          )
+            'condition' => array(
+                array(
+                    'glue' => 'and',
+                    'condition' => array('column' => 'f.id', 'comparison' => 'in', 'value' => $fileIds),
+                )
+            )
         );
         $fModel = $this->kernel->getContainer()->get('filemanagement.model');
-        
+
         $response = $fModel->listFiles($filter, $sortOrder, $limit);
-        
+
         $response->stats->execution->start = $timeStamp;
-        
+
         return $response;
+    }
+    /**
+     * @name            listPostRevisionsInCategory()
+     *
+     * @since           1.2.0
+     * @version         1.2.0
+     * @author          Said İmamoğlu
+     *
+     * @use             $this->createException()
+     * @use             $this->getBlogPostCategory()
+     * @use             $this->listPostsOfBlog()
+     *
+     * @param           mixed 			$category
+     * @param           array 			$filter
+     * @param           array 			$sortOrder
+     * @param           array 			$limit
+     *
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     */
+    public function listPostRevisionsInCategory($category, $filter = null, $sortOrder = null, $limit = null){
+        $timeStamp = time();
+        $response = $this->getBlogPostCategory($category);
+        if($response->error->exist){
+            return $response;
+        }
+        $category = $response->result->set;
+        /** First identify posts associated with given category */
+        $query_str = 'SELECT ' . $this->entity['cobp']['alias']
+            . ' FROM ' . $this->entity['cobp']['name'] . ' ' . $this->entity['cobp']['alias']
+            . ' WHERE ' . $this->entity['cobp']['alias'] . '.category = ' . $category->getId();
+        $query = $this->em->createQuery($query_str);
+        $result = $query->getResult();
+
+        $revisions = array();
+        if (count($result) > 0) {
+            foreach ($result as $cobp) {
+                $revisionResponse = $this->getLastRevisionOfBlogPost($cobp->getPost());
+                if (!$revisionResponse->error->exist) {
+                    $revisions[] = $revisionResponse->result->set;
+                }
+            }
+        }
+        if (count($revisions) < 1) {
+            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+        }
+        return new ModelResponse($revisions, count($revisions), 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());;
     }
     /**
      * @name            listPostsInCategory()
@@ -2114,7 +2163,7 @@ class BlogModel extends CoreModel
             . ' WHERE ' . $this->entity['cobp']['alias'] . '.category = ' . $category->getId();
         $query = $this->em->createQuery($query_str);
         $result = $query->getResult();
-        
+
         $postsInCat = array();
         if (count($result) > 0) {
             foreach ($result as $cobp) {
@@ -2137,10 +2186,10 @@ class BlogModel extends CoreModel
         );
         $response = $this->listBlogPosts($filter, $sortOrder, $limit);
         $response->stats->execution->start = $timeStamp;
-        
+
         return $response;
     }
-    
+
     /**
      * @name            listPostCategoriesOfBlog()
      *
@@ -2166,7 +2215,7 @@ class BlogModel extends CoreModel
             return $response;
         }
         $blog = $response->result->set;
-        
+
         $column = $this->entity['bpc']['alias'] . '.blog';
         $condition = array('column' => $column, 'comparison' => '=', 'value' => $blog->getId());
         $filter[] = array(
@@ -2179,12 +2228,12 @@ class BlogModel extends CoreModel
             )
         );
         $response = $this->listBlogPostCategories($filter, $sortOrder, $limit);
-        
+
         $response->stats->execution->start = $timeStamp;
-        
+
         return $response;
     }
-    
+
     /**
      * @name            listPostsOfBlog ()
      *                  List posts of a blog
@@ -2211,7 +2260,7 @@ class BlogModel extends CoreModel
             return $response;
         }
         $blog = $response->result->set;
-        
+
         $column = $this->entity['bp']['alias'] . '.blog';
         $filter[] = array(
             'glue' => 'and',
@@ -2224,7 +2273,7 @@ class BlogModel extends CoreModel
         );
         return $this->listBlogPosts($filter, $sortOrder, $limit);
     }
-    
+
     /**
      * @name            listPostsOfBlogInCategory ()
      *
@@ -2280,9 +2329,9 @@ class BlogModel extends CoreModel
             )
         );
         $response = $this->listPostsOfBlog($blog, $filter, $sortOrder, $limit);
-        
+
         $response->stats->execution->start = $timeStamp;
-        
+
         return $response;
     }
     /**
@@ -2331,7 +2380,7 @@ class BlogModel extends CoreModel
             . ' WHERE ' . $this->entity['cobp']['alias'] . '.category = ' . $category->getId();
         $q = $this->em->createQuery($qStr);
         $result = $q->getResult();
-        
+
         $postsInCat = array();
         if (count($result) > 0) {
             foreach ($result as $cobp) {
@@ -2355,9 +2404,9 @@ class BlogModel extends CoreModel
             )
         );
         $response = $this->listPostsOfBlog($blog, $filter, $sortOrder, $limit);
-        
+
         $response->stats->execution->start = $timeStamp;
-        
+
         return $response;
     }
     /**
@@ -2393,7 +2442,7 @@ class BlogModel extends CoreModel
             return $response;
         }
         $site = $response->result->set;
-        
+
         $filter[] = array(
             'glue' => 'and',
             'condition' => array(
@@ -2404,9 +2453,9 @@ class BlogModel extends CoreModel
             )
         );
         $response = $this->listPostsOfBlog($blog, $filter, $sortOrder, $limit);
-        
+
         $response->stats->execution->start = $timeStamp;
-        
+
         return $response;
     }
     /**
@@ -2472,7 +2521,7 @@ class BlogModel extends CoreModel
             return $response;
         }
         $site = $response->result->set;
-        
+
         $filter[] = array(
             'glue' => 'and',
             'condition' => array(
@@ -2487,9 +2536,9 @@ class BlogModel extends CoreModel
             )
         );
         $response = $this->listPostsOfBlog($blog, $filter, $sortOrder, $limit);
-        
+
         $response->stats->execution->start = $timeStamp;
-        
+
         return $response;
     }
     /**
@@ -2515,7 +2564,7 @@ class BlogModel extends CoreModel
         $now = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
         $columnDA = $this->entity['bp']['alias'] . '.date_published';
         $conditionDA = array('column' => $columnDA, 'comparison' => '<=', 'value' => $now->format('Y-m-d h:i:s'));
-        
+
         $columnDU = $this->entity['bp']['alias'] . '.date_unpublished';
         $conditionDU = array('column' => $columnDU, 'comparison' => 'isnull', 'value' => '');
         $filter[] = array(
@@ -2533,10 +2582,10 @@ class BlogModel extends CoreModel
         );
         $response = $this->listBlogPosts($filter, $sortOrder, $limit);
         $response->stats->execution->start = $timeStamp;
-        
+
         return $response;
     }
-    
+
     /**
      * @name            listPublishedPostsOfBlog()
      *
@@ -2579,7 +2628,7 @@ class BlogModel extends CoreModel
         $response->stats->execution->start = $timeStamp;
         return $response;
     }
-    
+
     /**
      * @name            listPublishedPostsOfBlogInCategory ()
      *
@@ -2617,7 +2666,7 @@ class BlogModel extends CoreModel
             . ' WHERE ' . $this->entity['cobp']['alias'] . '.category = ' . $category->getId();
         $query = $this->em->createQuery($qStr);
         $result = $query->getResult();
-        
+
         $postsInCat = array();
         if (count($result) > 0) {
             foreach ($result as $cobp) {
@@ -2680,7 +2729,7 @@ class BlogModel extends CoreModel
         $response = $this->updateBlogPosts($toUpdate);
         $response->stats->execution->start = $timeStamp;
         $response->stats->execution->end = time();
-        
+
         return $response;
     }
     /**
@@ -2721,7 +2770,7 @@ class BlogModel extends CoreModel
         $response = $this->updateBlogPosts($toUpdate);
         $response->stats->execution->start = $timeStamp;
         $response->stats->execution->end = time();
-        
+
         return $response;
     }
     /**
@@ -2755,10 +2804,10 @@ class BlogModel extends CoreModel
         $qStr = 'DELETE FROM '.$this->entity['cobp']['name'].' '.$this->entity['cobp']['alias']
             .' WHERE '.$this->entity['cobp']['alias'].'.post = '.$post->getId()
             .' AND '.$this->entity['cobp']['alias'].'.category '.$in;
-        
+
         $q = $this->em->createQuery($qStr);
         $result = $q->getResult();
-        
+
         $deleted = true;
         if (!$result) {
             $deleted = false;
@@ -2768,7 +2817,7 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
     }
-    
+
     /**
      * @name            removePostsFromCategory ()
      *
@@ -2800,10 +2849,10 @@ class BlogModel extends CoreModel
         $qStr = 'DELETE FROM '.$this->entity['cobp']['name'].' '.$this->entity['cobp']['alias']
             .' WHERE '.$this->entity['cobp']['alias'].'.category = '.$category->getId()
             .' AND '.$this->entity['cobp']['alias'].'.post '.$in;
-        
+
         $q = $this->em->createQuery($qStr);
         $result = $q->getResult();
-        
+
         $deleted = true;
         if (!$result) {
             $deleted = false;
@@ -2850,7 +2899,7 @@ class BlogModel extends CoreModel
         $response = $this->updateBlogPosts($toUpdate);
         $response->stats->execution->start = $timeStamp;
         $response->stats->execution->end = time();
-        
+
         return $response;
     }
     /**
@@ -2870,7 +2919,7 @@ class BlogModel extends CoreModel
     public function updateBlog($blog){
         return $this->updateBlogs(array($blog));
     }
-    
+
     /**
      * @name            updateBlogs()
      *
@@ -2971,7 +3020,7 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
     }
-    
+
     /**
      * @name            updateBlogPost()
      *
@@ -2989,7 +3038,7 @@ class BlogModel extends CoreModel
     public function updateBlogPost($post){
         return $this->updateBlogPosts(array($post));
     }
-    
+
     /**
      * @name            updateBlogPosts()
      *
@@ -3124,7 +3173,7 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
     }
-    
+
     /**
      * @name            updateBlogPostCategory()
      *
@@ -3141,7 +3190,7 @@ class BlogModel extends CoreModel
     public function updateBlogPostCategory($category){
         return $this->updateBlogPostCategories(array($category));
     }
-    
+
     /**
      * @name            updateBlogPostCategories ()
      *
@@ -3311,7 +3360,7 @@ class BlogModel extends CoreModel
                     return $this->createException('EntityDoesNotExist', 'BlogPostRevision revision cannot be found in database.', 'E:D:002');
                 }
                 $oldEntity = $response->result->set;
-                
+
                 foreach ($data as $column => $value) {
                     $set = 'set' . $this->translateColumnName($column);
                     switch ($column) {
@@ -3354,7 +3403,7 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
     }
-    
+
     /**
      * @name            listPostsInCategoryByPublishDate ()
      *
@@ -3380,7 +3429,7 @@ class BlogModel extends CoreModel
         $sortOrder[$column] = $order;
         return $this->listPostsInCategory($category, $filter, $sortOrder, $limit);
     }
-    
+
     /**
      * @name            getNextPostInCategoryByPublishDate ()
      *
@@ -3411,7 +3460,7 @@ class BlogModel extends CoreModel
             }
         }
         $response->result->set = $posts[$currentKey];
-        
+
         return $response;
     }
     /**
@@ -3444,7 +3493,7 @@ class BlogModel extends CoreModel
             }
         }
         $response->result->set = $posts[$currentKey];
-        
+
         return $response;
     }
     /**
@@ -3471,9 +3520,9 @@ class BlogModel extends CoreModel
             return $response;
         }
         $posts = $response->result->set;
-        
+
         $response->result->set = $posts[0];
-        
+
         return $response;
     }
     /**
@@ -3500,9 +3549,9 @@ class BlogModel extends CoreModel
             return $response;
         }
         $posts = $response->result->set;
-        
+
         $response->result->set = $posts[$response->result->count->total - 1];
-        
+
         return $response;
     }
     /**
@@ -3530,10 +3579,10 @@ class BlogModel extends CoreModel
         }
         $count = $response->result->count->total;
         $response->result->set = $count;
-        
+
         return $response;
     }
-    
+
     /**
      * @name            countTotalPostsInBlog()
      *
@@ -3542,7 +3591,7 @@ class BlogModel extends CoreModel
      *
      * @author          Can Berkol
      * @author          Said İmamoğlu
-    
+
      * @use             $this->listPostsInCategory()
      *
      * @param           mixed $blog
@@ -3575,13 +3624,18 @@ class BlogModel extends CoreModel
         }
         $count = count($response->result->set);
         $response->result->set = $count;
-        
+
         return $response;
     }
 }
 
 /**
  * Change Log
+ * **************************************
+ * v1.2.0                      23.07.2015
+ * Said İmamoğlu
+ * **************************************
+ * BF :: BlogPostRevision entity added to $entity array.
  * **************************************
  * v1.1.9                      16.07.2015
  * Can Berkol
