@@ -2174,7 +2174,6 @@ class BlogModel extends CoreModel
             return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
         }
         $columnI = $this->entity['bp']['alias'] . '.id';
-        $filter = array();
         $filter[] = array(
             'glue' => 'and',
             'condition' => array(
