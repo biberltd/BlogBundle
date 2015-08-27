@@ -11,7 +11,11 @@
  * @copyright   	Biber Ltd. (www.biberltd.com)
  *
  * @version     	1.2.1
+<<<<<<< HEAD
  * @date        	27.0.2015
+=======
+ * @date        	10.08.2015
+>>>>>>> 64753baa11ade3badb7bb16d82ef3da513d71eb1
  */
 namespace BiberLtd\Bundle\BlogBundle\Services;
 
@@ -2901,6 +2905,24 @@ class BlogModel extends CoreModel
 
         return $response;
     }
+
+    /**
+     * @name unPublishPostsOfBlogInSite()
+     * @author  Said İmamoğlu
+     * @since 1.2.1
+     * @version 1.2.1
+     * @param $blog
+     * @param $site
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     */
+    public function unPublishPostsOfBlogInSite($blog,$site){
+
+        $response = $this->listPostsOfBlogInSite($blog,$site);
+        if ($response->error->exist) {
+            return $response;
+        }
+        return $this->unpublishBlogPosts($response->result->set);
+    }
     /**
      * @name            updateBlog ()
      *
@@ -3630,6 +3652,11 @@ class BlogModel extends CoreModel
 
 /**
  * Change Log
+ * **************************************
+ * v1.2.1                      10.08.2015
+ * Said İmamoğlu
+ * **************************************
+ * FR :: unPublishPostsOfBlogInSite() method implemented.
  * **************************************
  * v1.2.0                      23.07.2015
  * Said İmamoğlu
