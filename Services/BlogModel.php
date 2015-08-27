@@ -10,8 +10,8 @@
  *
  * @copyright   	Biber Ltd. (www.biberltd.com)
  *
- * @version     	1.2.0
- * @date        	23.07.2015
+ * @version     	1.2.1
+ * @date        	27.0.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Services;
 
@@ -300,7 +300,7 @@ class BlogModel extends CoreModel
             }
             else{
                 $response = $this->getBlog($entry);
-                if(!$response->error->exists){
+                if(!$response->error->exist){
                     $this->em->remove($response->result->set);
                     $countDeleted++;
                 }
@@ -354,7 +354,7 @@ class BlogModel extends CoreModel
             }
             else{
                 $response = $this->getBlogPost($entry);
-                if(!$response->error->exists){
+                if(!$response->error->exist){
                     $this->em->remove($response->result->set);
                     $countDeleted++;
                 }
@@ -409,7 +409,7 @@ class BlogModel extends CoreModel
             }
             else{
                 $response = $this->getBlogPostCategory($entry);
-                if(!$response->error->exists){
+                if(!$response->error->exist){
                     $this->em->remove($response->result->set);
                     $countDeleted++;
                 }
@@ -463,7 +463,7 @@ class BlogModel extends CoreModel
             }
             else{
                 $response = $this->getBlogPostRevision($entry['entry'], $entry['language'], $entry['revisionNumber']);
-                if(!$response->error->exists){
+                if(!$response->error->exist){
                     $this->em->remove($response->result->set);
                     $countDeleted++;
                 }
@@ -544,7 +544,7 @@ class BlogModel extends CoreModel
         if(!is_null($language)){
             $mModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
             $response = $mModel->getLanguage($language);
-            if(!$response->error->exists){
+            if(!$response->error->exist){
                 $filter[] = array(
                     'glue' => 'and',
                     'condition' => array(
@@ -766,7 +766,7 @@ class BlogModel extends CoreModel
         if(!is_null($language)){
             $mModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
             $response = $mModel->getLanguage($language);
-            if(!$response->error->exists){
+            if(!$response->error->exist){
                 $filter[] = array(
                     'glue' => 'and',
                     'condition' => array(
@@ -3660,8 +3660,8 @@ class BlogModel extends CoreModel
  * v1.1.6                      16.06.2015
  * Said İmamoğlu, Can Berkol
  * **************************************
- * BF :: getBlogByUrlKey() was returning wrong reponse. Fixed
- * BF :: getBlogPostByUrlKey() was returning wrong reponse. Fixed
+ * BF :: getBlogByUrlKey() was returning wrong response. Fixed
+ * BF :: getBlogPostByUrlKey() was returning wrong response. Fixed
  * BF :: listPostsOfBlogInCategory() had invalid filter, fixed.
  * BF :: listPostsOfBlogInCategory() now returns ModelResponse if no posts found.
  * BF :: listPostsOfBlog() was resetting filters, fixed.
