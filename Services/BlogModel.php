@@ -10,12 +10,8 @@
  *
  * @copyright   	Biber Ltd. (www.biberltd.com)
  *
- * @version     	1.2.1
-<<<<<<< HEAD
- * @date        	27.0.2015
-=======
- * @date        	10.08.2015
->>>>>>> 64753baa11ade3badb7bb16d82ef3da513d71eb1
+ * @version     	1.2.2
+ * @date        	18.09.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Services;
 
@@ -3646,6 +3642,83 @@ class BlogModel extends CoreModel
         $count = count($response->result->set);
         $response->result->set = $count;
 
+        return $response;
+    }
+
+    /**
+     * @name listBlogPostsByDateColumnWhichBeforeGivenDate()
+     * @author  Said Imamoglu
+     * @since 1.2.2
+     * @version 1.2.2
+     * @param $dateColumn
+     * @param $date
+     * @param $filter
+     * @param $sortOrder
+     * @param $limit
+     * @return ModelResponse
+     */
+    public function listBlogPostsByDateColumnWhichBeforeGivenDate($dateColumn,$date,$filter = array(),$sortOrder = null,$limit = null){
+        $timeStamp = time();
+        if (! $date instanceof \DateTime) {
+            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'Invalid date object.', $timeStamp, time());
+        }
+        if (!in_array($dateColumn,array('date_added','date_published','date_unpublished'))) {
+            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'Invalid date column.', $timeStamp, time());
+        }
+        // Prepare SQL conditions
+        $filter[] = array(
+            'glue' => 'and',
+            'condition' => array('column' => $this->entity['bp']['alias'].'.'.$dateColumn, 'comparison' => '<', 'value' => $date->format('Y-m-d H:i:s')),
+        );
+        $response = $this->listBlogPosts($filter,$sortOrder,$limit);
+        $response->stats->execution->start = $timeStamp;
+        $response->stats->execution->end = time();
+        return $response;
+    }
+    /**
+     * @name unPublishBlogPostsByDateColumnWhichBeforeGivenDate()
+     * @author  Said Imamoglu
+     * @since 1.2.2
+     * @version 1.2.2
+     * @param $dateColumn
+     * @param $date
+     * @return ModelResponse
+     */
+    public function unPublishActiveBlogPostsByDateColumnWhichBeforeGivenDate($dateColumn,$date){
+        $timeStamp = time();
+        $filter = array();
+        $filter[] = array(
+            'glue' => 'and',
+            'condition' => array('column' => $this->entity['bp']['alias'] . '.status', 'comparison' => '!=', 'value' => 'u'),
+        );
+        $response = $this->listBlogPostsByDateColumnWhichBeforeGivenDate($dateColumn,$date,$filter);
+        if ($response->error->exist) {
+            return $response;
+        }
+        $response = $this->unpublishBlogPosts($response->result->set);
+        $response->stats->execution->start = $timeStamp;
+        $response->stats->execution->end = time();
+        return $response;
+    }
+
+    /**
+     * @name unPublishBlogPostsByDateColumnWhichBeforeGivenDate()
+     * @author  Said Imamoglu
+     * @since 1.2.2
+     * @version 1.2.2
+     * @param $dateColumn
+     * @param $date
+     * @return ModelResponse
+     */
+    public function unPublishBlogPostsByDateColumnWhichBeforeGivenDate($dateColumn,$date){
+        $timeStamp = time();
+        $response = $this->listBlogPostsByDateColumnWhichBeforeGivenDate($dateColumn,$date);
+        if ($response->error->exist()) {
+            return $response;
+        }
+        $response = $this->unpublishBlogPosts($response->result->set);
+        $response->stats->execution->start = $timeStamp;
+        $response->stats->execution->end = time();
         return $response;
     }
 }
