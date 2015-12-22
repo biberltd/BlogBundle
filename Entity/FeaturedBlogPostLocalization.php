@@ -1,18 +1,12 @@
 <?php
 /**
- * @name        CategoriesOfBlogPost
- * @package		BiberLtd\Bundle\CoreBundle\BlogBundle
- *
+ * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.0
- * @date        15.09.2013
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
- * @description Model / Entity class.
- *
+ * @date        14.12.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -30,6 +24,7 @@ class FeaturedBlogPostLocalization extends CoreEntity
 {
     /** 
      * @ORM\Column(type="text", nullable=false)
+     * @var string
      */
     private $content;
 
@@ -37,6 +32,7 @@ class FeaturedBlogPostLocalization extends CoreEntity
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language")
      * @ORM\JoinColumn(name="language", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language
      */
     private $language;
 
@@ -46,26 +42,16 @@ class FeaturedBlogPostLocalization extends CoreEntity
      *     inversedBy="localizations"
      * )
      * @ORM\JoinColumn(name="post", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPost
      */
     private $featured_blog_post;
 
     /**
-     * @name                  setContent ()
-     *                                   Sets the content property.
-     *                                   Updates the data only if stored value and value to be set are different.
+     * @param string $content
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $content
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setContent($content) {
+    public function setContent(\string $content) {
         if(!$this->setModified('content', $content)->isModified()) {
             return $this;
         }
@@ -74,37 +60,18 @@ class FeaturedBlogPostLocalization extends CoreEntity
     }
 
     /**
-     * @name            getContent ()
-     *                             Returns the value of content property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->content
+     * @return string
      */
     public function getContent() {
         return $this->content;
     }
 
     /**
-     * @name                  setFeaturedBlogPost ()
-     *                                            Sets the featured_blog_post property.
-     *                                            Updates the data only if stored value and value to be set are different.
+     * @param \BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPost $featured_blog_post
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $featured_blog_post
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setFeaturedBlogPost($featured_blog_post) {
+    public function setFeaturedBlogPost(\BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPost $featured_blog_post) {
         if(!$this->setModified('featured_blog_post', $featured_blog_post)->isModified()) {
             return $this;
         }
@@ -113,37 +80,18 @@ class FeaturedBlogPostLocalization extends CoreEntity
     }
 
     /**
-     * @name            getFeaturedBlogPost ()
-     *                                      Returns the value of featured_blog_post property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->featured_blog_post
+     * @return \BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPost
      */
     public function getFeaturedBlogPost() {
         return $this->featured_blog_post;
     }
 
     /**
-     * @name                  setLanguage ()
-     *                                    Sets the language property.
-     *                                    Updates the data only if stored value and value to be set are different.
+     * @param \BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language $language
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $language
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setLanguage($language) {
+    public function setLanguage(\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language $language) {
         if(!$this->setModified('language', $language)->isModified()) {
             return $this;
         }
@@ -152,36 +100,9 @@ class FeaturedBlogPostLocalization extends CoreEntity
     }
 
     /**
-     * @name            getLanguage ()
-     *                              Returns the value of language property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->language
+     * turn          mixed           $this->language
      */
     public function getLanguage() {
         return $this->language;
     }
-    /******************************************************************
-     * PUBLIC SET AND GET FUNCTIONS                                   *
-     ******************************************************************/
-
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.0                      Murat Ünal
- * 15.09.2013
- * **************************************
- * A getContent()
- * A getFeaturedBlogPost()
- * A getLanguage()
- *
- * A setContent()
- * A setFeaturedBlogPost()
- * A setLanguage()
- *
- */

@@ -1,18 +1,12 @@
 <?php
 /**
- * @name        BlogPostCommentAct,on
- * @package		BiberLtd\Core\BlogBundle
- *
+ * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.0
- * @date        13.09.2013
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
- * @description Model / Entity class.
- *
+ * @date        13.12.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -36,71 +30,56 @@ class BlogPostCommentAction extends CoreEntity
      * @ORM\Id
      * @ORM\Column(type="integer", length=15)
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @var int
      */
     private $id;
 
     /** 
      * @ORM\Column(type="string", length=1, nullable=false, options={"default":"l"})
+     * @var string
      */
     private $action;
 
     /** 
      * @ORM\Column(type="datetime", nullable=false)
+     * @var \DateTime
      */
     public $date_added;
 
     /** 
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MemberManagementBundle\Entity\Member")
      * @ORM\JoinColumn(name="member", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\MemberManagementBundle\Entity\Member
      */
     private $member;
 
     /** 
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment")
      * @ORM\JoinColumn(name="comment", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment
      */
     private $blog_post_comment;
 
     /** 
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost")
      * @ORM\JoinColumn(name="post", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
      */
     private $blog_post;
-    /******************************************************************
-     * PUBLIC SET AND GET FUNCTIONS                                   *
-     ******************************************************************/
 
     /**
-     * @name            getId()
-     *                  Gets $id property.
-     * .
-     * @author          Murat Ünal
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          integer          $this->id
+     * @return mixed
      */
     public function getId(){
         return $this->id;
     }
 
     /**
-     * @name                  setAction ()
-     *                                  Sets the action property.
-     *                                  Updates the data only if stored value and value to be set are different.
+     * @param string $action
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $action
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setAction($action) {
+    public function setAction(\string $action) {
         if(!$this->setModified('action', $action)->isModified()) {
             return $this;
         }
@@ -109,37 +88,18 @@ class BlogPostCommentAction extends CoreEntity
     }
 
     /**
-     * @name            getAction ()
-     *                            Returns the value of action property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->action
+     * @return string
      */
     public function getAction() {
         return $this->action;
     }
 
     /**
-     * @name                  setBlogPost ()
-     *                                    Sets the blog_post property.
-     *                                    Updates the data only if stored value and value to be set are different.
+     * @param \BiberLtd\Bundle\BlogBundle\Entity\BlogPost $blog_post
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $blog_post
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setBlogPost($blog_post) {
+    public function setBlogPost(\BiberLtd\Bundle\BlogBundle\Entity\BlogPost $blog_post) {
         if(!$this->setModified('blog_post', $blog_post)->isModified()) {
             return $this;
         }
@@ -148,37 +108,18 @@ class BlogPostCommentAction extends CoreEntity
     }
 
     /**
-     * @name            getBlogPost ()
-     *                              Returns the value of blog_post property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->blog_post
+     * @return \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
      */
     public function getBlogPost() {
         return $this->blog_post;
     }
 
     /**
-     * @name                  setBlogPostComment ()
-     *                                           Sets the blog_post_comment property.
-     *                                           Updates the data only if stored value and value to be set are different.
+     * @param \BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment $blog_post_comment
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $blog_post_comment
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setBlogPostComment($blog_post_comment) {
+    public function setBlogPostComment(\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment $blog_post_comment) {
         if(!$this->setModified('blog_post_comment', $blog_post_comment)->isModified()) {
             return $this;
         }
@@ -187,37 +128,18 @@ class BlogPostCommentAction extends CoreEntity
     }
 
     /**
-     * @name            getBlogPostComment ()
-     *                                     Returns the value of blog_post_comment property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->blog_post_comment
+     * @return \BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment
      */
     public function getBlogPostComment() {
         return $this->blog_post_comment;
     }
 
     /**
-     * @name                  setMember ()
-     *                                  Sets the member property.
-     *                                  Updates the data only if stored value and value to be set are different.
+     * @param \BiberLtd\Bundle\MemberManagementBundle\Entity\Member $member
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $member
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setMember($member) {
+    public function setMember(\BiberLtd\Bundle\MemberManagementBundle\Entity\Member $member) {
         if(!$this->setModified('member', $member)->isModified()) {
             return $this;
         }
@@ -226,38 +148,10 @@ class BlogPostCommentAction extends CoreEntity
     }
 
     /**
-     * @name            getMember ()
-     *                            Returns the value of member property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->member
+     * @return \BiberLtd\Bundle\MemberManagementBundle\Entity\Member
      */
     public function getMember() {
         return $this->member;
     }
 
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.0                      Murat Ünal
- * 13.09.2013
- * **************************************
- * A getAction()
- * A getBlogPost()
- * A getBlogPostComment()
- * A getDateAdded()
- * A getId()
- * A getMember()
- *
- * A setAction()
- * A setBlogPost()
- * A setBlogPostComment()
- * A setDateAdded()
- * A setMember()
- *
- */

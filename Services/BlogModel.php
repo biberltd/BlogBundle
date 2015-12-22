@@ -1,48 +1,30 @@
 <?php
 /**
- * @vendor          BiberLtd
- * @package         Core\Bundles\BlogBundle
- * @subpackage      Services
- * @name            BlogBundle
+ * @author		Can Berkol
  *
- * @author        	Can Berkol
- * @author        	Said İmamoğlu
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @copyright   	Biber Ltd. (www.biberltd.com)
- *
- * @version     	1.2.2
- * @date        	18.09.2015
+ * @date        14.12.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Services;
 
 /** Extends CoreModel */
 use BiberLtd\Bundle\CoreBundle\CoreModel;
-
-/** Entities to be used */
 use BiberLtd\Bundle\BlogBundle\Entity as BundleEntity;
 use BiberLtd\Bundle\CoreBundle\Responses\ModelResponse;
 use BiberLtd\Bundle\FileManagementBundle\Entity as FileEntity;
-
-/** Helper Models */
 use BiberLtd\Bundle\SiteManagementBundle\Services as SMMService;
-
-/** Core Service*/
 use BiberLtd\Bundle\CoreBundle\Services as CoreServices;
 
 class BlogModel extends CoreModel
 {
     /**
-     * @name            __construct ()
-     *                  Constructor.
+     * BlogModel constructor.
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @param           object $kernel
-     * @param           string $dbConnection Database connection key as set in app/config.yml
-     * @param           string $orm ORM that is used.
+     * @param object $kernel
+     * @param string $dbConnection
+     * @param string $orm
      */
     public function __construct($kernel, $dbConnection = 'default', $orm = 'doctrine')    {
         parent::__construct($kernel, $dbConnection, $orm);
@@ -73,13 +55,7 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            __destruct()
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.9
-     *
+     * Destructor
      */
     public function __destruct(){
         foreach ($this as $property => $value) {
@@ -88,29 +64,19 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            addCategoriesToPost()
+     * @param array  $categories
+     * @param mixed  $post
+     * @param string $isPrimary
      *
-     * @since           1.0.2
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->isPostAssociatedWithCategory()
-     *
-     * @param           array 			$categories
-     * @param           mixed			$post
-     * @param           string 			$isPrimary
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function addCategoriesToPost(array $categories, $post, $isPrimary = 'n'){
+    public function addCategoriesToPost(array $categories, $post, \string $isPrimary = 'n'){
         $timeStamp = time();
         $response = $this->getBlogPost($post);
         if($response->error->exist){
             return $response;
         }
         $post = $response->result->set;
-        /** issue an error only if there is no valid file entries */
         if (count($categories) < 1) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. $categories parameter must be an array collection', 'E:S:001');
         }
@@ -146,21 +112,12 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
     }
+
     /**
-     * @name            addFilesToBlogPost()
+     * @param array $files
+     * @param mixed $post
      *
-     * @since           1.0.2
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->isFileAssociatedWithBlogPost()
-     * @use             $this->getMaxSortOrderOfBlogPostFile()
-     *
-     * @param           array $files
-     * @param           mixed $post
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function addFilesToBlogPost(array $files, $post) {
         $timeStamp = time();
@@ -199,23 +156,15 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
     }
+
     /**
-     * @name            addPostsToCategory()
+     * @param array  $posts
+     * @param mixed $category
+     * @param string $isPrimary
      *
-     * @since           1.0.2
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->isPostAssociatedWithCategory()
-     *
-     * @param           array 			$posts
-     * @param           mixed			$category
-     * @param           string 			$isPrimary
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function addPostsToCategory(array $posts, $category, $isPrimary = 'n'){
+    public function addPostsToCategory(array $posts, $category, \string $isPrimary = 'n'){
         $timeStamp = time();
         $response = $this->getBlogPostCategory($category);
         if($response->error->exist){
@@ -260,34 +209,20 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            deleteBlog ()
+     * @param mixed $blog
      *
-     * @since           1.0.2
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use				$this->deleteBlogs()
-     * @param           array 			$blog
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function deleteBlog($blog){
         return $this->deleteBlogs(array($blog));
     }
 
     /**
-     * @name            deleteBlogs()
+     * @param array $collection
      *
-     * @since           1.0.2
-     * @version         1.0.9
-     *
-     * @use             $this->createException()
-     *
-     * @param           array 			$collection
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function deleteBlogs($collection){
+    public function deleteBlogs(array $collection){
         $timeStamp = time();
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -313,35 +248,22 @@ class BlogModel extends CoreModel
 
         return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
     }
+
     /**
-     * @name            deleteBlogPost()
+     * @param mixed $post
      *
-     * @since           1.0.2
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use				$this->deleteBlogPosts()
-     * @param           array 			$post
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function deleteBlogPost($post){
         return $this->deleteBlogPosts(array($post));
     }
 
     /**
-     * @name            deleteBlogPosts()
+     * @param array $collection
      *
-     * @since           1.0.2
-     * @version         1.0.9
-     *
-     * @use             $this->createException()
-     *
-     * @param           array 			$collection
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function deleteBlogPosts($collection){
+    public function deleteBlogPosts(array $collection){
         $timeStamp = time();
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -369,34 +291,20 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            deleteBlogPostCategory()
+     * @param mixed $category
      *
-     * @since           1.0.2
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use				$this->deleteBlogPostCategories()
-     * @param           array 			$category
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function deleteBlogPostCategory($category){
         return $this->deleteBlogPostCategories(array($category));
     }
 
     /**
-     * @name            deleteBlogPostCategories()
+     * @param array $collection
      *
-     * @since           1.0.2
-     * @version         1.0.9
-     *
-     * @use             $this->createException()
-     *
-     * @param           array 			$collection
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function deleteBlogPostCategories($collection){
+    public function deleteBlogPostCategories(array $collection){
         $timeStamp = time();
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -422,35 +330,22 @@ class BlogModel extends CoreModel
 
         return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
     }
+
     /**
-     * @name            deleteBlogPostRevision()
+     * @param mixed $revision
      *
-     * @since           1.0.8
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use				$this->deleteBlogPostCategories()
-     * @param           array 			$revision
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function deleteBlogPostRevision($revision){
         return $this->deleteBlogPostRevisions(array($revision));
     }
 
     /**
-     * @name            deleteBlogPostRevisions()
+     * @param array $collection
      *
-     * @since           1.0.8
-     * @version         1.0.9
-     *
-     * @use             $this->createException()
-     *
-     * @param           array 			$collection
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function deleteBlogPostRevisions($collection){
+    public function deleteBlogPostRevisions(array $collection){
         $timeStamp = time();
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -476,16 +371,11 @@ class BlogModel extends CoreModel
 
         return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
     }
+
     /**
-     * @name 			getBlog()
+     * @param mixed $blog
      *
-     * @since			1.0.1
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @param           mixed           $blog
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function getBlog($blog) {
         $timeStamp = time();
@@ -511,23 +401,14 @@ class BlogModel extends CoreModel
 
         return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
+
     /**
-     * @name            getBlogByUrlKey ()
+     * @param string $urlKey
+     * @param mixed|null   $language
      *
-     * @since           1.0.9
-     * @version         1.1.6
-     * @author          Can Berkol
-     * @author          Said İmamoğlu
-     *
-     * @use             $this->listBlogs()
-     * @use             $this->createException()
-     *
-     * @param           mixed 			$urlKey
-     * @param			mixed			$language
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getBlogByUrlKey($urlKey, $language = null){
+    public function getBlogByUrlKey(\string $urlKey, $language = null){
         $timeStamp = time();
         if(!is_string($urlKey)){
             return $this->createException('InvalidParameterValueException', '$urlKey must be a string.', 'E:S:007');
@@ -562,16 +443,11 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse($response->result->set[0], 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
+
     /**
-     * @name 			getBlogPost()
+     * @param mixed $post
      *
-     * @since			1.0.1
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @param           mixed           $post
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function getBlogPost($post) {
         $timeStamp = time();
@@ -597,23 +473,14 @@ class BlogModel extends CoreModel
 
         return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
+
     /**
-     * @name            getBlogPostByUrlKey ()
+     * @param string $urlKey
+     * @param mixed|null   $language
      *
-     * @since           1.0.9
-     * @version         1.1.6
-     * @author          Can Berkol
-     * @author          Said İmamoğlu
-     *
-     * @use             $this->listBlogPosts()
-     * @use             $this->createException()
-     *
-     * @param           mixed 			$urlKey
-     * @param			mixed			$language
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getBlogPostByUrlKey($urlKey, $language = null){
+    public function getBlogPostByUrlKey(\string $urlKey, $language = null){
         $timeStamp = time();
         if(!is_string($urlKey)){
             return $this->createException('InvalidParameterValueException', '$urlKey must be a string.', 'E:S:007');
@@ -650,15 +517,9 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name 			getBlogPostCategory()
+     * @param mixed $category
      *
-     * @since			1.0.1
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @param           mixed           $category
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function getBlogPostCategory($category) {
         $timeStamp = time();
@@ -684,22 +545,14 @@ class BlogModel extends CoreModel
 
         return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
+
     /**
-     * @name            getBlogPostByMetaTitle ()
+     * @param string $metaTitle
+     * @param mixed|null   $language
      *
-     * @since           1.1.8
-     * @version         1.1.8
-     * @author          Said İmamoğlu
-     *
-     * @use             $this->listBlogPosts()
-     * @use             $this->createException()
-     *
-     * @param           mixed 			$metaTitle
-     * @param			mixed			$language
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getBlogPostByMetaTitle($metaTitle, $language = null){
+    public function getBlogPostByMetaTitle(\string $metaTitle, $language = null){
         $timeStamp = time();
         if(!is_string($metaTitle)){
             return $this->createException('InvalidParameterValueException', '$metaTitle must be a string.', 'E:S:007');
@@ -734,22 +587,14 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse($response->result->set[0], 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
+
     /**
-     * @name            getBlogPostCategoryByUrlKey ()
+     * @param string $urlKey
+     * @param mixed|null   $language
      *
-     * @since           1.0.9
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->listBlogPostss()
-     * @use             $this->createException()
-     *
-     * @param           mixed 			$urlKey
-     * @param			mixed			$language
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getBlogPostCategoryByUrlKey($urlKey, $language = null){
+    public function getBlogPostCategoryByUrlKey(\string $urlKey, $language = null){
         $timeStamp = time();
         if(!is_string($urlKey)){
             return $this->createException('InvalidParameterValueException', '$urlKey must be a string.', 'E:S:007');
@@ -784,25 +629,15 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse($response->result->set[0], 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
+
     /**
-     * @name            getBlogPostRevision()
+     * @param mixed $post
+     * @param mixed $language
+     * @param string $revisionNumber
      *
-     * @since           1.0.8
-     * @version         1.0.9
-     *
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->listBlogPostRevisions()
-     * @use             $this->resetResponse()
-     *
-     * @param           mixed           $post
-     * @param			mixed			$language
-     * @param			integer			$revisionNumber
-     *
-     * @return          mixed           $response
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getBlogPostRevision($post, $language, $revisionNumber){
+    public function getBlogPostRevision($post, $language, \string $revisionNumber){
         $timeStamp = time();
 
         $response = $this->getBlogPost($post);
@@ -834,16 +669,11 @@ class BlogModel extends CoreModel
 
         return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
+
     /**
-     * @name            getLastRevisionOfBlogPost()
+     * @param mixed $post
      *
-     * @since           1.0.8
-     * @version         1.0.9
-     *
-     * @author          Can Berkol
-     *
-     * @page			mixed			$post
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function getLastRevisionOfBlogPost($post){
         $timeStamp = time();
@@ -873,19 +703,12 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            getMaxSortOrderOfBlogPostFile()
+     * @param mixed $post
+     * @param bool $bypass
      *
-     * @since           1.0.4
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     *
-     * @param           mixed 			$post
-     * @param           bool 			$bypass
-     *
-     * @return          mixed           bool | $response
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getMaxSortOrderOfBlogPostFile($post, $bypass = false){
+    public function getMaxSortOrderOfBlogPostFile($post, \bool $bypass = false){
         $timeStamp = time();
         $response = $this->getBlogPost($post);
         if($response->error->exist){
@@ -904,37 +727,20 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            insertBlog()
+     * @param mixed $blog
      *
-     * @since           1.0.2
-     * @version         1.0.9
-     *
-     * @author          Can Berkol
-     *
-     * @use             $this->insertBlogs()
-     *
-     * @param           mixed			 $blog
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function insertBlog($blog){
         return $this->insertBlogs(array($blog));
     }
 
     /**
-     * @name            insertBlogLocalizations()
+     * @param array $collection
      *
-     * @since           1.0.2
-     * @version         1.1.3
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     *
-     * @param           array 			$collection
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function insertBlogLocalizations($collection) {
+    public function insertBlogLocalizations(array $collection) {
         $timeStamp = time();
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -985,20 +791,11 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            insertBlogs()
+     * @param array $collection
      *
-     * @since           1.0.2
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->insertBlogLocalization()
-     *
-     * @param           array 			$collection
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function insertBlogs($collection){
+    public function insertBlogs(array $collection){
         $timeStamp = time();
         /** Parameter must be an array */
         if (!is_array($collection)) {
@@ -1078,36 +875,20 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            insertBlogPost()
+     * @param mixed $post
      *
-     * @since           1.0.2
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->insertBlogPosts()
-     *
-     * @param           mixed $post
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return array
      */
     public function insertBlogPost($post){
         return $this->insertBlogPosts(array($post));
     }
 
     /**
-     * @name            insertBlogPostLocalizations()
+     * @param array $collection
      *
-     * @since           1.0.2
-     * @version         1.1.3
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     *
-     * @param           array $collection Collection of entities or post data.
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function insertBlogPostLocalizations($collection){
+    public function insertBlogPostLocalizations(array $collection){
         $timeStamp = time();
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -1156,38 +937,22 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
     }
+
     /**
-     * @name            insertBlogPostRevision()
+     * @param mixed $revision
      *
-     * @since           1.0.8
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->insertBlogPostRevisions()
-     *
-     * @param           mixed			$revision
-     *
-     * @return          array           $response
+     * @return array
      */
     public function insertBlogPostRevision($revision){
         return $this->insertBlogPostRevisions(array($revision));
     }
 
     /**
-     * @name            insertBlogPostRevisions()
+     * @param array $collection
      *
-     * @since           1.0.8
-     * @version         1.1.6
-     * @author          Can Berkol
-     * @author          Said İmamoğlu
-     *
-     * @use             $this->createException()
-     *
-     * @param           array 			$collection
-     *
-     * @return          array           $response
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function insertBlogPostRevisions($collection) {
+    public function insertBlogPostRevisions(array $collection) {
         $timeStamp = time();
         /** Parameter must be an array */
         if (!is_array($collection)) {
@@ -1241,21 +1006,13 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
     }
+
     /**
-     * @name            insertBlogPosts()
+     * @param array $collection
      *
-     * @since           1.0.2
-     * @version         1.1.0
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->insertBlogPostLocalizations()
-     *
-     * @param           array 			$collection
-     *
-     * @return          array           $response
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function insertBlogPosts($collection){
+    public function insertBlogPosts(array $collection){
         $timeStamp = time();
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -1377,36 +1134,20 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            insertBlogPostCategory ()
+     * @param mixed $category
      *
-     * @since           1.0.2
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->insertBlogPostCategories()
-     *
-     * @param           mixed 			$category
-     *
-     * @return          array           $response
+     * @return array
      */
     public function insertBlogPostCategory($category){
         return $this->insertBlogPostCategories(array($category));
     }
 
     /**
-     * @name            insertBlogPostCategoryLocalizations()
+     * @param array $collection
      *
-     * @since           1.0.2
-     * @version         1.1.3
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     *
-     * @param           array 			$collection
-     *
-     * @return          array           $response
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function insertBlogPostCategoryLocalizations($collection) {
+    public function insertBlogPostCategoryLocalizations(array $collection) {
         $timeStamp = time();
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -1457,20 +1198,11 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            insertBlogPostCategories ()
+     * @param array $collection
      *
-     * @since           1.0.2
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->insertBlogLocalizations()
-     *
-     * @param           array 			$collection
-     *
-     * @return          array           $response
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function insertBlogPostCategories($collection){
+    public function insertBlogPostCategories(array $collection){
         $timeStamp = time();
         /** Parameter must be an array */
         if (!is_array($collection)) {
@@ -1567,21 +1299,13 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            isFileAssociatedWithBlogPost()
+     * @param mixed $file
+     * @param mixed $post
+     * @param bool $bypass
      *
-     * @since           1.0.4
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     *
-     * @param           mixed       $file
-     * @param           mixed       $post
-     * @param           bool        $bypass     true or false
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|bool
      */
-    public function isFileAssociatedWithBlogPost($file, $post, $bypass = false){
+    public function isFileAssociatedWithBlogPost($file, $post, \bool $bypass = false){
         $timeStamp = time();
         $fModel = new FileService\FileManagementModel($this->kernel, $this->dbConnection, $this->orm);
 
@@ -1589,7 +1313,7 @@ class BlogModel extends CoreModel
         if($response->error->exist){
             return $response;
         }
-        $post = $response->result->set;
+        $file = $response->result->set;
 
         $response = $this->getBlogPost($post);
 
@@ -1620,21 +1344,13 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            isPostAssociatedWithCategory()
+     * @param mixed $post
+     * @param mixed $category
+     * @param bool $bypass
      *
-     * @since           1.0.4
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     *
-     * @param           mixed 			$post
-     * @param           mixed 			$category
-     * @param           bool 			$bypass
-     *
-     * @return          mixed           bool or $response
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|bool
      */
-    public function isPostAssociatedWithCategory($post, $category, $bypass = false){
+    public function isPostAssociatedWithCategory($post, $category, \bool $bypass = false){
         $timeStamp = time();
         $response = $this->getBlogPost($post);
         if($response->error->exist){
@@ -1670,22 +1386,13 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            listBlogPostCategories ()
-     *                  List blog posts.
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
      *
-     * @since           1.0.1
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     *
-     * @param           array 			$filter
-     * @param           array 			$sortOrder
-     * @param           array 			$limit
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listBlogPostCategories($filter = null, $sortOrder = null, $limit = null){
+    public function listBlogPostCategories(array $filter = null, array $sortOrder = null, array $limit = null){
         $timeStamp = time();
         if(!is_array($sortOrder) && !is_null($sortOrder)){
             return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
@@ -1744,21 +1451,15 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
+
     /**
-     * @name            listBlogPostRevisions()
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
      *
-     * @since           1.0.8
-     * @version         1.0.8
-     *
-     * @author          Can Berkol
-     *
-     * @param           array 			$filter
-     * @param			array			$sortOrder
-     * @param			array			$limit
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listBlogPostRevisions($filter = null, $sortOrder = null, $limit = null){
+    public function listBlogPostRevisions(array $filter = null, array $sortOrder = null, array $limit = null){
         $timeStamp = time();
         if(!is_array($sortOrder) && !is_null($sortOrder)){
             return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
@@ -1803,23 +1504,15 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse($result, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
+
     /**
-     * @name            listBlogPosts()
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
      *
-     * @since           1.0.1
-     * @version         1.1.8
-     * @author          Can Berkol
-     * @author          Said İmamoğlu
-     *
-     * @use             $this->createException()
-     *
-     * @param           array 			$filter
-     * @param           array 			$sortOrder
-     * @param           array 			$limit
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listBlogPosts($filter = null, $sortOrder = null, $limit = null){
+    public function listBlogPosts(array $filter = null, array $sortOrder = null, array $limit = null){
         $timeStamp = time();
         if(!is_array($sortOrder) && !is_null($sortOrder)){
             return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
@@ -1887,21 +1580,13 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            listBlogs()
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
      *
-     * @since           1.0.1
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     *
-     * @param           array 			$filter
-     * @param           array 			$sortOrder
-     * @param           array 			$limit
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listBlogs($filter = null, $sortOrder = null, $limit = null){
+    public function listBlogs(array $filter = null, array $sortOrder = null, array $limit = null){
         $timeStamp = time();
         if(!is_array($sortOrder) && !is_null($sortOrder)){
             return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
@@ -1961,24 +1646,14 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            listCategoriesOfPost(
+     * @param mixed $post
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
      *
-     * @since           1.0.1
-     * @version         1.1.0
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->getBlogPostCategory()
-     * @use             $this->listPostCategories()
-     *
-     * @param           mixed 			$post
-     * @param           array 			$filter
-     * @param           array 			$sortOrder
-     * @param           array 			$limit
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listCategoriesOfPost($post, $filter = null, $sortOrder = null, $limit = null){
+    public function listCategoriesOfPost($post, array $filter = null, array $sortOrder = null, array $limit = null){
         $timeStamp = time();
         $response = $this->getBlogPost($post);
         if($response->error->exist){
@@ -2013,27 +1688,17 @@ class BlogModel extends CoreModel
         );
         return $this->listBlogPostCategories($filter, $sortOrder, $limit);
     }
+
     /**
-     * @name            listMediaOfBlogPost()
-     *                  Lists one ore more random media from gallery
+     * @param mixed $post
+     * @param string     $mediaType
+     * @param array|null $sortOrder
+     * @param array|null $limit
+     * @param array|null $filter
      *
-     * @since           1.0.7
-     * @version         1.0.9
-     *
-     * @author          Can Berkol
-     * @author          Said İmamoğlu
-     *
-     * @use             $this->createException()
-     *
-     * @param           mixed       	$post
-     * @param           string      	$mediaType      all, i, a, v, f, d, p, s
-     * @param           array       	$sortOrder
-     * @param           array       	$limit
-     * @param           array       	$filter
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listMediaOfBlogPost($post, $mediaType = 'all', $sortOrder = null, $limit = null, $filter = null){
+    public function listMediaOfBlogPost($post, \string $mediaType = 'all', array $sortOrder = null, array $limit = null, array $filter = null){
         $timeStamp = time();
         $allowedTypes = array('i', 'a', 'v', 'f', 'd', 'p', 's');
         $response = $this->getBlogPost($post);
@@ -2086,25 +1751,16 @@ class BlogModel extends CoreModel
 
         return $response;
     }
+
     /**
-     * @name            listPostRevisionsInCategory()
+     * @param mixed $category
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
      *
-     * @since           1.2.0
-     * @version         1.2.0
-     * @author          Said İmamoğlu
-     *
-     * @use             $this->createException()
-     * @use             $this->getBlogPostCategory()
-     * @use             $this->listPostsOfBlog()
-     *
-     * @param           mixed 			$category
-     * @param           array 			$filter
-     * @param           array 			$sortOrder
-     * @param           array 			$limit
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPostRevisionsInCategory($category, $filter = null, $sortOrder = null, $limit = null){
+    public function listPostRevisionsInCategory($category, array $filter = null, array $sortOrder = null, array $limit = null){
         $timeStamp = time();
         $response = $this->getBlogPostCategory($category);
         if($response->error->exist){
@@ -2132,25 +1788,16 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse($revisions, count($revisions), 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());;
     }
+
     /**
-     * @name            listPostsInCategory()
+     * @param mixed      $category
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
      *
-     * @since           1.0.1
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->getBlogPostCategory()
-     * @use             $this->listPostsOfBlog()
-     *
-     * @param           mixed 			$category
-     * @param           array 			$filter
-     * @param           array 			$sortOrder
-     * @param           array 			$limit
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPostsInCategory($category, $filter = null, $sortOrder = null, $limit = null){
+    public function listPostsInCategory($category, array $filter = null, array $sortOrder = null, array $limit = null){
         $timeStamp = time();
         $response = $this->getBlogPostCategory($category);
         if($response->error->exist){
@@ -2190,24 +1837,14 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            listPostCategoriesOfBlog()
+     * @param mixed      $blog
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
      *
-     * @since           1.0.3
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->getBlog()
-     * @use             $this->listBlogPostCategories()
-     *
-     * @param           mixed 			$blog
-     * @param           array 			$filter
-     * @param           array 			$sortOrder
-     * @param           array 			$limit
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPostCategoriesOfBlog($blog, $filter = null, $sortOrder = null, $limit = null){
+    public function listPostCategoriesOfBlog($blog, array $filter = null, array $sortOrder = null, array $limit = null){
         $timeStamp = time();
         $response = $this->getBlog($blog);
         if($response->error->exist){
@@ -2234,25 +1871,14 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            listPostsOfBlog ()
-     *                  List posts of a blog
+     * @param mixed      $blog
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
      *
-     * @since           1.0.1
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->getBlog()
-     * @use             $this->listBlogPosts()
-     *
-     * @param           mixed 		$blog
-     * @param           array 		$filter
-     * @param           array 		$sortOrder
-     * @param           array 		$limit
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPostsOfBlog($blog, $filter = null, $sortOrder = null, $limit = null){
+    public function listPostsOfBlog($blog, array $filter = null, array $sortOrder = null, array $limit = null){
         $timeStamp = time();
         $response = $this->getBlog($blog);
         if($response->error->exist){
@@ -2274,25 +1900,15 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            listPostsOfBlogInCategory ()
+     * @param mixed      $blog
+     * @param mixed      $category
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
      *
-     * @since           1.0.1
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->getBlog()
-     * @use             $this->listPostsOfBlog()
-     *
-     * @param           mixed 			$blog
-     * @param           mixed 			$category
-     * @param           array 			$filter
-     * @param           array 			$sortOrder
-     * @param           array 			$limit
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPostsOfBlogInCategory($blog, $category, $filter = null, $sortOrder = null, $limit = null){
+    public function listPostsOfBlogInCategory($blog, $category, array $filter = null, array $sortOrder = null, array $limit = null){
         $timeStamp = time();
         $response = $this->getBlog($blog);
         if($response->error->exist){
@@ -2333,27 +1949,18 @@ class BlogModel extends CoreModel
 
         return $response;
     }
+
     /**
-     * @name            listPostsOfBlogInCategoryAndSite()
+     * @param mixed      $blog
+     * @param mixed      $category
+     * @param mixed      $site
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
      *
-     * @since           1.1.2
-     * @version         1.1.2
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->getBlog()
-     * @use             $this->listPostsOfBlog()
-     *
-     * @param           mixed 			$blog
-     * @param           mixed 			$category
-     * @param           mixed 			$site
-     * @param           array 			$filter
-     * @param           array 			$sortOrder
-     * @param           array 			$limit
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPostsOfBlogInCategoryAndSite($blog, $category, $site, $filter = null, $sortOrder = null, $limit = null){
+    public function listPostsOfBlogInCategoryAndSite($blog, $category, $site, array $filter = null, array $sortOrder = null, array $limit = null){
         $timeStamp = time();
         $response = $this->getBlog($blog);
         if($this->error->exist){
@@ -2408,26 +2015,17 @@ class BlogModel extends CoreModel
 
         return $response;
     }
+
     /**
-     * @name            listPostsOfBlogInSite()
+     * @param mixed      $blog
+     * @param mixed      $site
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
      *
-     * @since           1.1.2
-     * @version         1.1.2
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->getBlog()
-     * @use             $this->listPostsOfBlog()
-     *
-     * @param           mixed 			$blog
-     * @param           mixed 			$site
-     * @param           array 			$filter
-     * @param           array 			$sortOrder
-     * @param           array 			$limit
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPostsOfBlogInSite($blog, $site, $filter = null, $sortOrder = null, $limit = null){
+    public function listPostsOfBlogInSite($blog, $site, array $filter = null, array $sortOrder = null, array $limit = null){
         $timeStamp = time();
         $response = $this->getBlog($blog);
         if($response->error->exist){
@@ -2457,24 +2055,17 @@ class BlogModel extends CoreModel
 
         return $response;
     }
+
     /**
-     * @name            listPostsOfBlogInCategoryWithStatuses()
+     * @param mixed      $blog
+     * @param mixed      $category
+     * @param array      $statuses
+     * @param array|null $sortOrder
+     * @param array|null $limit
      *
-     * @since           1.1.6
-     * @version         1.1.6
-     * @author          Can Berkol
-     * @use             $this->getBlog()
-     * @use             $this->listPostsOfBlog()
-     *
-     * @param           mixed 			$blog
-     * @param           mixed 			$category
-     * @param           array 			$statuses
-     * @param           array 			$sortOrder
-     * @param           array 			$limit
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPostsOfBlogInCategoryWithStatuses($blog, $category, array $statuses, $sortOrder = null, $limit = null){
+    public function listPostsOfBlogInCategoryWithStatuses($blog, $category, array $statuses, array $sortOrder = null, array $limit = null){
         $filter[] = array(
             'glue' => 'and',
             'condition' => array(
@@ -2486,27 +2077,18 @@ class BlogModel extends CoreModel
         );
         return $this->listPostsOfBlogInCategory($blog, $category, $filter, $sortOrder, $limit);
     }
+
     /**
-     * @name            listPostsOfBlogInSiteWithStatuses()
+     * @param mixed      $blog
+     * @param mixed      $site
+     * @param array      $statuses
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
      *
-     * @since           1.1.4
-     * @version         1.1.4
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->getBlog()
-     * @use             $this->listPostsOfBlog()
-     *
-     * @param           mixed 			$blog
-     * @param           mixed 			$site
-     * @param           array 			$statuses
-     * @param           array 			$filter
-     * @param           array 			$sortOrder
-     * @param           array 			$limit
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPostsOfBlogInSiteWithStatuses($blog, $site, $statuses, $filter = null, $sortOrder = null, $limit = null){
+    public function listPostsOfBlogInSiteWithStatuses($blog, $site, array $statuses, array $filter = null, array $sortOrder = null, array $limit = null){
         $timeStamp = time();
         $response = $this->getBlog($blog);
         if($response->error->exist){
@@ -2540,25 +2122,15 @@ class BlogModel extends CoreModel
 
         return $response;
     }
+
     /**
-     * @name            listPublishedPosts()
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
      *
-     * @since           1.0.5
-     * @version         1.0.9
-     *
-     * @author          Can Berkol
-     * @author          Said İmamoğlu
-     *
-     * @use             $this->createException()
-     * @use             $this->listBlogPosts()
-     *
-     * @param           array 			$filter
-     * @param           array 			$sortOrder
-     * @param           array 			$limit
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPublishedPosts($filter = null, $sortOrder = null, $limit = null){
+    public function listPublishedPosts(array $filter = null, array $sortOrder = null, array $limit = null){
         $timeStamp = time();
         $now = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
         $columnDA = $this->entity['bp']['alias'] . '.date_published';
@@ -2586,26 +2158,14 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            listPublishedPostsOfBlog()
+     * @param mixed      $blog
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
      *
-     * @since           1.0.5
-     * @version         1.0.9
-     *
-     * @author          Can Berkol
-     * @author          Said İmamoğlu
-     *
-     * @use             $this->createException()
-     * @use             $this->getBlog()
-     * @use             $this->listPostsOfBlog()
-     *
-     * @param           mixed 			$blog
-     * @param           array 			$filter
-     * @param           array 			$sortOrder
-     * @param           array 			$limit
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPublishedPostsOfBlog($blog, $filter = null, $sortOrder = null, $limit = null){
+    public function listPublishedPostsOfBlog($blog, array $filter = null, array $sortOrder = null, array $limit = null){
         $timeStamp = time();
         $response = $this->getBlog($blog);
         if($response->error->exist){
@@ -2629,25 +2189,15 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            listPublishedPostsOfBlogInCategory ()
+     * @param mixed      $blog
+     * @param mixed      $category
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
      *
-     * @since           1.0.1
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->getBlog()
-     * @use             $this->listPublishedBlogPosts()
-     *
-     * @param           mixed 			$blog
-     * @param           mixed 			$category
-     * @param           array 			$filter
-     * @param           array 			$sortOrder
-     * @param           array 			$limit
-     *
-     * @return           BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPublishedPostsOfBlogInCategory($blog, $category, $filter = null, $sortOrder = null, $limit = null){
+    public function listPublishedPostsOfBlogInCategory($blog, $category, array $filter = null, array $sortOrder = null, array $limit = null){
         $timeStamp = time();
         $response = $this->getBlog($blog);
         if($response->error->exist){
@@ -2691,21 +2241,13 @@ class BlogModel extends CoreModel
         $response->stats->execution->start = $timeStamp;
         return $response;
     }
+
     /**
-     * @name            markPostsAsDeleted()
+     * @param array $collection
      *
-     * @since           1.1.3
-     * @version         1.1.3
-     *
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     *
-     * @param           array 			$collection
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function markPostsAsDeleted($collection){
+    public function markPostsAsDeleted(array $collection){
         $timeStamp = time();
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -2731,21 +2273,13 @@ class BlogModel extends CoreModel
 
         return $response;
     }
+
     /**
-     * @name            publishBlogPosts()
+     * @param array $collection
      *
-     * @since           1.1.4
-     * @version         1.1.4
-     *
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     *
-     * @param           array 			$collection
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function publishBlogPosts($collection){
+    public function publishBlogPosts(array $collection){
         $timeStamp = time();
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -2772,19 +2306,14 @@ class BlogModel extends CoreModel
 
         return $response;
     }
+
     /**
-     * @name            removeCategoriesFromPost ()
+     * @param array $categories
+     * @param mixed      $post
      *
-     * @since           1.0.2
-     * @version         1.1.7
-     * @author          Can Berkol
-     *
-     * @param           array 			$categories
-     * @param           mixed			$post
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function removeCategoriesFromPost($categories, $post){
+    public function removeCategoriesFromPost(array $categories, $post){
         $timeStamp = time();
         $response = $this->getBlogPost($post);
         if($response->error->exist){
@@ -2818,18 +2347,12 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            removePostsFromCategory ()
+     * @param array $posts
+     * @param mixed      $category
      *
-     * @since           1.0.2
-     * @version         1.1.7
-     * @author          Can Berkol
-     *
-     * @param           array 			$posts
-     * @param           mixed			$category
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function removePostsFromCategory($posts, $category){
+    public function removePostsFromCategory(array $posts, $category){
         $timeStamp = time();
         $response = $this->getBlogPostCategory($category);
         if($response->error->exist){
@@ -2861,21 +2384,13 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
     }
+
     /**
-     * @name            unpublishBlogPosts()
+     * @param array $collection
      *
-     * @since           1.1.4
-     * @version         1.1.4
-     *
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     *
-     * @param           array 			$collection
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function unpublishBlogPosts($collection){
+    public function unpublishBlogPosts(array $collection){
         $timeStamp = time();
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -2903,54 +2418,34 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name unPublishPostsOfBlogInSite()
-     * @author  Said İmamoğlu
-     * @since 1.2.1
-     * @version 1.2.1
      * @param $blog
      * @param $site
-     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     *
+     * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function unPublishPostsOfBlogInSite($blog,$site){
-
+    public function unPublishPostsOfBlogInSite($blog, $site){
         $response = $this->listPostsOfBlogInSite($blog,$site);
         if ($response->error->exist) {
             return $response;
         }
         return $this->unpublishBlogPosts($response->result->set);
     }
+
     /**
-     * @name            updateBlog ()
+     * @param $blog
      *
-     * @since           1.0.2
-     * @version         1.0.9
-     *
-     * @author          Can Berkol
-     *
-     * @use             $this->updateBlogs()
-     *
-     * @param           mixed $blog
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function updateBlog($blog){
         return $this->updateBlogs(array($blog));
     }
 
     /**
-     * @name            updateBlogs()
+     * @param array $collection
      *
-     * @since           1.0.2
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     *
-     * @param           array 			$collection
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function updateBlogs($collection){
+    public function updateBlogs(array $collection){
         $timeStamp = time();
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -3039,39 +2534,20 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            updateBlogPost()
+     * @param $post
      *
-     * @since           1.0.2
-     * @version         1.0.9
-     *
-     * @author          Can Berkol
-     *
-     * @use             $this->updateBlogPosts()
-     *
-     * @param           mixed 			$post
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function updateBlogPost($post){
         return $this->updateBlogPosts(array($post));
     }
 
     /**
-     * @name            updateBlogPosts()
+     * @param array $collection
      *
-     * @since           1.0.2
-     * @version         1.1.8
-     *
-     * @author          Can Berkol
-     * @author          Said İmamoğlu
-     *
-     * @use             $this->createException()
-     *
-     * @param           array 			$collection
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function updateBlogPosts($collection){
+    public function updateBlogPosts(array $collection){
         $timeStamp = time();
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -3192,36 +2668,20 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            updateBlogPostCategory()
+     * @param $category
      *
-     * @since           1.0.2
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->updateBlogPostCategories()
-     *
-     * @param           mixed 			$category
-     *
-     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function updateBlogPostCategory($category){
         return $this->updateBlogPostCategories(array($category));
     }
 
     /**
-     * @name            updateBlogPostCategories ()
+     * @param array $collection
      *
-     * @since           1.0.2
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     *
-     * @param           array 				$collection
-     *
-     * @return         	\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function updateBlogPostCategories($collection){
+    public function updateBlogPostCategories(array $collection){
         $timeStamp = time();
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
@@ -3321,18 +2781,11 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
     }
+
     /**
-     * @name            updateBlogPostRevision()
+     * @param $revision
      *
-     * @since           1.0.8
-     * @version         1.0.8
-     * @author          Can Berkol
-     *
-     * @use             $this->updatePageRevisions()
-     *
-     * @param           mixed 			$revision
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function updateBlogPostRevision($revision){
         return $this->updateBlogPostRevisions(array($revision));
@@ -3422,50 +2875,28 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            listPostsInCategoryByPublishDate ()
+     * @param            $category
+     * @param string     $order
+     * @param array|null $filter
+     * @param array|null $limit
      *
-     * @since           1.0.5
-     * @version         1.0.9
-     *
-     * @author          Can Berkol
-     * @author          Said İmamoğlu
-     *
-     * @use             $this->createException()
-     * @use             $this->getBlog()
-     * @use             $this->listPostsOfBlog()
-     *
-     * @param           mixed 	$category
-     * @param           string 	$order
-     * @param           array 	$filter
-     * @param           array 	$limit
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPostsInCategoryByPublishDate($category, $order = 'asc', $filter = null, $limit = null){
+    public function listPostsInCategoryByPublishDate($category, \ßtring $order = 'asc', array $filter = null, array $limit = null){
         $column = $this->entity['bp']['alias'] . '.date_published';
         $sortOrder[$column] = $order;
         return $this->listPostsInCategory($category, $filter, $sortOrder, $limit);
     }
 
     /**
-     * @name            getNextPostInCategoryByPublishDate ()
+     * @param            $post
+     * @param            $category
+     * @param string     $order
+     * @param array|null $filter
      *
-     * @since           1.0.5
-     * @version         1.0.9
-     *
-     * @author          Can Berkol
-     * @author          Said İmamoğlu
-     *
-     * @use             $this->listPostsInCategoryByPublishDate()
-     *
-     * @param           mixed 	$post
-     * @param           mixed 	$category
-     * @param			string 	$order
-     * @param           array 	$filter
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getNextPostInCategoryByPublishDate($post, $category, $order = 'asc', $filter = null){
+    public function getNextPostInCategoryByPublishDate($post, $category, \string $order = 'asc', array $filter = null){
         $response = $this->listPostsInCategoryByPublishDate($category, $order, $filter, null);
         if ($response->error->exist) {
             return $response;
@@ -3480,25 +2911,16 @@ class BlogModel extends CoreModel
 
         return $response;
     }
+
     /**
-     * @name            getPreviousPostInCategoryByPublishDate ()
+     * @param            $post
+     * @param            $category
+     * @param string     $order
+     * @param array|null $filter
      *
-     * @since           1.0.5
-     * @version         1.0.9
-     *
-     * @author          Can Berkol
-     * @author          Said İmamoğlu
-     *
-     * @use             $this->listPostsInCategoryByPublishDate()
-     *
-     * @param           mixed 	$post
-     * @param           mixed 	$category
-     * @param			string 	$order
-     * @param           array 	$filter
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getPreviousPostInCategoryByPublishDate($post, $category, $order = 'asc', $filter = null){
+    public function getPreviousPostInCategoryByPublishDate($post, $category, \string $order = 'asc', array $filter = null){
         $response = $this->listPostsInCategoryByPublishDate($category, $order, $filter, null);
         if ($response->error->exist) {
             return $response;
@@ -3513,25 +2935,15 @@ class BlogModel extends CoreModel
 
         return $response;
     }
+
     /**
-     * @name            getFirstPostInCategoryByPublishDate ()
+     * @param            $category
+     * @param string     $order
+     * @param array|null $filter
      *
-     * @since           1.0.5
-     * @version         1.0.9
-     *
-     * @author          Can Berkol
-     * @author          Said İmamoğlu
-     *
-     *
-     * @use             $this->listPostsInCategoryByPublishDate()
-     *
-     * @param           mixed 	$category
-     * @param			string 	$order
-     * @param           array 	$filter
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getFirstPostInCategoryByPublishDate($category, $order = 'asc', $filter = null){
+    public function getFirstPostInCategoryByPublishDate($category, \string $order = 'asc', array $filter = null){
         $response = $this->listPostsInCategoryByPublishDate($category, $order, $filter, null);
         if ($response->error->exist) {
             return $response;
@@ -3542,25 +2954,15 @@ class BlogModel extends CoreModel
 
         return $response;
     }
+
     /**
-     * @name            getLastPostInCategoryByPublishDate ()
+     * @param            $category
+     * @param string     $order
+     * @param array|null $filter
      *
-     * @since           1.0.5
-     * @version         1.0.9
-     *
-     * @author          Can Berkol
-     * @author          Said İmamoğlu
-     *
-     *
-     * @use             $this->listPostsInCategoryByPublishDate()
-     *
-     * @param           mixed 	$category
-     * @param			string 	$order
-     * @param           array 	$filter
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getLastPostInCategoryByPublishDate($category, $order = 'asc', $filter = null){
+    public function getLastPostInCategoryByPublishDate($category, \string $order = 'asc', array $filter = null){
         $response = $this->listPostsInCategoryByPublishDate($category, $order, $filter, null);
         if ($response->error->exist) {
             return $response;
@@ -3571,25 +2973,16 @@ class BlogModel extends CoreModel
 
         return $response;
     }
+
     /**
-     * @name            countTotalPostsInCategory ()
+     * @param            $category
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
      *
-     * @since           1.0.5
-     * @version         1.0.9
-     *
-     * @author          Can Berkol
-     * @author          Said İmamoğlu
-     *
-     * @use             $this->listPostsInCategory()
-     *
-     * @param           mixed $category
-     * @param           array $filter
-     * @param           array $sortOrder
-     * @param           array $limit
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function countTotalPostsInCategory($category, $filter = null, $sortOrder = null, $limit = null){
+    public function countTotalPostsInCategory($category, array $filter = null, array $sortOrder = null, array $limit = null){
         $response = $this->listPostsInCategory($category, $filter, $sortOrder, $limit);
         if ($response->error->exist) {
             return $response;
@@ -3601,24 +2994,14 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            countTotalPostsInBlog()
+     * @param            $blog
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
      *
-     * @since           1.0.5
-     * @version         1.0.9
-     *
-     * @author          Can Berkol
-     * @author          Said İmamoğlu
-
-     * @use             $this->listPostsInCategory()
-     *
-     * @param           mixed $blog
-     * @param           array $filter
-     * @param           array $sortOrder
-     * @param           array $limit
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function countTotalPostsInBlog($blog, $filter = null, $sortOrder = null, $limit = null){
+    public function countTotalPostsInBlog($blog, array $filter = null, array $sortOrder = null, array $limit = null){
         $response = $this->getBlog($blog);
         if($response->error->exist){
             return $response;
@@ -3646,18 +3029,15 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name listBlogPostsByDateColumnWhichBeforeGivenDate()
-     * @author  Said Imamoglu
-     * @since 1.2.2
-     * @version 1.2.2
-     * @param $dateColumn
-     * @param $date
-     * @param $filter
-     * @param $sortOrder
-     * @param $limit
-     * @return ModelResponse
+     * @param STRİNG     $dateColumn
+     * @param \DateTime  $date
+     * @param array      $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
+     *
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listBlogPostsByDateColumnWhichBeforeGivenDate($dateColumn,$date,$filter = array(),$sortOrder = null,$limit = null){
+    public function listBlogPostsByDateColumnWhichBeforeGivenDate(\STRİNG $dateColumn, \DateTime $date, array $filter = array(), array $sortOrder = null, array $limit = null){
         $timeStamp = time();
         if (! $date instanceof \DateTime) {
             return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'Invalid date object.', $timeStamp, time());
@@ -3675,16 +3055,14 @@ class BlogModel extends CoreModel
         $response->stats->execution->end = time();
         return $response;
     }
+
     /**
-     * @name unPublishBlogPostsByDateColumnWhichBeforeGivenDate()
-     * @author  Said Imamoglu
-     * @since 1.2.2
-     * @version 1.2.2
-     * @param $dateColumn
-     * @param $date
-     * @return ModelResponse
+     * @param string    $dateColumn
+     * @param \DateTime $date
+     *
+     * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function unPublishActiveBlogPostsByDateColumnWhichBeforeGivenDate($dateColumn,$date){
+    public function unPublishActiveBlogPostsByDateColumnWhichBeforeGivenDate(\string $dateColumn, \DateTime $date){
         $timeStamp = time();
         $filter = array();
         $filter[] = array(
@@ -3702,15 +3080,12 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name unPublishBlogPostsByDateColumnWhichBeforeGivenDate()
-     * @author  Said Imamoglu
-     * @since 1.2.2
-     * @version 1.2.2
-     * @param $dateColumn
-     * @param $date
-     * @return ModelResponse
+     * @param string    $dateColumn
+     * @param \DateTime $date
+     *
+     * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function unPublishBlogPostsByDateColumnWhichBeforeGivenDate($dateColumn,$date){
+    public function unPublishBlogPostsByDateColumnWhichBeforeGivenDate(\string $dateColumn, \DateTime $date){
         $timeStamp = time();
         $response = $this->listBlogPostsByDateColumnWhichBeforeGivenDate($dateColumn,$date);
         if ($response->error->exist()) {
@@ -3722,214 +3097,3 @@ class BlogModel extends CoreModel
         return $response;
     }
 }
-
-/**
- * Change Log
- * **************************************
- * v1.2.1                      10.08.2015
- * Said İmamoğlu
- * **************************************
- * FR :: unPublishPostsOfBlogInSite() method implemented.
- * **************************************
- * v1.2.0                      23.07.2015
- * Said İmamoğlu
- * **************************************
- * BF :: BlogPostRevision entity added to $entity array.
- * **************************************
- * v1.1.9                      16.07.2015
- * Can Berkol
- * **************************************
- * BF :: listPostCategoriesOfBlog() method fixed.
- * BF :: list methods were returning duplicate values. fixed.
- *
- * **************************************
- * v1.1.8                      01.07.2015
- * Said İmamoğlu
- * **************************************
- * FR :: getBlogPostByMetaTitle() method added.
- * BF :: updateBlogPosts() does not update blog column. Fixed
- * BF :: listBlogPosts() was listing wrong. Fixed.
- *
- * **************************************
- * v1.1.7                      08.06.2015
- * Can Berkol
- * **************************************
- * BF :: remove.. methods had invalid DQL syntax. Fixed.
- *
- * **************************************
- * v1.1.6                      16.06.2015
- * Said İmamoğlu, Can Berkol
- * **************************************
- * BF :: getBlogByUrlKey() was returning wrong response. Fixed
- * BF :: getBlogPostByUrlKey() was returning wrong response. Fixed
- * BF :: listPostsOfBlogInCategory() had invalid filter, fixed.
- * BF :: listPostsOfBlogInCategory() now returns ModelResponse if no posts found.
- * BF :: listPostsOfBlog() was resetting filters, fixed.
- * FR :: listPostsOfBlogInCategoryWithStatuses() added.
- *
- * **************************************
- * v1.1.5                      14.06.2015
- * Can Berkol
- * **************************************
- * BF :: getPost calls are replaced with getBlogPost
- * FR :: publishBlogPosts()
- * FR :: unpublishBlogPosts()
- *
- * **************************************
- * v1.1.4                      13.06.2015
- * Can Berkol
- * **************************************
- * BF :: post property must be blog_post. Fixed.
- * BF :: listPostsOfBlogInSiteWithStatuses() added.
- *
- * **************************************
- * v1.1.3                      11.06.2015
- * Can Berkol
- * **************************************
- * BF :: insertBloglocalizations() method rewritten.
- * BF :: insertBlogPostLocalizations() method rewritten.
- * BF :: insertBlogPostLocalizations() method rewritten.
- * FR :: markPostsAsDeleted() method rewritten.
- *
- * **************************************
- * v1.1.2                      10.06.2015
- * Can Berkol
- * **************************************
- * FR :: listPostsOfBlogInCategoryAndSite() method implemented.
- * FR :: listPostsOfBlogInSite() method implemented.
- *
- * **************************************
- * v1.1.1                      25.05.2015
- * Can Berkol
- * **************************************
- * BF :: db_connection is replaced with dbConnection
- *
- * **************************************
- * v1.1.0                      11.05.2015
- * Can Berkol
- * **************************************
- * BF :: Old habits detected and cleaned in the code.
- *
- * **************************************
- * v1.0.9                      10.05.2015
- * Can Berkol
- * **************************************
- * CR :: Made compatible with Core 3.3.
- *
- * **************************************
- * v1.0.8                      24.04.2015
- * TW #3568873
- * Can Berkol
- * **************************************
- * A deleteBlogPostRevision()
- * A deleteBlogPostRevisions()
- * A getBlogPostRevision()
- * A getLastRevisionOfPage()
- * A insertBlogPostRevision()
- * A insertBlogPostRevisions()
- * A listBlogPostRevisions()
- * A updateBlogPostRevision()
- * A updateBlogPostRevisions()
- *
- * **************************************
- * v1.0.7                   Said İmamoğlu
- * 15.01.2015
- * **************************************
- * A listFilesOfBlogPost()
- *
- * **************************************
- * v1.0.6                      Can Berkol
- * 14.10.2014
- * **************************************
- * U insertBlogPosts()
- * U updateBlogPosts()
- *
- * **************************************
- * v1.0.5                   Said İmamoğlu
- * 02.04.2014
- * **************************************
- * A listPublishedPosts()
- * U listPublishedPostsOfBlog()
- * A listPublishedPostsAfter()
- * A listPublishedPostsBefore()
- * A listPublishedPostsBetween()
- * A listPublishedPostsOfBlogAfter()
- * A listPublishedPostsOfBlogBefore()
- * A listPublishedPostsOfBlogBetween()
- * A listPostsInCategoryByPublishDate()
- * A getNextPostInCategoryByPublishDate()
- * A getPreviousPostInCategoryByPublishDate()
- * A getFirstPostInCategoryByPublishDate()
- * A getLastPostInCategoryByPublishDate()
- * A listPostsInBlogByPublishDate()
- * A getNextPostInBlogByPublishDate()
- * A getPreviousPostInBlogByPublishDate()
- * A getFirstPostInBlogByPublishDate()
- * A getLastPostInBlogByPublishDate()
- *
- * **************************************
- * v1.0.4                      Can Berkol
- * 31.03.2014
- * **************************************
- * A addFilesToBlogPost()
- * A isFileAssociatedWithBlogPost()
- * A getMaxSortOrderOfBlogPostFile()
- *
- * **************************************
- * v1.0.3                      Can Berkol
- * 31.03.2014
- * **************************************
- * A listPostCategoriesOfBlog()
- *
- * **************************************
- * v1.0.2                      Can Berkol
- * 31.03.2014
- * **************************************
- * A addCategoriesToPost()
- * A addPostsToCategory()
- * A deleteBlog()
- * A deleteBlogs()
- * A deleteBlogPost()
- * A deleteBlogPosts()
- * A deleteBlogPostCategory()
- * A deleteBlogPostCategories()
- * A insertBlog()
- * A insertBlogLocalizations()
- * A insertBlogs()
- * A insertBlogCategory()
- * A insertBlogCategoryLocalizations()
- * A insertCategoryBlogs()
- * A removeCategoriesFromPost()
- * A removePostsFromCategory()
- * A updateBlog()
- * A updateBlogs()
- * A updateBlogCategory()
- * A updateBlogCategories()
- * A updateBlogPost()
- * A updateBlogPosts()
- * A updateBlogPostCategory()
- * A updateBlogPostCategories()
- *
- * **************************************
- * v1.0.1                      Can Berkol
- * 30.03.2014
- * **************************************
- * A getBlog()
- * A getBlogPost()
- * A getBlogPostCategory()
- * A listBlogPostCategories()
- * A listBlogPosts()
- * A listBlogs()
- * A listCategoriesOfPost()
- * A listPostsInCategory()
- * A listPostsOfBlog()
- * A listPostsOfBlogInCategory()
- * A listPublishedPostsOfBlog()
- * A listPublishedPostsOfBlogInCategory()
- *
- * **************************************
- * v1.0.0                      Can Berkol
- * 18.10.2013
- * **************************************
- * Initial setup of class has been added.
- */

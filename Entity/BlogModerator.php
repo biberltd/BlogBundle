@@ -1,19 +1,12 @@
 <?php
 /**
- * @name        BlogModerator
- * @package		BiberLtd\Core\BlogBundle
- *
  * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.1
- * @date        25.04.2015
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
- * @description Model / Entity class.
- *
+ * @date        10.12.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -39,6 +32,7 @@ class BlogModerator extends CoreEntity
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MemberManagementBundle\Entity\Member")
      * @ORM\JoinColumn(name="moderator", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\MemberManagementBundle\Entity\Member
      */
     private $member;
 
@@ -46,32 +40,23 @@ class BlogModerator extends CoreEntity
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\Blog", inversedBy="moderators")
      * @ORM\JoinColumn(name="blog", referencedColumnName="id", nullable=false)
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\Blog
      */
     private $blog;
 
     /**
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory", inversedBy="moderators")
      * @ORM\JoinColumn(name="category", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory
      */
     private $category;
 
     /**
-     * @name            setBlog ()
-     *                  Sets the blog property.
-     *                  Updates the data only if stored value and value to be set are different.
+     * @param \BiberLtd\Bundle\BlogBundle\Entity\Blog $blog
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $blog
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setBlog($blog) {
+    public function setBlog(\BiberLtd\Bundle\BlogBundle\Entity\Blog $blog) {
         if(!$this->setModified('blog', $blog)->isModified()) {
             return $this;
         }
@@ -80,37 +65,18 @@ class BlogModerator extends CoreEntity
     }
 
     /**
-     * @name            getBlog ()
-     *                  Returns the value of blog property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->blog
+     * @return \BiberLtd\Bundle\BlogBundle\Entity\Blog
      */
     public function getBlog() {
         return $this->blog;
     }
 
     /**
-     * @name            setCategory()
-     *                  Sets the blog_post_category property.
-     *                  Updates the data only if stored value and value to be set are different.
+     * @param \BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory $category
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed 				$category
-     *
-     * @return          object              $this
+     * @return $this
      */
-    public function setCategory($category) {
+    public function setCategory(\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory $category) {
         if(!$this->setModified('category', $category)->isModified()) {
             return $this;
         }
@@ -119,37 +85,18 @@ class BlogModerator extends CoreEntity
     }
 
     /**
-     * @name            getCategory()
-     *                  Returns the value of blog_post_category property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @return          mixed           $this->blog_post_category
+     * @return \BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory
      */
     public function getCategory() {
         return $this->category;
     }
 
     /**
-     * @name            setMember ()
-     *                  Sets the member property.
-     *                  Updates the data only if stored value and value to be set are different.
+     * @param \BiberLtd\Bundle\MemberManagementBundle\Entity\Member $member
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $member
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setMember($member) {
+    public function setMember(\BiberLtd\Bundle\MemberManagementBundle\Entity\Member $member) {
         if(!$this->setModified('member', $member)->isModified()) {
             return $this;
         }
@@ -158,43 +105,9 @@ class BlogModerator extends CoreEntity
     }
 
     /**
-     * @name            getMember ()
-     *                  Returns the value of member property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->member
+     * @return \BiberLtd\Bundle\MemberManagementBundle\Entity\Member
      */
     public function getMember() {
         return $this->member;
     }
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.1                      25.04.2015
- * TW #3568845
- * Can Berkol
- * **************************************
- * A getCategory()
- * A setCategory()
- * D getBlogPostCategory()
- * D setBlogPostCategory()
- *
- * **************************************
- * v1.0.0                      Murat Ünal
- * 13.09.2013
- * **************************************
- * A getBlog()
- * A getBlogPostCategory()
- * A getDateAdded()
- * A getMember()
- * A setBlog()
- * A setBlogPostCategory()
- * A setDateAdded()
- * A setMember()
- *
- */

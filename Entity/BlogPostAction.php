@@ -1,19 +1,12 @@
 <?php
 /**
- * @name        BlogPostAction
- * @package		BiberLtd\Core\BlogBundle
- *
  * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.1
- * @date        26.04.2015
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
- * @description Model / Entity class.
- *
+ * @date        13.12.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -36,63 +29,49 @@ class BlogPostAction extends CoreEntity
      * @ORM\Id
      * @ORM\Column(type="integer", length=15)
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @var int
      */
     private $id;
 
     /** 
      * @ORM\Column(type="string", length=1, nullable=false, options={"default":"v"})
+     * @var string
      */
     private $action;
 
     /** 
      * @ORM\Column(type="datetime", nullable=false)
+     * @var \DateTime
      */
     public $date_added;
 
     /**
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost", inversedBy="actions")
      * @ORM\JoinColumn(name="post", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var  \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
      */
     private $post;
 
     /** 
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MemberManagementBundle\Entity\Member")
      * @ORM\JoinColumn(name="member", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\MemberManagementBundle\Entity\Member
      */
     private $member;
-    /******************************************************************
-     * PUBLIC SET AND GET FUNCTIONS                                   *
-     ******************************************************************/
 
-    /**
-     * @name            getId()
-     *                  Gets $id property.
-     * .
-     * @author          Murat Ünal
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          integer          $this->id
-     */
+	/**
+	 * @return mixed
+	 */
     public function getId(){
         return $this->id;
     }
 
-    /**
-     * @name            setAction ()
+	/**
+	 * @param string $action
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $action
-     *
-     * @return          object                $this
-     */
-    public function setAction($action) {
+	 * @return $this
+	 */
+    public function setAction(\string $action) {
         if(!$this->setModified('action', $action)->isModified()) {
             return $this;
         }
@@ -100,35 +79,19 @@ class BlogPostAction extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getAction ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->action
-     */
+	/**
+	 * @return string
+	 */
     public function getAction() {
         return $this->action;
     }
 
-    /**
-     * @name            setPost ()
+	/**
+	 * @param \BiberLtd\Bundle\BlogBundle\Entity\BlogPost $blog_post
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $blog_post
-     *
-     * @return          object                $this
-     */
-    public function setPost($blog_post) {
+	 * @return $this
+	 */
+    public function setPost(\BiberLtd\Bundle\BlogBundle\Entity\BlogPost $blog_post) {
         if(!$this->setModified('post', $blog_post)->isModified()) {
             return $this;
         }
@@ -136,37 +99,19 @@ class BlogPostAction extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getPost ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @return          mixed           $this->blog_post
-     */
+	/**
+	 * @return \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
+	 */
     public function getPost() {
         return $this->post;
     }
 
-    /**
-     * @name            setMember ()
-     *                  Sets the member property.
-     *                  Updates the data only if stored value and value to be set are different.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $member
-     *
-     * @return          object                $this
-     */
-    public function setMember($member) {
+	/**
+	 * @param \BiberLtd\Bundle\MemberManagementBundle\Entity\Member $member
+	 *
+	 * @return $this
+	 */
+    public function setMember(\BiberLtd\Bundle\MemberManagementBundle\Entity\Member $member) {
         if(!$this->setModified('member', $member)->isModified()) {
             return $this;
         }
@@ -174,46 +119,11 @@ class BlogPostAction extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getMember ()
-     *                            Returns the value of member property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->member
-     */
+	/**
+	 * @return \BiberLtd\Bundle\MemberManagementBundle\Entity\Member
+	 */
     public function getMember() {
         return $this->member;
     }
 
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.1                      26.04.2015
- * TW #3568845
- * Can Berkol
- * **************************************
- * A getPost()
- * A setPost()
- * D getBlogPost()
- * D setBlogPost()
- *
- * **************************************
- * v1.0.0                      Murat Ünal
- * 13.09.2013
- * **************************************
- * A getAction()
- * A get_blot_post()
- * A getDateAdded()
- * A getId()
- * A getMember()
- * A setAction()
- * A setBlogPost()
- * A setDateAdded()
- * A setMember()
- *
- */

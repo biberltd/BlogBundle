@@ -1,19 +1,11 @@
 <?php
 /**
- * @name        FavoriteBlogPostsOfMember
- * @package		BiberLtd\Core\BlogBundle
+ * @author		Can Berkol
  *
- * @author		CaN Berkol
- * @author		Murat Ünal
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @version     1.0.1
- * @date        26.04.2015
- *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
- * @description Model / Entity class.
- *
+ * @date        14.12.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -32,6 +24,7 @@ class FavoriteBlogPostsOfMember extends CoreEntity
 {
     /** 
      * @ORM\Column(type="datetime", nullable=false)
+     * @var \DateTime
      */
     public $date_added;
 
@@ -39,6 +32,7 @@ class FavoriteBlogPostsOfMember extends CoreEntity
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MemberManagementBundle\Entity\Member")
      * @ORM\JoinColumn(name="member", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\MemberManagementBundle\Entity\Member
      */
     private $member;
 
@@ -46,24 +40,16 @@ class FavoriteBlogPostsOfMember extends CoreEntity
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost")
      * @ORM\JoinColumn(name="post", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
      */
     private $post;
 
-    /**
-     * @name            setPost()
+	/**
+	 * @param \BiberLtd\Bundle\BlogBundle\Entity\BlogPost $post
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed 		$post
-     *
-     * @return          object                $this
-     */
-    public function setPost($post) {
+	 * @return $this
+	 */
+    public function setPost(\BiberLtd\Bundle\BlogBundle\Entity\BlogPost $post) {
         if(!$this->setModified('post', $post)->isModified()) {
             return $this;
         }
@@ -71,35 +57,19 @@ class FavoriteBlogPostsOfMember extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getPost()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @return          mixed           $this->blog_posts
-     */
+	/**
+	 * @return mixed
+	 */
     public function getBlogPosts() {
         return $this->blog_posts;
     }
 
-    /**
-     * @name            setMember ()
+	/**
+	 * @param \BiberLtd\Bundle\MemberManagementBundle\Entity\Member $member
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $member
-     *
-     * @return          object                $this
-     */
-    public function setMember($member) {
+	 * @return $this
+	 */
+    public function setMember(\BiberLtd\Bundle\MemberManagementBundle\Entity\Member $member) {
         if(!$this->setModified('member', $member)->isModified()) {
             return $this;
         }
@@ -107,39 +77,10 @@ class FavoriteBlogPostsOfMember extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getMember ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->member
-     */
+	/**
+	 * @return \BiberLtd\Bundle\MemberManagementBundle\Entity\Member
+	 */
     public function getMember() {
         return $this->member;
     }
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.1  					   26.04.2015
- * TW #3568845
- * Can Berkol
- * **************************************
- * Major changes!!
- *
- * **************************************
- * v1.0.1                     Murat Ünal
- * 10.10.2013
- * **************************************
- * A getBlogPosts()
- * A getDateAdded()
- * A getMember()
- *
- * A setBlogPosts()
- * A setDateAdded()
- * A setMember()
- *
- */

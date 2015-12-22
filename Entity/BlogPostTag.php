@@ -1,18 +1,11 @@
 <?php
 /**
- * @name        BlogPostTag
- * @package		BiberLtd\Core\BlogBundle
+ * @author		Can Berkol
  *
- * @author		Murat Ünal
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @version     1.0.1
- * @date        10.10.2013
- *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
- * @description Model / Entity class.
- *
+ * @date        14.12.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -37,86 +30,74 @@ class BlogPostTag extends  CoreEntity
      * @ORM\Id
      * @ORM\Column(type="integer", length=10)
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @var int
      */
     private $id;
 
     /** 
      * @ORM\Column(type="datetime", nullable=false)
+     * @var \DateTime
      */
     public $date_added;
 
     /** 
      * @ORM\Column(type="integer", length=10, nullable=false, options={"default":0})
+     * @var int
      */
     private $count_posts;
 
     /**
      * @ORM\Column(type="datetime", nullable=false)
+     * @var \DateTime
      */
     public $date_updated;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @var \DateTime
      */
 	public $date_removed;
 
     /** 
      * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostTagLocalization", mappedBy="tag")
+     * @var array
      */
     protected $localizations;
 
     /** 
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\SiteManagementBundle\Entity\Site")
      * @ORM\JoinColumn(name="site", referencedColumnName="id", onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\SiteManagementBundle\Entity\Site
      */
     private $site;
 
     /** 
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\Blog")
      * @ORM\JoinColumn(name="blog", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\Blog
      */
     private $blog;
 
     /** 
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MemberManagementBundle\Entity\Member")
      * @ORM\JoinColumn(name="member", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\MemberManagementBundle\Entity\Member
      */
     private $member;
-    /******************************************************************
-     * PUBLIC SET AND GET FUNCTIONS                                   *
-     ******************************************************************/
 
     /**
-     * @name            getId()
-     *  				Gets $id property.
-     * .
-     * @author          Murat Ünal
-     * @since			1.0.0
-     * @version         1.0.0
-     *
-     * @return          string          $this->id
+     * @return mixed
      */
     public function getId(){
         return $this->id;
     }
 
     /**
-     * @name                  setBlog ()
-     *                                Sets the blog property.
-     *                                Updates the data only if stored value and value to be set are different.
+     * @param \BiberLtd\Bundle\BlogBundle\Entity\Blog $blog
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $blog
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setBlog($blog) {
+    public function setBlog(\BiberLtd\Bundle\BlogBundle\Entity\Blog $blog) {
         if(!$this->setModified('blog', $blog)->isModified()) {
             return $this;
         }
@@ -125,37 +106,18 @@ class BlogPostTag extends  CoreEntity
     }
 
     /**
-     * @name            getBlog ()
-     *                          Returns the value of blog property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->blog
+     * @return \BiberLtd\Bundle\BlogBundle\Entity\Blog
      */
     public function getBlog() {
         return $this->blog;
     }
 
     /**
-     * @name                  setCountPosts ()
-     *                                      Sets the count_posts property.
-     *                                      Updates the data only if stored value and value to be set are different.
+     * @param int $count_posts
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $count_posts
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setCountPosts($count_posts) {
+    public function setCountPosts(\int $count_posts) {
         if(!$this->setModified('count_posts', $count_posts)->isModified()) {
             return $this;
         }
@@ -164,37 +126,18 @@ class BlogPostTag extends  CoreEntity
     }
 
     /**
-     * @name            getCountPosts ()
-     *                                Returns the value of count_posts property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->count_posts
+     * @return int
      */
     public function getCountPosts() {
         return $this->count_posts;
     }
 
     /**
-     * @name                  setMember ()
-     *                                  Sets the member property.
-     *                                  Updates the data only if stored value and value to be set are different.
+     * @param \BiberLtd\Bundle\MemberManagementBundle\Entity\Member $member
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $member
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setMember($member) {
+    public function setMember(\BiberLtd\Bundle\MemberManagementBundle\Entity\Member $member) {
         if(!$this->setModified('member', $member)->isModified()) {
             return $this;
         }
@@ -203,37 +146,18 @@ class BlogPostTag extends  CoreEntity
     }
 
     /**
-     * @name            getMember ()
-     *                            Returns the value of member property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->member
+     * @return \BiberLtd\Bundle\MemberManagementBundle\Entity\Member
      */
     public function getMember() {
         return $this->member;
     }
 
     /**
-     * @name                  setSite ()
-     *                                Sets the site property.
-     *                                Updates the data only if stored value and value to be set are different.
+     * @param \BiberLtd\Bundle\SiteManagementBundle\Site $site
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $site
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setSite($site) {
+    public function setSite(\BiberLtd\Bundle\SiteManagementBundle\Site $site) {
         if(!$this->setModified('site', $site)->isModified()) {
             return $this;
         }
@@ -242,39 +166,9 @@ class BlogPostTag extends  CoreEntity
     }
 
     /**
-     * @name            getSite ()
-     *                          Returns the value of site property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->site
+     * @return \BiberLtd\Bundle\SiteManagementBundle\Entity\Site
      */
     public function getSite() {
         return $this->site;
     }
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.1                      Murat Ünal
- * 10.10.2013
- * **************************************
- * A getBlog()
- * A get_count_post()
- * A getDateAdded()
- * A getId()
- * A getLocalizations()
- * A getMember()
- * A getSite()
- *
- * A setBlog()
- * A set_count_post()
- * A setDateAdded()
- * A setLocalizations()
- * A setMember()
- * A setSite()
- *
- */

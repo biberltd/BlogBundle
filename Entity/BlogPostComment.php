@@ -1,19 +1,12 @@
 <?php
 /**
- * @name        BlogPostComment
- * @package		BiberLtd\Core\BlogBundle
- *
  * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.1
- * @date        26.04.2015
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
- * @description Model / Entity class.
- *
+ * @date        13.12.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -33,110 +26,97 @@ class BlogPostComment extends CoreEntity
      * @ORM\Id
      * @ORM\Column(type="integer", length=10)
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @var int
      */
     private $id;
 
     /** 
      * @ORM\Column(type="datetime", nullable=false)
+     * @var \DateTime
      */
     public $date_added;
 
     /** 
      * @ORM\Column(type="datetime", nullable=true)
+     * @var \DateTime
      */
     public $date_removed;
 
     /** 
      * @ORM\Column(type="datetime", nullable=false)
+     * @var \DateTime
      */
     private $date_published;
 
     /** 
      * @ORM\Column(type="string", length=255, nullable=false)
+     * @var string
      */
     private $name;
 
     /** 
      * @ORM\Column(type="string", length=255, nullable=false)
+     * @var string
      */
     private $email;
 
     /** 
      * @ORM\Column(type="text", nullable=true)
+     * @var string
      */
     private $url;
 
     /** 
      * @ORM\Column(type="integer", length=10, nullable=false, options={"default":0})
+     * @var int
      */
     private $count_likes;
 
     /** 
      * @ORM\Column(type="integer", length=10, nullable=false, options={"default":0})
+     * @var int
      */
     private $count_dislikes;
 
     /**
-     * @ORM\OneToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment", inversedBy="parent")
-     * @ORM\JoinColumn(name="parent", referencedColumnName="id", nullable=false, unique=true)
-     */
-    private $comment;
-
-    /**
      * @ORM\OneToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment", mappedBy="comment")
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment
      */
     private $parent;
 
     /** 
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\SiteManagementBundle\Entity\Site")
      * @ORM\JoinColumn(name="site", referencedColumnName="id", onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\SiteManagementBundle\Entity\Site
      */
     private $site;
 
     /**
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MemberManagementBundle\Entity\Member")
      * @ORM\JoinColumn(name="author", referencedColumnName="id", onDelete="SET NULL")
+     * @var \BiberLtd\Bundle\MemberManagementBundle\Entity\Member
      */
     private $author;
 
     /**
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost", inversedBy="comments")
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
      */
     private $post;
 
-    /******************************************************************
-     * PUBLIC SET AND GET FUNCTIONS                                   *
-     ******************************************************************/
-
-    /**
-     * @name            getId()
-     *                  Gets $id property.
-     * .
-     * @author          Murat Ünal
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          integer          $this->id
-     */
+	/**
+	 * @return mixed
+	 */
     public function getId(){
         return $this->id;
     }
 
-    /**
-     * @name            setPost()
+	/**
+	 * @param \BiberLtd\Bundle\BlogBundle\Entity\BlogPost $post
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed 		$post
-     *
-     * @return          object      $this
-     */
-    public function setPost($post) {
+	 * @return $this
+	 */
+    public function setPost(\BiberLtd\Bundle\BlogBundle\Entity\BlogPost $post) {
         if(!$this->setModified('post', $post)->isModified()) {
             return $this;
         }
@@ -144,71 +124,19 @@ class BlogPostComment extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getPost()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @return          mixed           $this->blog_post
-     */
+	/**
+	 * @return \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
+	 */
     public function getPost() {
         return $this->post;
     }
 
-    /**
-     * @name            setComment
+	/**
+	 * @param \BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment $parent
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $blog_post_comment
-     *
-     * @return          object                $this
-     */
-    public function setComment($blog_post_comment) {
-        if(!$this->setModified('comment', $blog_post_comment)->isModified()) {
-            return $this;
-        }
-		$this->comment = $blog_post_comment;
-		return $this;
-    }
-
-    /**
-     * @name            getComment()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @return          mixed           $this->blog_post_comment
-     */
-    public function getComment() {
-        return $this->comment;
-    }
-
-    /**
-     * @name            setParent()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed 			$parent
-     *
-     * @return          object          $this
-     */
-    public function setParent($parent) {
+	 * @return $this
+	 */
+    public function setParent(\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment $parent) {
         if(!$this->setModified('parent', $parent)->isModified()) {
             return $this;
         }
@@ -216,35 +144,19 @@ class BlogPostComment extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getParent()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-	 * @return          mixed
+	/**
+	 * @return \BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment
 	 */
-    public function getBlogPostCommentParent() {
+    public function getParent() {
         return $this->parent;
     }
 
-    /**
-     * @name            setCountDislikes ()
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $count_dislikes
-     *
-     * @return          object                $this
-     */
-    public function setCountDislikes($count_dislikes) {
+	/**
+	 * @param int $count_dislikes
+	 *
+	 * @return $this
+	 */
+    public function setCountDislikes(\integer $count_dislikes) {
         if(!$this->setModified('count_dislikes', $count_dislikes)->isModified()) {
             return $this;
         }
@@ -252,36 +164,19 @@ class BlogPostComment extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getCountDislikes ()
-     *                  Returns the value of count_dislikes property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->count_dislikes
-     */
+	/**
+	 * @return int
+	 */
     public function getCountDislikes() {
         return $this->count_dislikes;
     }
 
-    /**
-     * @name            setCountLikes ()
+	/**
+	 * @param int $count_likes
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $count_likes
-     *
-     * @return          object                $this
-     */
-    public function setCountLikes($count_likes) {
+	 * @return $this
+	 */
+    public function setCountLikes(\integer $count_likes) {
         if(!$this->setModified('count_likes', $count_likes)->isModified()) {
             return $this;
         }
@@ -289,36 +184,19 @@ class BlogPostComment extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getCountLikes ()
-     *                  Returns the value of count_likes property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->count_likes
-     */
+	/**
+	 * @return int
+	 */
     public function getCountLikes() {
         return $this->count_likes;
     }
 
-    /**
-     * @name            setDatePublished()
+	/**
+	 * @param \DateTime $date_published
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $date_published
-     *
-     * @return          object                $this
-     */
-    public function setDatePublished($date_published) {
+	 * @return $this
+	 */
+    public function setDatePublished(\DateTime $date_published) {
         if(!$this->setModified('date_published', $date_published)->isModified()) {
             return $this;
         }
@@ -326,36 +204,19 @@ class BlogPostComment extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getDatePublished ()
-     *                                   Returns the value of date_published property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->date_published
-     */
+	/**
+	 * @return \DateTime
+	 */
     public function getDatePublished() {
         return $this->date_published;
     }
 
-    /**
-     * @name           setEmail ()
+	/**
+	 * @param string $email
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $email
-     *
-     * @return          object                $this
-     */
-    public function setEmail($email) {
+	 * @return $this
+	 */
+    public function setEmail(\string $email) {
         if(!$this->setModified('email', $email)->isModified()) {
             return $this;
         }
@@ -363,34 +224,19 @@ class BlogPostComment extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getEmail ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->email
-     */
+	/**
+	 * @return string
+	 */
     public function getEmail() {
         return $this->email;
     }
 
-    /**
-     * @name            setMember()
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $member
-     *
-     * @return          object                $this
-     */
-    public function setAuthor($member) {
+	/**
+	 * @param \BiberLtd\Bundle\MemberManagementBundle\Entity\Member $member
+	 *
+	 * @return $this
+	 */
+    public function setAuthor(\BiberLtd\Bundle\MemberManagementBundle\Entity\Member $member) {
         if(!$this->setModified('author', $member)->isModified()) {
             return $this;
         }
@@ -398,35 +244,19 @@ class BlogPostComment extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getAuthor()
-     *                  Returns the value of member property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->member
-     */
+	/**
+	 * @return \BiberLtd\Bundle\MemberManagementBundle\Entity\Member
+	 */
     public function getAuthor() {
         return $this->author;
     }
 
-    /**
-     * @name            setName ()
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $name
-     *
-     * @return          object                $this
-     */
-    public function setName($name) {
+	/**
+	 * @param string $name
+	 *
+	 * @return $this
+	 */
+    public function setName(\string $name) {
         if(!$this->setModified('name', $name)->isModified()) {
             return $this;
         }
@@ -434,38 +264,19 @@ class BlogPostComment extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getName ()
-     *                  Returns the value of name property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->name
-     */
+	/**
+	 * @return string
+	 */
     public function getName() {
         return $this->name;
     }
 
-    /**
-     * @name                  setSite ()
-     *                                Sets the site property.
-     *                                Updates the data only if stored value and value to be set are different.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $site
-     *
-     * @return          object                $this
-     */
-    public function setSite($site) {
+	/**
+	 * @param \BiberLtd\Bundle\SiteManagementBundle\Entity\Site $site
+	 *
+	 * @return $this
+	 */
+    public function setSite(\BiberLtd\Bundle\SiteManagementBundle\Entity\Site $site) {
         if(!$this->setModified('site', $site)->isModified()) {
             return $this;
         }
@@ -473,38 +284,19 @@ class BlogPostComment extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getSite ()
-     *                          Returns the value of site property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->site
-     */
+	/**
+	 * @return \BiberLtd\Bundle\SiteManagementBundle\Entity\Site
+	 */
     public function getSite() {
         return $this->site;
     }
 
-    /**
-     * @name                  setUrl ()
-     *                               Sets the url property.
-     *                               Updates the data only if stored value and value to be set are different.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $url
-     *
-     * @return          object                $this
-     */
-    public function setUrl($url) {
+	/**
+	 * @param string $url
+	 *
+	 * @return $this
+	 */
+    public function setUrl(\string $url) {
         if(!$this->setModified('url', $url)->isModified()) {
             return $this;
         }
@@ -512,61 +304,10 @@ class BlogPostComment extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getUrl ()
-     *                  Returns the value of url property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->url
-     */
+	/**
+	 * @return string
+	 */
     public function getUrl() {
         return $this->url;
     }
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.1  					   26.04.2015
- * TW #3568845
- * Can Berkol
- * **************************************
- * Major changes!!
- *
- * **************************************
- * v1.0.0                      Murat Ünal
- * 10.10.2013
- * **************************************
- * A getBlog()
- * A getBlogPostComment()
- * A getBlogPostComment_parent()
- * A getCountDislikes()
- * A get_count_kikes()
- * A getDateAdded()
- * A getDatePublished()
- * A getDateRemoved()
- * A getEmail()
- * A getId()
- * A getMember()
- * A getName()
- * A getSite()
- * A getUrl()
- *
- * A setBlog()
- * A setBlogPostComment()
- * A setBlogPostComment_parent()
- * A setCountDislikes()
- * A set_count_kikes()
- * A setDateAdded()
- * A setDatePublished()
- * A setDateRemoved()
- * A setEmail()
- * A setMember()
- * A setName()
- * A setSite()
- * A setUrl()
- *
- */

@@ -1,19 +1,12 @@
 <?php
 /**
- * @name        BlogPostCategoryLocalization
- * @package		BiberLtd\Core\BlogBundle
- *
  * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.4
- * @date        26.04.2015
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
- * @description Model / Entity class.
- *
+ * @date        13.12.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -34,16 +27,19 @@ class BlogPostCategoryLocalization extends CoreEntity
 {
     /**
      * @ORM\Column(type="string", length=155, nullable=false)
+     * @var string
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=false)
+     * @var string
      */
     private $url_key;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @var string
      */
     private $description;
 
@@ -51,6 +47,7 @@ class BlogPostCategoryLocalization extends CoreEntity
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language")
      * @ORM\JoinColumn(name="language", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language
      */
     private $language;
 
@@ -58,24 +55,16 @@ class BlogPostCategoryLocalization extends CoreEntity
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory", inversedBy="localizations")
      * @ORM\JoinColumn(name="post_category", referencedColumnName="id", nullable=false)
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory
      */
     private $category;
 
     /**
-     * @name            setCategory ()
+     * @param \BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory $blog_post_category
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $blog_post_category
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setCategory($blog_post_category) {
+    public function setCategory(\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory $blog_post_category) {
         if(!$this->setModified('category', $blog_post_category)->isModified()) {
             return $this;
         }
@@ -84,35 +73,18 @@ class BlogPostCategoryLocalization extends CoreEntity
     }
 
     /**
-     * @name            getCategory()
-     *                  Returns the value of blog_post_category property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @return          mixed           $this->category
+     * @return \BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory
      */
     public function getCategory() {
         return $this->category;
     }
 
     /**
-     * @name            setDescription ()
+     * @param string $description
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $description
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setDescription($description) {
+    public function setDescription(\string $description) {
         if(!$this->setModified('description', $description)->isModified()) {
             return $this;
         }
@@ -121,34 +93,18 @@ class BlogPostCategoryLocalization extends CoreEntity
     }
 
     /**
-     * @name            getDescription ()
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->description
+     * @return string
      */
     public function getDescription() {
         return $this->description;
     }
 
     /**
-     * @name            setLanguage ()
+     * @param \BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language $language
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $language
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setLanguage($language) {
+    public function setLanguage(\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language $language) {
         if(!$this->setModified('language', $language)->isModified()) {
             return $this;
         }
@@ -157,35 +113,18 @@ class BlogPostCategoryLocalization extends CoreEntity
     }
 
     /**
-     * @name            getLanguage ()
-     *                  Returns the value of language property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->language
+     * @return \BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language
      */
     public function getLanguage() {
         return $this->language;
     }
 
     /**
-     * @name            setName ()
+     * @param string $name
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $name
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setName($name) {
+    public function setName(\string $name) {
         if(!$this->setModified('name', $name)->isModified()) {
             return $this;
         }
@@ -194,35 +133,18 @@ class BlogPostCategoryLocalization extends CoreEntity
     }
 
     /**
-     * @name            getName ()
-     *                  Returns the value of name property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->name
+     * @return string
      */
     public function getName() {
         return $this->name;
     }
 
     /**
-     * @name            setUrlKey ()
+     * @param string $url_key
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $url_key
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setUrlKey($url_key) {
+    public function setUrlKey(\string $url_key) {
         if(!$this->setModified('url_key', $url_key)->isModified()) {
             return $this;
         }
@@ -231,43 +153,9 @@ class BlogPostCategoryLocalization extends CoreEntity
     }
 
     /**
-     * @name            getUrlKey ()
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->url_key
+     * @return string
      */
     public function getUrlKey() {
         return $this->url_key;
     }
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.1  					   26.04.2015
- * TW #3568845
- * Can Berkol
- * **************************************
- * A getCategory()
- * A setCategory()
- *
- * **************************************
- * v1.0.0                      Murat Ünal
- * 13.09.2013
- * **************************************
- * A getBlogPostCategory()
- * A getDescription()
- * A getLanguage()
- * A getName()
- * A getUrlKey()
- *
- * A setBlogPostCategory()
- * A setDescription()
- * A setLanguage()
- * A setName()
- * A setUrlKey()
- *
- */

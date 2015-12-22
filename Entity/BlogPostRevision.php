@@ -1,16 +1,11 @@
 <?php
 /**
- * @name        BlogPostRevision
- * @package		BiberLtd\Core\BlogBundle
- *
  * @author		Can Berkol
  *
- * @version     1.0.1
- * @date        14.06.2015
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
+ * @date        13.12.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -27,61 +22,73 @@ use BiberLtd\Bundle\CoreBundle\CoreEntity;
 class BlogPostRevision extends CoreEntity{
     /**
      * @ORM\Column(type="string", length=155, nullable=false)
+     * @var string
      */
     private $title;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=false)
+     * @var string
      */
     private $url_key;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @var string
      */
     private $summary;
 
     /**
      * @ORM\Column(type="string", length=155, nullable=true)
+     * @var string
      */
     private $meta_title;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @var string
      */
     private $meta_description;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @var string
      */
     private $meta_keywords;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @var string
      */
     private $content;
 
     /**
      * @ORM\Column(type="datetime", nullable=false)
+     * @var \DateTime
      */
     public $date_added;
 
     /**
      * @ORM\Column(type="datetime", nullable=false)
+     * @var \DateTime
      */
 	public $date_updated;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @var \DateTime
      */
 	public $date_removed;
 
     /**
      * @ORM\Column(type="integer", length=10, nullable=false)
+     * @var string
      */
     private $revision_number;
 
     /**
      * @ORM\Column(type="string", length=1, nullable=true, options={"default":"w"})
+     * @var string
      */
     private $status;
 
@@ -89,6 +96,7 @@ class BlogPostRevision extends CoreEntity{
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language")
      * @ORM\JoinColumn(name="language", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language
      */
     private $language;
 
@@ -96,36 +104,23 @@ class BlogPostRevision extends CoreEntity{
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost")
      * @ORM\JoinColumn(name="post", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
      */
     private $post;
 
 	/**
-	 * @name        getContent ()
-	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @return      mixed
+	 * @return mixed
 	 */
 	public function getContent() {
 		return $this->content;
 	}
 
 	/**
-	 * @name        setContent ()
+	 * @param string $content
 	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @param       mixed $content
-	 *
-	 * @return      $this
+	 * @return $this
 	 */
-	public function setContent($content) {
+	public function setContent(\string $content) {
 		if (!$this->setModified('content', $content)->isModified()) {
 			return $this;
 		}
@@ -135,32 +130,18 @@ class BlogPostRevision extends CoreEntity{
 	}
 
 	/**
-	 * @name        getLanguage ()
-	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @return      mixed
+	 * @return \BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language
 	 */
 	public function getLanguage() {
 		return $this->language;
 	}
 
 	/**
-	 * @name        setLanguage ()
+	 * @param \BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language $language
 	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @param       mixed $language
-	 *
-	 * @return      $this
+	 * @return $this
 	 */
-	public function setLanguage($language) {
+	public function setLanguage(\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language $language) {
 		if (!$this->setModified('language', $language)->isModified()) {
 			return $this;
 		}
@@ -170,32 +151,18 @@ class BlogPostRevision extends CoreEntity{
 	}
 
 	/**
-	 * @name        getMetaDescription ()
-	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @return      mixed
+	 * @return string
 	 */
 	public function getMetaDescription() {
 		return $this->meta_description;
 	}
 
 	/**
-	 * @name        setMetaDescription ()
+	 * @param string $meta_description
 	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @param       mixed $meta_description
-	 *
-	 * @return      $this
+	 * @return $this
 	 */
-	public function setMetaDescription($meta_description) {
+	public function setMetaDescription(\string $meta_description) {
 		if (!$this->setModified('meta_description', $meta_description)->isModified()) {
 			return $this;
 		}
@@ -205,32 +172,18 @@ class BlogPostRevision extends CoreEntity{
 	}
 
 	/**
-	 * @name        getMetaKeywords ()
-	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @return      mixed
+	 * @return string
 	 */
 	public function getMetaKeywords() {
 		return $this->meta_keywords;
 	}
 
 	/**
-	 * @name        setMetaKeywords ()
+	 * @param string $meta_keywords
 	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @param       mixed $meta_keywords
-	 *
-	 * @return      $this
+	 * @return $this
 	 */
-	public function setMetaKeywords($meta_keywords) {
+	public function setMetaKeywords(\string $meta_keywords) {
 		if (!$this->setModified('meta_keywords', $meta_keywords)->isModified()) {
 			return $this;
 		}
@@ -240,32 +193,18 @@ class BlogPostRevision extends CoreEntity{
 	}
 
 	/**
-	 * @name        getPost ()
-	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @return      mixed
+	 * @return \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
 	 */
 	public function getPost() {
 		return $this->post;
 	}
 
 	/**
-	 * @name              setPost ()
+	 * @param \BiberLtd\Bundle\BlogBundle\Entity\BlogPost $post
 	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @param       mixed $post
-	 *
-	 * @return      $this
+	 * @return $this
 	 */
-	public function setPost($post) {
+	public function setPost(\BiberLtd\Bundle\BlogBundle\Entity\BlogPost $post) {
 		if (!$this->setModified('post', $post)->isModified()) {
 			return $this;
 		}
@@ -275,32 +214,18 @@ class BlogPostRevision extends CoreEntity{
 	}
 
 	/**
-	 * @name        getRevisionNumber ()
-	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @return      mixed
+	 * @return string
 	 */
 	public function getRevisionNumber() {
 		return $this->revision_number;
 	}
 
 	/**
-	 * @name              setRevisionNumber ()
+	 * @param string $revision_number
 	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @param       mixed $revision_number
-	 *
-	 * @return      $this
+	 * @return $this
 	 */
-	public function setRevisionNumber($revision_number) {
+	public function setRevisionNumber(\string $revision_number) {
 		if (!$this->setModified('revision_number', $revision_number)->isModified()) {
 			return $this;
 		}
@@ -310,30 +235,16 @@ class BlogPostRevision extends CoreEntity{
 	}
 
 	/**
-	 * @name        getSummary ()
-	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @return      mixed
+	 * @return string
 	 */
 	public function getSummary() {
 		return $this->summary;
 	}
 
 	/**
-	 * @name              setSummary ()
+	 * @param $summary
 	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @param       mixed $summary
-	 *
-	 * @return      $this
+	 * @return $this
 	 */
 	public function setSummary($summary) {
 		if (!$this->setModified('summary', $summary)->isModified()) {
@@ -345,32 +256,18 @@ class BlogPostRevision extends CoreEntity{
 	}
 
 	/**
-	 * @name        getTitle ()
-	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @return      mixed
+	 * @return string
 	 */
 	public function getTitle() {
 		return $this->title;
 	}
 
 	/**
-	 * @name        setTitle ()
+	 * @param string $title
 	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @param       mixed $title
-	 *
-	 * @return      $this
+	 * @return $this
 	 */
-	public function setTitle($title) {
+	public function setTitle(\string $title) {
 		if (!$this->setModified('title', $title)->isModified()) {
 			return $this;
 		}
@@ -380,32 +277,18 @@ class BlogPostRevision extends CoreEntity{
 	}
 
 	/**
-	 * @name        getUrlKey ()
-	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @return      mixed
+	 * @return string
 	 */
 	public function getUrlKey() {
 		return $this->url_key;
 	}
 
 	/**
-	 * @name        setUrlKey ()
+	 * @param string $url_key
 	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.0
-	 * @version     1.0.0
-	 *
-	 * @param       mixed $url_key
-	 *
-	 * @return      $this
+	 * @return $this
 	 */
-	public function setUrlKey($url_key) {
+	public function setUrlKey(\string $url_key) {
 		if (!$this->setModified('url_key', $url_key)->isModified()) {
 			return $this;
 		}
@@ -415,32 +298,18 @@ class BlogPostRevision extends CoreEntity{
 	}
 
 	/**
-	 * @name        getMetaTitle ()
-	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.1
-	 * @version     1.0.1
-	 *
-	 * @return      mixed
+	 * @return string
 	 */
 	public function getMetaTitle() {
 		return $this->meta_title;
 	}
 
 	/**
-	 * @name        setMetaTitle ()
+	 * @param string $meta_title
 	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.1
-	 * @version     1.0.1
-	 *
-	 * @param       mixed $meta_title
-	 *
-	 * @return      $this
+	 * @return $this
 	 */
-	public function setMetaTitle($meta_title) {
+	public function setMetaTitle(\string $meta_title) {
 		if (!$this->setModified('meta_title', $meta_title)->isModified()) {
 			return $this;
 		}
@@ -450,32 +319,18 @@ class BlogPostRevision extends CoreEntity{
 	}
 
 	/**
-	 * @name        getStatus ()
-	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.2
-	 * @version     1.0.2
-	 *
-	 * @return      mixed
+	 * @return string
 	 */
 	public function getStatus() {
 		return $this->status;
 	}
 
 	/**
-	 * @name        setStatus ()
+	 * @param string $status
 	 *
-	 * @author      Can Berkol
-	 *
-	 * @since       1.0.2
-	 * @version     1.0.2
-	 *
-	 * @param       mixed $status
-	 *
-	 * @return      $this
+	 * @return $this
 	 */
-	public function setStatus($status) {
+	public function setStatus(\string $status) {
 		if (!$this->setModified('status', $status)->isModified()) {
 			return $this;
 		}
@@ -485,26 +340,3 @@ class BlogPostRevision extends CoreEntity{
 	}
 
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.2  					   16.06.2015
- * Can Berkol
- * **************************************
- * FR :: status property added.
- *
- * **************************************
- * v1.0.1  					   14.06.2015
- * Can Berkol
- * **************************************
- * FR :: meta_title property added.
- * FR :: get/setMetaTitle methods implemented.
- *
- * **************************************
- * v1.0.0  					   26.04.2015
- * TW #3568845
- * Can Berkol
- * **************************************
- * File created for the first time.
- *
- */

@@ -1,18 +1,11 @@
 <?php
 /**
- * @name        FilesOfBlogPost
- * @package		BiberLtd\Bundle\CoreBundle\BlogBundle
+ * @author		Can Berkol
  *
- * @author		Murat Ünal
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @version     1.0.0
- * @date        15.09.2013
- *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
- * @description Model / Entity class.
- *
+ * @date        14.12.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -30,11 +23,13 @@ class FilesOfBlogPost extends CoreEntity
 {
     /**
      * @ORM\Column(type="datetime", nullable=false)
+     * @var \DateTime
      */
     public $date_added;
 
     /**
      * @ORM\Column(type="integer", length=10, nullable=false)
+     * @var integer
      */
     private $sort_order;
 
@@ -42,6 +37,7 @@ class FilesOfBlogPost extends CoreEntity
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost")
      * @ORM\JoinColumn(name="post", referencedColumnName="id", nullable=false)
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
      */
     private $post;
 
@@ -49,34 +45,26 @@ class FilesOfBlogPost extends CoreEntity
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\FileManagementBundle\Entity\File")
      * @ORM\JoinColumn(name="file", referencedColumnName="id", nullable=false)
+     * @var \BiberLtd\Bundle\FileManagementBundle\Entity\File
      */
     private $file;
     /**
      * @ORM\Column(type="string", length=1, nullable=false)
+     * @var string
      */
     private $type;
     /**
      * @ORM\Column(type="integer", nullable=false)
+     * @var integer
      */
     private $count_view;
 
     /**
-     * @name            setPost ()
-     *                  Sets the blog_post property.
-     *                  Updates the data only if stored value and value to be set are different.
+     * @param \BiberLtd\Bundle\BlogBundle\Entity\BlogPost $post
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $blog_post
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setPost($post) {
+    public function setPost(\BiberLtd\Bundle\BlogBundle\Entity\BlogPost $post) {
         if(!$this->setModified('post', $post)->isModified()) {
             return $this;
         }
@@ -85,37 +73,18 @@ class FilesOfBlogPost extends CoreEntity
     }
 
     /**
-     * @name            getPost ()
-     *                  Returns the value of blog_post property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->blog_post
+     * @return \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
      */
     public function getPost() {
         return $this->post;
     }
 
     /**
-     * @name                  setFile ()
-     *                                Sets the file property.
-     *                                Updates the data only if stored value and value to be set are different.
+     * @param \BiberLtd\Bundle\FileManagementBundle\Entity\File $file
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $file
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setFile($file) {
+    public function setFile(\BiberLtd\Bundle\FileManagementBundle\Entity\File $file) {
         if(!$this->setModified('file', $file)->isModified()) {
             return $this;
         }
@@ -124,37 +93,18 @@ class FilesOfBlogPost extends CoreEntity
     }
 
     /**
-     * @name            getFile ()
-     *                          Returns the value of file property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->file
+     * @return \BiberLtd\Bundle\FileManagementBundle\Entity\File
      */
     public function getFile() {
         return $this->file;
     }
 
     /**
-     * @name                  setSortOrder ()
-     *                                     Sets the sort_order property.
-     *                                     Updates the data only if stored value and value to be set are different.
+     * @param int $sort_order
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $sort_order
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setSortOrder($sort_order) {
+    public function setSortOrder(\integer $sort_order) {
         if(!$this->setModified('sort_order', $sort_order)->isModified()) {
             return $this;
         }
@@ -163,29 +113,14 @@ class FilesOfBlogPost extends CoreEntity
     }
 
     /**
-     * @name            getSortOrder ()
-     *                               Returns the value of sort_order property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->sort_order
+     * @return int
      */
     public function getSortOrder() {
         return $this->sort_order;
     }
 
     /**
-     * @name        getCountView ()
-     *
-     * @author      Said İmamoğlu
-     *
-     * @since       1.0.0
-     * @version     1.0.0
-     *
-     * @return      mixed
+     * @return int
      */
     public function getCountView()
     {
@@ -193,18 +128,11 @@ class FilesOfBlogPost extends CoreEntity
     }
 
     /**
-     * @name        setCountView ()
+     * @param int $count_view
      *
-     * @author      Said İmamoğlu
-     *
-     * @since       1.0.0
-     * @version     1.0.0
-     *
-     * @param       mixed $count_view
-     *
-     * @return      $this
+     * @return $this
      */
-    public function setCountView($count_view)
+    public function setCountView(\integer $count_view)
     {
         if (!$this->setModified('count_view', $count_view)->isModified()) {
             return $this;
@@ -214,14 +142,7 @@ class FilesOfBlogPost extends CoreEntity
     }
 
     /**
-     * @name        getType ()
-     *
-     * @author      Said İmamoğlu
-     *
-     * @since       1.0.0
-     * @version     1.0.0
-     *
-     * @return      mixed
+     * @return string
      */
     public function getType()
     {
@@ -229,18 +150,11 @@ class FilesOfBlogPost extends CoreEntity
     }
 
     /**
-     * @name        setType ()
+     * @param string $type
      *
-     * @author      Said İmamoğlu
-     *
-     * @since       1.0.0
-     * @version     1.0.0
-     *
-     * @param       mixed $type
-     *
-     * @return      $this
+     * @return $this
      */
-    public function setType($type)
+    public function setType(\string $type)
     {
         if (!$this->setModified('type', $type)->isModified()) {
             return $this;
@@ -248,33 +162,4 @@ class FilesOfBlogPost extends CoreEntity
         $this->type = $type;
         return $this;
     }
-    /******************************************************************
-     * PUBLIC SET AND GET FUNCTIONS                                   *
-     ******************************************************************/
-
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.1                      Said İmamoğlu
- * 15.01.2015
- *
- * **************************************
- * A getType()
- * A setType()
- * A getCountView()
- * A setCountView()
- *
- * **************************************
- * v1.0.0                      Murat Ünal
- * 15.09.2013
- * **************************************
- * A getDateAdded()
- * A getFile()
- * A getSortOrder()
- *
- * A setDateAdded()
- * A setFile()
- * A setSortOrder()
- *
- */

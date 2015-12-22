@@ -1,18 +1,11 @@
 <?php
 /**
- * @name        CategoriesOfBlogPost
- * @package		BiberLtd\Core\BlogBundle
+ * @author		Can Berkol
  *
- * @author		Murat Ünal
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @version     1.0.1
- * @date        10.10.2013
- *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
- * @description Model / Entity class.
- *
+ * @date        14.12.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -31,11 +24,13 @@ class CategoriesOfBlogPost extends CoreEntity
 {
     /**
      * @ORM\Column(type="datetime", nullable=false)
+     * @var \DateTime
      */
     public $date_added;
 
     /**
      * @ORM\Column(type="string", length=1, nullable=false, options={"default":"y"})
+     * @var string
      */
     private $is_primary;
 
@@ -43,6 +38,7 @@ class CategoriesOfBlogPost extends CoreEntity
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory")
      * @ORM\JoinColumn(name="category", referencedColumnName="id", nullable=false)
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory
      */
     private $category;
 
@@ -50,27 +46,16 @@ class CategoriesOfBlogPost extends CoreEntity
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost")
      * @ORM\JoinColumn(name="post", referencedColumnName="id", nullable=false)
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
      */
     private $post;
 
-
     /**
-     * @name                  setBlogPostCategories ()
-     *                                              Sets the blog_post_categories property.
-     *                                              Updates the data only if stored value and value to be set are different.
+     * @param \BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory $category
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $category
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setCategory($category) {
+    public function setCategory(\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory $category) {
         if(!$this->setModified('category', $category)->isModified()) {
             return $this;
         }
@@ -79,37 +64,18 @@ class CategoriesOfBlogPost extends CoreEntity
     }
 
     /**
-     * @name            getBlogPostCategories ()
-     *                                        Returns the value of blog_post_categories property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->blog_post_categories
+     * @return \BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory
      */
     public function getCategory() {
         return $this->category;
     }
 
     /**
-     * @name                  setBlogPosts ()
-     *                                     Sets the blog_posts property.
-     *                                     Updates the data only if stored value and value to be set are different.
+     * @param \BiberLtd\Bundle\BlogBundle\Entity\BlogPost $post
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $post
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setPost($post) {
+    public function setPost(\BiberLtd\Bundle\BlogBundle\Entity\BlogPost $post) {
         if(!$this->setModified('post', $post)->isModified()) {
             return $this;
         }
@@ -118,37 +84,18 @@ class CategoriesOfBlogPost extends CoreEntity
     }
 
     /**
-     * @name            getBlogPosts ()
-     *                               Returns the value of blog_posts property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->blog_posts
+     * @return \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
      */
     public function getPost() {
         return $this->post;
     }
 
     /**
-     * @name                  setIsPrimary()
-     *                            Sets the is_primary property.
-     *                            Updates the data only if stored value and value to be set are different.
+     * @param string $is_primary
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $is_primary
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setIsPrimary($is_primary) {
+    public function setIsPrimary(\string $is_primary) {
         if(!$this->setModified('is_primary', $is_primary)->isModified()) {
             return $this;
         }
@@ -157,39 +104,9 @@ class CategoriesOfBlogPost extends CoreEntity
     }
 
     /**
-     * @name            getIsPrimary()
-     *                      Returns the value of is_primary property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->is_primary
+     * @return string
      */
     public function getIsPrimary() {
         return $this->is_primary;
     }
-
-    /******************************************************************
-     * PUBLIC SET AND GET FUNCTIONS                                   *
-     ******************************************************************/
-
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.01                     Murat Ünal
- * 10.10.2013
- * **************************************
- * A getBlogPosts()
- * A getBlogPostCategories()
- * A getDateAdded()
- * A getIsPrimary()
- *
- * A setBlogPosts()
- * A setBlogPostCategories()
- * A setDateAdded()
- * A setIsPrimary()
- *
- */

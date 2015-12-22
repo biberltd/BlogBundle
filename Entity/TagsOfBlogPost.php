@@ -1,17 +1,12 @@
 <?php
 /**
- * @name        CategoriesOfBlogPost
- * @package		BiberLtd\Core\BlogBundle
- *
  * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.1
- * @date        26.04.2015
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
+ * @date        14.12.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -30,6 +25,7 @@ class TagsOfBlogPost extends CoreEntity
 {
     /** 
      * @ORM\Column(type="datetime", nullable=false)
+     * @var \DateTime
      */
     public $date_added;
 
@@ -37,6 +33,7 @@ class TagsOfBlogPost extends CoreEntity
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag")
      * @ORM\JoinColumn(name="tag", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag
      */
     private $tag;
 
@@ -44,24 +41,16 @@ class TagsOfBlogPost extends CoreEntity
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost")
      * @ORM\JoinColumn(name="post", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
      */
     private $post;
 
-    /**
-     * @name            setPost()
+	/**
+	 * @param \BiberLtd\Bundle\BlogBundle\Entity\BlogPost $blog_post
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $blog_post
-     *
-     * @return          object                $this
-     */
-    public function setPost($blog_post) {
+	 * @return $this
+	 */
+    public function setPost(\BiberLtd\Bundle\BlogBundle\Entity\BlogPost $blog_post) {
         if(!$this->setModified('post', $blog_post)->isModified()) {
             return $this;
         }
@@ -69,34 +58,19 @@ class TagsOfBlogPost extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getPost ()
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @return          mixed           $this->blog_post
-     */
+	/**
+	 * @return \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
+	 */
     public function getPost() {
         return $this->post;
     }
 
-    /**
-     * @name            setTag()
+	/**
+	 * @param \BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag $tag
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $tag
-     *
-     * @return          object                $this
-     */
-    public function setTag($tag) {
+	 * @return $this
+	 */
+    public function setTag(\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag $tag) {
         if(!$this->setModified('tag', $tag)->isModified()) {
             return $this;
         }
@@ -104,39 +78,10 @@ class TagsOfBlogPost extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getTag()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @return          mixed           $this->blog_post_tag
-     */
+	/**
+	 * @return \BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag
+	 */
     public function getTag() {
         return $this->tag;
     }
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.1  					   26.04.2015
- * TW #3568845
- * Can Berkol
- * **************************************
- * Major changes!!
- *
- * **************************************
- * v1.0.0                      Murat Ünal
- * 15.09.2013
- * **************************************
- * A getBlogPost()
- * A getBlogPostTag()
- * A getDateAdded()
- *
- * A setBlogPost()
- * A setBlogPostTag()
- * A setDateAdded()
- *
- */

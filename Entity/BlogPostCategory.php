@@ -1,19 +1,12 @@
 <?php
 /**
- * @name        BlogPostCategory
- * @package		BiberLtd\Core\BlogBundle
- *
  * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.1
- * @date        26.04.2014
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
- * @description Model / Entity class.
- *
+ * @date        13.12.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use BiberLtd\Bundle\CoreBundle\CoreLocalizableEntity;
@@ -38,31 +31,37 @@ class BlogPostCategory extends CoreLocalizableEntity
      * @ORM\Id
      * @ORM\Column(type="integer", length=10)
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @var int
      */
     private $id;
 
     /** 
      * @ORM\Column(type="datetime", nullable=false)
+     * @var \DateTime
      */
     public $date_added;
 
     /**
      * @ORM\Column(type="datetime", nullable=false)
+     * @var \DateTime
      */
     public $date_updated;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @var \DateTime
      */
 	public $date_removed;
 
     /**
      * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogModerator", mappedBy="category")
+     * @var array
      */
     private $moderators;
 
     /** 
      * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory", mappedBy="parents")
+     * @var array
      */
     private $children;
 
@@ -71,59 +70,44 @@ class BlogPostCategory extends CoreLocalizableEntity
      *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategoryLocalization",
      *     mappedBy="category"
      * )
+     * @var array
      */
     protected $localizations;
 
     /** 
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\SiteManagementBundle\Entity\Site")
      * @ORM\JoinColumn(name="site", referencedColumnName="id", onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\SiteManagementBundle\Entity\Site
      */
     private $site;
 
     /** 
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\Blog")
      * @ORM\JoinColumn(name="blog", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\Blog
      */
     private $blog;
 
     /** 
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory", inversedBy="children")
      * @ORM\JoinColumn(name="parent", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var array
      */
     private $parents;
 
-    /******************************************************************
-     * PUBLIC SET AND GET FUNCTIONS                                   *
-     ******************************************************************/
-    /**
-     * @name            getId()
-     *                  Gets $id property.
-     * .
-     * @author          Murat Ünal
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          integer          $this->id
-     */
+	/**
+	 * @return mixed
+	 */
     public function getId(){
         return $this->id;
     }
 
-    /**
-     * @name            setBlog ()
+	/**
+	 * @param \BiberLtd\Bundle\BlogBundle\Entity\Blog $blog
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $blog
-     *
-     * @return          object                $this
-     */
-    public function setBlog($blog) {
+	 * @return $this
+	 */
+    public function setBlog(\BiberLtd\Bundle\BlogBundle\Entity\Blog $blog) {
         if(!$this->setModified('blog', $blog)->isModified()) {
             return $this;
         }
@@ -131,144 +115,97 @@ class BlogPostCategory extends CoreLocalizableEntity
 		return $this;
     }
 
-    /**
-     * @name            getBlog ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->blog
-     */
+	/**
+	 * @return \BiberLtd\Bundle\BlogBundle\Entity\Blog
+	 */
     public function getBlog() {
         return $this->blog;
     }
 
-    /**
-     * @name            setModerators()
+	/**
+	 * @param array $blog_moderators
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $blog_moderators
-     *
-     * @return          object                $this
-     */
-    public function setModerators($blog_moderators) {
-        if(!$this->setModified('moderators', $blog_moderators)->isModified()) {
+	 * @return $this
+	 */
+    public function setModerators(array $blog_moderators) {
+	    $validCollection = [];
+	    foreach($blog_moderators as $moderator){
+		    if($moderator instanceof \BiberLtd\Bundle\BlogBundle\Entity\BlogModeratorr){
+			     $validCollection[] = $moderator;
+		    }
+	    }
+        if(!$this->setModified('moderators', $validCollection)->isModified()) {
             return $this;
         }
-		$this->moderators = $blog_moderators;
+		$this->moderators = $validCollection;
 		return $this;
     }
 
-    /**
-     * @name            getModerators()
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @return          mixed           $this->blog_moderators
-     */
+	/**
+	 * @return array
+	 */
     public function getModerators() {
         return $this->moderators;
     }
 
-    /**
-     * @name            setChildren ()
-     *                  Sets the children property.
-     *                  Updates the data only if stored value and value to be set are different.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $children
-     *
-     * @return          object                $this
-     */
-    public function setChildren($children) {
-        if(!$this->setModified('children', $children)->isModified()) {
+	/**
+	 * @param array $children
+	 *
+	 * @return $this
+	 */
+    public function setChildren(array $children) {
+	    $validCollection = [];
+	    foreach($children as $item){
+		    if($item instanceof \BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory){
+			    $validCollection[] = $item;
+		    }
+	    }
+        if(!$this->setModified('children', $validCollection)->isModified()) {
             return $this;
         }
-		$this->children = $children;
+		$this->children = $validCollection;
 		return $this;
     }
 
-    /**
-     * @name            getChildren ()
-     *                  Returns the value of children property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->children
-     */
+	/**
+	 * @return array
+	 */
     public function getChildren() {
         return $this->children;
     }
 
-    /**
-     * @name            setParents ()
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $parents
-     *
-     * @return          object                $this
-     */
-    public function setParents($parents) {
-        if(!$this->setModified('parents', $parents)->isModified()) {
+	/**
+	 * @param array $parents
+	 *
+	 * @return $this
+	 */
+    public function setParents(array $parents) {
+	    $validCollection = [];
+	    foreach($parents as $item){
+		    if($item instanceof \BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory){
+			    $validCollection[] = $item;
+		    }
+	    }
+        if(!$this->setModified('parents', $validCollection)->isModified()) {
             return $this;
         }
-		$this->parents = $parents;
+		$this->parents = $validCollection;
 		return $this;
     }
 
-    /**
-     * @name            getParents ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->parents
-     */
+	/**
+	 * @return array
+	 */
     public function getParents() {
         return $this->parents;
     }
 
-    /**
-	 * @name            setSite ()
-	 *                          *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $site
-     *
-     * @return          object                $this
-     */
-    public function setSite($site) {
+	/**
+	 * @param \BiberLtd\Bundle\SiteManagementBundle\Entity\Site $site
+	 *
+	 * @return $this
+	 */
+    public function setSite(\BiberLtd\Bundle\SiteManagementBundle\Entity\Site $site) {
         if(!$this->setModified('site', $site)->isModified()) {
             return $this;
         }
@@ -276,50 +213,10 @@ class BlogPostCategory extends CoreLocalizableEntity
 		return $this;
     }
 
-    /**
-     * @name            getSite ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->site
-     */
+	/**
+	 * @return \BiberLtd\Bundle\SiteManagementBundle\Entity\Site
+	 */
     public function getSite() {
         return $this->site;
     }
-
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.1  					   26.04.2015
- * TW #3568845
- * Can Berkol
- * **************************************
- * A getModerators()
- * A setModerators()
- *
- * **************************************
- * v1.0.0                      Murat Ünal
- * 10.10.2013
- * **************************************
- * A getBlog()
- * A getBlogModerators()
- * A getChildren()
- * A getDateAdded()
- * A getId()
- * A getLocalizations()
- * A getParents()
- * A getSite()
- *
- * A setBlog()
- * A setBlogModerators()
- * A setChildren()
- * A setDateAdded()
- * A setLocalizations()
- * A setParents()
- * A setSite()
- *
- */

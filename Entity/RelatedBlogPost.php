@@ -1,17 +1,12 @@
 <?php
 /**
- * @name        relatedBlogPost
- * @package		BiberLtd\Core\BlogBundle
- *
  * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.1
- * @date        26.04.2015
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
+ * @date        14.12.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -30,6 +25,7 @@ class RelatedBlogPost extends CoreEntity
 {
     /** 
      * @ORM\Column(type="datetime", nullable=false)
+     * @var \DateTime
      */
     public $date_added;
 
@@ -37,6 +33,7 @@ class RelatedBlogPost extends CoreEntity
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost")
      * @ORM\JoinColumn(name="post", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
      */
     private $post;
 
@@ -44,24 +41,16 @@ class RelatedBlogPost extends CoreEntity
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost")
      * @ORM\JoinColumn(name="related_post", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\RelatedBlogPost
      */
     private $related_post;
 
-    /**
-     * @name            setPost()
+	/**
+	 * @param \BiberLtd\Bundle\BlogBundle\Entity\BlogPost $blog_post
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $blog_post
-     *
-     * @return          object                $this
-     */
-    public function setPost($blog_post) {
+	 * @return $this
+	 */
+    public function setPost(\BiberLtd\Bundle\BlogBundle\Entity\BlogPost $blog_post) {
         if(!$this->setModified('post', $blog_post)->isModified()) {
             return $this;
         }
@@ -69,35 +58,19 @@ class RelatedBlogPost extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getPost()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @return          mixed           $this->blog_post
-     */
+	/**
+	 * @return \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
+	 */
     public function getBlogPost() {
         return $this->post;
     }
 
-    /**
-     * @name            setRelatedPost ()
+	/**
+	 * @param \BiberLtd\Bundle\BlogBundle\Entity\RelatedBlogPost $related_post
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $related_post
-     *
-     * @return          object                $this
-     */
-    public function setRelatedPost($related_post) {
+	 * @return $this
+	 */
+    public function setRelatedPost(\BiberLtd\Bundle\BlogBundle\Entity\RelatedBlogPost $related_post) {
         if(!$this->setModified('related_post', $related_post)->isModified()) {
             return $this;
         }
@@ -105,40 +78,10 @@ class RelatedBlogPost extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getRelatedPost ()
-     *                                 Returns the value of related_post property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->related_post
-     */
+	/**
+	 * @return \BiberLtd\Bundle\BlogBundle\Entity\RelatedBlogPost
+	 */
     public function getRelatedPost() {
         return $this->related_post;
     }
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.1  					   26.04.2015
- * TW #3568845
- * Can Berkol
- * **************************************
- * Major changes!!
- *
- * **************************************
- * v1.0.0                      Murat Ünal
- * 15.09.2013
- * **************************************
- * A getBlogPost()
- * A getDateAdded()
- * A getRelatedPost()
- *
- * A setBlogPost()
- * A setDateAdded()
- * A setRelatedPost()
- *
- */

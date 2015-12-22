@@ -1,19 +1,12 @@
 <?php
 /**
- * @name        BlogPostPostModeration
- * @package		BiberLtd\Core\BlogBundle
- *
  * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.1
- * @date        26.04.2015
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
- * @description Model / Entity class.
- *
+ * @date        13.12.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -37,78 +30,67 @@ class BlogPostModeration extends CoreEntity
      * @ORM\Id
      * @ORM\Column(type="integer", length=10)
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @var int
      */
     private $id;
 
     /** 
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @var string
      */
     private $comment;
 
     /** 
      * @ORM\Column(type="string", length=1, nullable=false, options={"default":"a"})
+     * @var string
      */
     private $status;
 
     /** 
      * @ORM\Column(type="datetime", nullable=true)
+     * @var \DateTime
      */
     private $date_reviewed;
 
     /** 
      * @ORM\Column(type="datetime", nullable=true)
+     * @var \DateTime
      */
     public $date_updated;
 
     /**
      * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostModerationReply", mappedBy="moderation")
+     * @var array
      */
     private $replies;
 
     /**
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MemberManagementBundle\Entity\Member")
      * @ORM\JoinColumn(name="moderator", referencedColumnName="id", nullable=false, onDelete="RESTRICT")
+     * @var \BiberLtd\Bundle\MemberManagementBundle\Entity\Member
      */
     private $moderator;
 
     /**
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost", inversedBy="moderations")
      * @ORM\JoinColumn(name="post", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
      */
     private $post;
 
-    /******************************************************************
-     * PUBLIC SET AND GET FUNCTIONS                                   *
-     ******************************************************************/
-    /**
-     * @name            getId()
-     *  				Gets $id property.
-     * .
-     * @author          Murat Ünal
-     * @since			1.0.0
-     * @version         1.0.0
-     *
-     * @return          string          $this->id
-     */
+	/**
+	 * @return mixed
+	 */
     public function getId(){
         return $this->id;
     }
 
-    /**
-     * @name            setPost()
+	/**
+	 * @param \BiberLtd\Bundle\BlogBundle\Entity\BlogPost $blog_post
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $blog_post
-     *
-     * @return          object                $this
-     */
-    public function setPost($blog_post) {
+	 * @return $this
+	 */
+    public function setPost(\BiberLtd\Bundle\BlogBundle\Entity\BlogPost $blog_post) {
         if(!$this->setModified('post', $blog_post)->isModified()) {
             return $this;
         }
@@ -116,71 +98,46 @@ class BlogPostModeration extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getPost()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @return          mixed           $this->post
-     */
+	/**
+	 * @return \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
+	 */
     public function getPost() {
         return $this->post;
     }
 
-    /**
-     * @name           setReplies()
+	/**
+	 * @param array $replies
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $replies
-     *
-     * @return          object                $this
-     */
-    public function setReplies($replies) {
-        if(!$this->setModified('replies', $replies)->isModified()) {
+	 * @return $this
+	 */
+    public function setReplies(array $replies) {
+	    $validCollection = [];
+	    foreach($replies as $reply){
+		    if($reply instanceof \BiberLtd\Bundle\BlogBundle\Entity\BlogPostModerationReply){
+			    $validCollection[] = $reply;
+		    }
+	    }
+	    unset($replies);
+        if(!$this->setModified('replies', $validCollection)->isModified()) {
             return $this;
         }
-		$this->replies = $replies;
+		$this->replies = $validCollection;
 		return $this;
     }
 
-    /**
-     * @name            getReplises()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @return          mixed           $this->replies
-     */
+	/**
+	 * @return array
+	 */
     public function getReplies() {
         return $this->replies;
     }
 
-    /**
-     * @name            setComment()
+	/**
+	 * @param string $comment
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $comment
-     *
-     * @return          object                $this
-     */
-    public function setComment($comment) {
+	 * @return $this
+	 */
+    public function setComment(\string $comment) {
         if(!$this->setModified('comment', $comment)->isModified()) {
             return $this;
         }
@@ -188,35 +145,19 @@ class BlogPostModeration extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getComment ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->comment
-     */
+	/**
+	 * @return string
+	 */
     public function getComment() {
         return $this->comment;
     }
 
-    /**
-     * @name            setDateReviewed()
+	/**
+	 * @param \DateTime $date_reviewed
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $date_reviewed
-     *
-     * @return          object                $this
-     */
-    public function setDateReviewed($date_reviewed) {
+	 * @return $this
+	 */
+    public function setDateReviewed(\DateTime $date_reviewed) {
         if(!$this->setModified('date_reviewed', $date_reviewed)->isModified()) {
             return $this;
         }
@@ -224,35 +165,19 @@ class BlogPostModeration extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getDateReviewed()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->date_reviewed
-     */
+	/**
+	 * @return \DateTime
+	 */
     public function getDateReviewed() {
         return $this->date_reviewed;
     }
 
-    /**
-     * @name            setModerator()
+	/**
+	 * @param \BiberLtd\Bundle\MemberManagementBundle\Entity\Member $member
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $member
-     *
-     * @return          object                $this
-     */
-    public function setModerator($member) {
+	 * @return $this
+	 */
+    public function setModerator(\BiberLtd\Bundle\MemberManagementBundle\Entity\Member $member) {
         if(!$this->setModified('moderator', $member)->isModified()) {
             return $this;
         }
@@ -260,35 +185,19 @@ class BlogPostModeration extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getModerator()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @return          mixed           $this->member
-     */
+	/**
+	 * @return \BiberLtd\Bundle\MemberManagementBundle\Entity\Member
+	 */
     public function getModerator() {
         return $this->moderator;
     }
 
-    /**
-     * @name            setStatus()
+	/**
+	 * @param string $status
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $status
-     *
-     * @return          object                $this
-     */
-    public function setStatus($status) {
+	 * @return $this
+	 */
+    public function setStatus(\string $status) {
         if(!$this->setModified('status', $status)->isModified()) {
             return $this;
         }
@@ -296,48 +205,10 @@ class BlogPostModeration extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getStatus ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->status
-     */
+	/**
+	 * @return string
+	 */
     public function getStatus() {
         return $this->status;
     }
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.1  					   26.04.2015
- * TW #3568845
- * Can Berkol
- * **************************************
- * Major changes!!
- *
- * **************************************
- * v1.0.0                      Murat Ünal
- * 13.09.2013
- * **************************************
- * A getBlogPost()
- * A getBlogPostModerationReplies()
- * A getComment()
- * A getDateReviewed()
- * A getDateUpdated()
- * A getId()
- * A getMember()
- * A getStatus()
- *
- * A setBlogPost()
- * A setBlogPostModerationReplies()
- * A setComment()
- * A setDateReviewed()
- * A setDateUpdated()
- * A setMember()
- * A setStatus()
- *
- */

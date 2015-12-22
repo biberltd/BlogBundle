@@ -1,19 +1,12 @@
 <?php
 /**
- * @name        Blog
- * @package		BiberLtd\Core\BlogBundle
- *
  * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.2
- * @date        25.04.2015
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
- * @description Model / Entity class.
- *
+ * @date        10.12.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use BiberLtd\Bundle\CoreBundle\CoreLocalizableEntity;
@@ -81,158 +74,96 @@ class Blog extends CoreLocalizableEntity{
 	 * @ORM\JoinColumn(name="site", referencedColumnName="id", onDelete="CASCADE")
 	 */
 	private $site;
-	/******************************************************************
-	 * PUBLIC SET AND GET FUNCTIONS                                   *
-	 ******************************************************************/
 
 	/**
-	 * @name            getId()
-	 *                  Gets $id property.
-	 * .
-	 * @author          Murat Ünal
-	 * @since           1.0.0
-	 * @version         1.0.0
-	 *
-	 * @return          integer          $this->id
+	 * @return mixed
 	 */
 	public function getId(){
 		return $this->id;
 	}
 
 	/**
-	 * @name           setModerators()
-	 *                 Sets the blog_moderators property.
-	 *                 Updates the data only if stored value and value to be set are different.
+	 * @param array $moderators (BiberLtd\MemberberManagementBundle\Entity\Member)
 	 *
-	 * @author         Can Berkol
-	 *
-	 * @since          1.0.2
-	 * @version        1.0.2
-	 *
-	 * @use            $this->setModified()
-	 *
-	 * @param          mixed $blog_moderators
-	 *
-	 * @return         object                $this
+	 * @return $this
 	 */
-	public function setModerators($blog_moderators) {
-		if(!$this->setModified('moderators', $blog_moderators)->isModified()) {
+	public function setModerators(array $moderators) {
+		$cCount = count($moderators);
+		$validModerators = [];
+		for($i=0; $i < $cCount; $i++){
+			if($moderators[$i] instanceof BiberLtd\MemberberManagementBundle\Entity\Member){
+				$validModerators[] = $moderators[$i];
+			}
+		}
+		unset($moderators);
+		if(!$this->setModified('moderators', $validModerators)->isModified()) {
 			return $this;
 		}
-		$this->moderators = $blog_moderators;
+		$this->moderators = $validModerators;
 		return $this;
 	}
 
 	/**
-	 * @name            getModerators()
-	 *                  Returns the value of blog_moderators property.
-	 *
-	 * @author          Can Berkol
-	 *
-	 * @since           1.0.2
-	 * @version         1.0.2
-	 *
-	 * @return          mixed           $this->blog_moderators
+	 * @return mixed
 	 */
 	public function getModerators() {
 		return $this->moderators;
 	}
 
 	/**
-	 * @name            setBlogPosts ()
-	 *                  Sets the blog_posts property.
-	 *                  Updates the data only if stored value and value to be set are different.
+	 * @param $posts
 	 *
-	 * @author          Can Berkol
-	 *
-	 * @since           1.0.2
-	 * @version         1.0.2
-	 *
-	 * @use             $this->setModified()
-	 *
-	 * @param           mixed 				$posts
-	 *
-	 * @return          object              $this
+	 * @return $this
 	 */
 	public function setBlogPosts($posts) {
-		if(!$this->setModified('posts', $posts)->isModified()) {
+		$cCount = count($posts);
+		$validPosts = [];
+		for($i=0; $i < $cCount; $i++){
+			if($posts[$i] instanceof BiberLtd\BlogBundle\Entity\BşogPost){
+				$validPosts[] = $validPosts[$i];
+			}
+		}
+		unset($posts);
+		if(!$this->setModified('posts', $validPosts)->isModified()) {
 			return $this;
 		}
-		$this->posts = $posts;
+		$this->posts = $validPosts;
 		return $this;
 	}
 
 	/**
-	 * @name            getPosts()
-	 *                  Returns the value of blog_posts property.
-	 *
-	 * @author          Can Berkol
-	 *
-	 * @since           1.0.2
-	 * @version         1.0.2
-	 *
-	 * @return          mixed           $this->blog_posts
+	 * @return mixed
 	 */
 	public function getPosts() {
 		return $this->posts;
 	}
 
 	/**
-	 * @name                  setCountPosts ()
-	 *                                      Sets the count_posts property.
-	 *                                      Updates the data only if stored value and value to be set are different.
+	 * @param int $count
 	 *
-	 * @author          Can Berkol
-	 *
-	 * @since           1.0.0
-	 * @version         1.0.0
-	 *
-	 * @use             $this->setModified()
-	 *
-	 * @param           mixed $count_posts
-	 *
-	 * @return          object                $this
+	 * @return $this
 	 */
-	public function setCountPosts($count_posts) {
-		if(!$this->setModified('count_posts', $count_posts)->isModified()) {
+	public function setCountPosts(\integer $count) {
+		if(!$this->setModified('count_posts', $count)->isModified()) {
 			return $this;
 		}
-		$this->count_posts = $count_posts;
+		$this->count_posts = $count;
 		return $this;
 	}
 
 	/**
-	 * @name            getCountPosts ()
-	 *                                Returns the value of count_posts property.
-	 *
-	 * @author          Can Berkol
-	 *
-	 * @since           1.0.0
-	 * @version         1.0.0
-	 *
-	 * @return          mixed           $this->count_posts
+	 * @return mixed
 	 */
 	public function getCountPosts() {
 		return $this->count_posts;
 	}
 
 	/**
-	 * @name            setSite ()
-	 *                  Sets the site property.
-	 *                  Updates the data only if stored value and value to be set are different.
+	 * @param \BiberLtd\Bundle\SiteManagementBundle\Entity\Site $site
 	 *
-	 * @author          Can Berkol
-	 *
-	 * @since           1.0.0
-	 * @version         1.0.0
-	 *
-	 * @use             $this->setModified()
-	 *
-	 * @param           mixed $site
-	 *
-	 * @return          object                $this
+	 * @return $this
 	 */
-	public function setSite($site) {
+	public function setSite(\BiberLtd\Bundle\SiteManagementBundle\Entity\Site $site) {
 		if(!$this->setModified('site', $site)->isModified()) {
 			return $this;
 		}
@@ -241,51 +172,9 @@ class Blog extends CoreLocalizableEntity{
 	}
 
 	/**
-	 * @name            getSite ()
-	 *                  Returns the value of site property.
-	 *
-	 * @author          Can Berkol
-	 *
-	 * @since           1.0.0
-	 * @version         1.0.0
-	 *
-	 * @return          mixed           $this->site
+	 * @return mixed
 	 */
 	public function getSite() {
 		return $this->site;
 	}
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.2                      25.04.2015
- * TW #3568845
- * Can Berkol
- * **************************************
- * Major changes !!
- *
- * **************************************
- * v1.0.0                      Murat Ünal
- * 13.09.2013
- * **************************************
- * A getBlogModerators()
- * A getBlogPostCategories()
- * A getBlogPostFieldContents()
- * A getBlogPostTags()
- * A getBlogPosts()
- * A getCountPosts()
- * A getDateCreated()
- * A getDateUpdated()
- * A getId()
- * A getSite()
- * A setBlogModerators()
- * A setBlogPosts_categories()
- * A setBlogPosts_field_contents()
- * A setBlogPosts_tags()
- * A setBlogPosts()
- * A setCountPosts()
- * A setDateCreated()
- * A setDateUpdated()
- * A setSite()
- *
- */

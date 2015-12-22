@@ -1,19 +1,11 @@
 <?php
 /**
- * @name        BlogPostTagLocalization
- * @package		BiberLtd\Core\BlogBundle
- *
  * @author		Can Berkol
- * @author		Murat Ünal
  *
- * @version     1.0.1
- * @date        26.04.2015
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
- * @description Model / Entity class.
- *
+ * @date        14.12.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -34,19 +26,21 @@ use BiberLtd\Bundle\CoreBundle\CoreEntity;
 class BlogPostTagLocalization extends CoreEntity{
     /** 
      * @ORM\Column(type="string", length=155, nullable=false)
+     * @var string
      */
     private $name;
 
     /** 
      * @ORM\Column(type="string", length=255, nullable=false)
+     * @var string
      */
     private $url_key;
 
     /** 
      * @ORM\Id
      * @ORM\OneToOne(targetEntity="BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language")
-     * 
      * @ORM\JoinColumn(name="language", referencedColumnName="id", nullable=false, unique=true, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language
      */
     private $language;
 
@@ -54,24 +48,16 @@ class BlogPostTagLocalization extends CoreEntity{
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag", inversedBy="localizations")
      * @ORM\JoinColumn(name="tag", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag
      */
     private $tag;
 
-    /**
-     * @name            setTag()
+	/**
+	 * @param \BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag $tag
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed 			$tag
-     *
-     * @return          object          $this
-     */
-    public function setTag($tag) {
+	 * @return $this
+	 */
+    public function setTag(\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag $tag) {
         if(!$this->setModified('tag', $tag)->isModified()) {
             return $this;
         }
@@ -79,35 +65,19 @@ class BlogPostTagLocalization extends CoreEntity{
 		return $this;
     }
 
-    /**
-     * @name            getTag()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @return          mixed           $this->tag
-     */
+	/**
+	 * @return \BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag
+	 */
     public function getTag() {
         return $this->tag;
     }
 
-    /**
-     * @name            setLanguage ()
+	/**
+	 * @param \BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language $language
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $language
-     *
-     * @return          object                $this
-     */
-    public function setLanguage($language) {
+	 * @return $this
+	 */
+    public function setLanguage(\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language $language) {
         if(!$this->setModified('language', $language)->isModified()) {
             return $this;
         }
@@ -115,35 +85,19 @@ class BlogPostTagLocalization extends CoreEntity{
 		return $this;
     }
 
-    /**
-     * @name            getLanguage ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->language
-     */
+	/**
+	 * @return \BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language
+	 */
     public function getLanguage() {
         return $this->language;
     }
 
-    /**
-     * @name            setName ()
+	/**
+	 * @param string $name
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $name
-     *
-     * @return          object                $this
-     */
-    public function setName($name) {
+	 * @return $this
+	 */
+    public function setName(\string $name) {
         if(!$this->setModified('name', $name)->isModified()) {
             return $this;
         }
@@ -151,35 +105,19 @@ class BlogPostTagLocalization extends CoreEntity{
 		return $this;
     }
 
-    /**
-     * @name            getName ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->name
-     */
+	/**
+	 * @return string
+	 */
     public function getName() {
         return $this->name;
     }
 
-    /**
-     * @name            setUrlKey ()
+	/**
+	 * @param string $url_key
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $url_key
-     *
-     * @return          object                $this
-     */
-    public function setUrlKey($url_key) {
+	 * @return $this
+	 */
+    public function setUrlKey(\string $url_key) {
         if(!$this->setModified('url_key', $url_key)->isModified()) {
             return $this;
         }
@@ -187,41 +125,10 @@ class BlogPostTagLocalization extends CoreEntity{
 		return $this;
     }
 
-    /**
-     * @name            getUrlKey ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->url_key
-     */
+	/**
+	 * @return string
+	 */
     public function getUrlKey() {
         return $this->url_key;
     }
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.1  					   26.04.2015
- * TW #3568845
- * Can Berkol
- * **************************************
- * Major changes!!
- *
- * **************************************
- * v1.0.0                      Murat Ünal
- * 15.09.2013
- * **************************************
- * A getBlogPostTag()
- * A getLanguage()
- * A getName()
- * A getUrlKey()
- *
- * A setBlogPostTag()
- * A setLanguage()
- * A setName()
- * A setUrlKey()
- *
- */

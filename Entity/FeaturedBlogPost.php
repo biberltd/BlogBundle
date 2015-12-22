@@ -1,19 +1,12 @@
 <?php
 /**
- * @name        FeaturedBlogPost
- * @package		BiberLtd\Core\BlogBundle
- *
  * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.1
- * @date        26.04.2015
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
- * @description Model / Entity class.
- *
+ * @date        14.12.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -40,74 +33,66 @@ class FeaturedBlogPost extends CoreEntity
      * @ORM\Id
      * @ORM\Column(type="integer", length=10)
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @var int
      */
     private $id;
 
     /** 
      * @ORM\Column(type="datetime", nullable=false)
+     * @var \DateTime
      */
     public $date_added;
 
     /** 
      * @ORM\Column(type="datetime", nullable=false)
+     * @var \DateTime
      */
     private $date_published;
 
     /** 
      * @ORM\Column(type="datetime", nullable=false)
+     * @var \DateTime
      */
     private $date_unpublished;
 
     /** 
      * @ORM\Column(type="integer", length=10, nullable=false, options={"default":1})
+     * @var int
      */
     private $sort_order;
 
     /**
      * @ORM\Column(type="datetime", nullable=false)
+     * @var \DateTime
      */
     public $date_updated;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @var \DateTime
      */
 	public $date_removed;
 
     /**
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost")
      * @ORM\JoinColumn(name="post", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
      */
     private $post;
 
-    /**
-     * @name            getId()
-     *                  Gets $id property.
-     * .
-     * @author          Murat Ünal
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          integer          $this->id
-     */
+	/**
+	 * @return mixed
+	 */
     public function getId(){
         return $this->id;
     }
 
-    /**
-     * @name            setPost()
+	/**
+	 * @param \BiberLtd\Bundle\BlogBundle\Entity\BlogPost $blog_post
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed 		$blog_post
-     *
-     * @return          object                $this
-     */
-    public function setPost($blog_post) {
+	 * @return $this
+	 */
+    public function setPost(\BiberLtd\Bundle\BlogBundle\Entity\BlogPost $blog_post) {
         if(!$this->setModified('post', $blog_post)->isModified()) {
             return $this;
         }
@@ -115,35 +100,19 @@ class FeaturedBlogPost extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getPost()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.1
-     * @version         1.0.1
-     *
-     * @return          mixed           $this->post
-     */
+	/**
+	 * @return \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
+	 */
     public function getPost() {
         return $this->post;
     }
 
-    /**
-     * @name            setDatePublished ()
+	/**
+	 * @param \DateTime $date_published
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $date_published
-     *
-     * @return          object                $this
-     */
-    public function setDatePublished($date_published) {
+	 * @return $this
+	 */
+    public function setDatePublished(\DateTime $date_published) {
         if(!$this->setModified('date_published', $date_published)->isModified()) {
             return $this;
         }
@@ -151,35 +120,19 @@ class FeaturedBlogPost extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getDatePublished ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->date_published
-     */
+	/**
+	 * @return \DateTime
+	 */
     public function getDatePublished() {
         return $this->date_published;
     }
 
-    /**
-     * @name            setDateUnpublished ()
+	/**
+	 * @param \DateTime $date_unpublished
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $date_unpublished
-     *
-     * @return          object                $this
-     */
-    public function setDateUnpublished($date_unpublished) {
+	 * @return $this
+	 */
+    public function setDateUnpublished(\DateTime $date_unpublished) {
         if(!$this->setModified('date_unpublished', $date_unpublished)->isModified()) {
             return $this;
         }
@@ -187,35 +140,19 @@ class FeaturedBlogPost extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getDateUnpublished ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->date_unpublished
-     */
+	/**
+	 * @return \DateTime
+	 */
     public function getDateUnpublished() {
         return $this->date_unpublished;
     }
 
-    /**
-     * @name            setSortOrder ()
+	/**
+	 * @param int $sort_order
 	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $sort_order
-     *
-     * @return          object                $this
-     */
-    public function setSortOrder($sort_order) {
+	 * @return $this
+	 */
+    public function setSortOrder(\integer $sort_order) {
         if(!$this->setModified('sort_order', $sort_order)->isModified()) {
             return $this;
         }
@@ -223,46 +160,10 @@ class FeaturedBlogPost extends CoreEntity
 		return $this;
     }
 
-    /**
-     * @name            getSortOrder ()
-	 *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->sort_order
-     */
+	/**
+	 * @return int
+	 */
     public function getSortOrder() {
         return $this->sort_order;
     }
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.1  					   26.04.2015
- * TW #3568845
- * Can Berkol
- * **************************************
- * Major changes!!
- *
- * **************************************
- * v1.0.1                      Murat Ünal
- * 10.10.2013
- * **************************************
- * A getBlogPost()
- * A getDateAdded()
- * A getDatePublished()
- * A getDateUnpublished()
- * A getId()
- * A getLocalizations()
- * A getSortOrder()
- *
- * A setBlogPost()
- * A setDateAdded()
- * A setDatePublished()
- * A setDateUnpublished()
- * A setLocalizations()
- * A setSortOrder()
- *
- */

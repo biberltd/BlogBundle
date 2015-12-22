@@ -1,18 +1,12 @@
 <?php
 /**
- * @name        BlogLocalization
- * @package		BiberLtd\Core\BlogBundle
- *
+ * @author		Can Berkol
  * @author		Murat Ünal
  *
- * @version     1.0.0
- * @date        13.09.2013
+ * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
+ * @license     GPLv3
  *
- * @copyright   Biber Ltd. (http://www.biberltd.com)
- * @license     GPL v3.0
- *
- * @description Model / Entity class.
- *
+ * @date        10.12.2015
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -69,22 +63,11 @@ class BlogLocalization extends CoreEntity
     private $blog;
 
     /**
-     * @name                  setBlog ()
-     *                                Sets the blog property.
-     *                                Updates the data only if stored value and value to be set are different.
+     * @param \BiberLtd\Bundle\BlogBundle\Entity\Blog $blog
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $blog
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setBlog($blog) {
+    public function setBlog(\BiberLtd\Bundle\BlogBundle\Entity\Blog $blog) {
         if(!$this->setModified('blog', $blog)->isModified()) {
             return $this;
         }
@@ -93,37 +76,18 @@ class BlogLocalization extends CoreEntity
     }
 
     /**
-     * @name            getBlog ()
-     *                          Returns the value of blog property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->blog
+     * @return mixed
      */
     public function getBlog() {
         return $this->blog;
     }
 
     /**
-     * @name                  setDescription ()
-     *                                       Sets the description property.
-     *                                       Updates the data only if stored value and value to be set are different.
+     * @param string $description
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $description
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setDescription($description) {
+    public function setDescription(\string $description) {
         if(!$this->setModified('description', $description)->isModified()) {
             return $this;
         }
@@ -132,37 +96,18 @@ class BlogLocalization extends CoreEntity
     }
 
     /**
-     * @name            getDescription ()
-     *                                 Returns the value of description property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->description
+     * @return mixed
      */
     public function getDescription() {
         return $this->description;
     }
 
     /**
-     * @name                  setLanguage ()
-     *                                    Sets the language property.
-     *                                    Updates the data only if stored value and value to be set are different.
+     * @param \BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language $language
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $language
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setLanguage($language) {
+    public function setLanguage(\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language $language) {
         if(!$this->setModified('language', $language)->isModified()) {
             return $this;
         }
@@ -171,115 +116,58 @@ class BlogLocalization extends CoreEntity
     }
 
     /**
-     * @name            getLanguage ()
-     *                              Returns the value of language property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->language
+     * @return mixed
      */
     public function getLanguage() {
         return $this->language;
     }
 
     /**
-     * @name                  setMetaDescription ()
-     *                                           Sets the meta_description property.
-     *                                           Updates the data only if stored value and value to be set are different.
+     * @param string $metaDescription
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $meta_description
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setMetaDescription($meta_description) {
-        if(!$this->setModified('meta_description', $meta_description)->isModified()) {
+    public function setMetaDescription(\string $metaDescription) {
+        if(!$this->setModified('meta_description', $metaDescription)->isModified()) {
             return $this;
         }
-		$this->meta_description = $meta_description;
+		$this->meta_description = $metaDescription;
 		return $this;
     }
 
     /**
-     * @name            getMetaDescription ()
-     *                                     Returns the value of meta_description property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->meta_description
+     * @return mixed
      */
     public function getMetaDescription() {
         return $this->meta_description;
     }
 
     /**
-     * @name                  setMetaKeywords ()
-     *                                        Sets the meta_keywords property.
-     *                                        Updates the data only if stored value and value to be set are different.
+     * @param \ßtring $metaKeywords
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $meta_keywords
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setMetaKeywords($meta_keywords) {
-        if(!$this->setModified('meta_keywords', $meta_keywords)->isModified()) {
+    public function setMetaKeywords(\ßtring $metaKeywords) {
+        if(!$this->setModified('meta_keywords', $metaKeywords)->isModified()) {
             return $this;
         }
-		$this->meta_keywords = $meta_keywords;
+		$this->meta_keywords = $metaKeywords;
 		return $this;
     }
 
     /**
-     * @name            getMetaKeywords ()
-     *                                  Returns the value of meta_keywords property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->meta_keywords
+     * @return mixed
      */
     public function getMetaKeywords() {
         return $this->meta_keywords;
     }
 
     /**
-     * @name                  setTitle ()
-     *                                 Sets the title property.
-     *                                 Updates the data only if stored value and value to be set are different.
+     * @param string $title
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $title
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setTitle($title) {
+    public function setTitle(\string $title) {
         if(!$this->setModified('title', $title)->isModified()) {
             return $this;
         }
@@ -288,79 +176,29 @@ class BlogLocalization extends CoreEntity
     }
 
     /**
-     * @name            getTitle ()
-     *                           Returns the value of title property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->title
+     * @return mixed
      */
     public function getTitle() {
         return $this->title;
     }
 
     /**
-     * @name                  setUrlKey ()
-     *                                  Sets the url_key property.
-     *                                  Updates the data only if stored value and value to be set are different.
+     * @param string $urlKey
      *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @use             $this->setModified()
-     *
-     * @param           mixed $url_key
-     *
-     * @return          object                $this
+     * @return $this
      */
-    public function setUrlKey($url_key) {
-        if(!$this->setModified('url_key', $url_key)->isModified()) {
+    public function setUrlKey(\string $urlKey) {
+        if(!$this->setModified('url_key', $urlKey)->isModified()) {
             return $this;
         }
-		$this->url_key = $url_key;
+		$this->url_key = $urlKey;
 		return $this;
     }
 
     /**
-     * @name            getUrlKey ()
-     *                            Returns the value of url_key property.
-     *
-     * @author          Can Berkol
-     *
-     * @since           1.0.0
-     * @version         1.0.0
-     *
-     * @return          mixed           $this->url_key
+     * @return mixed
      */
     public function getUrlKey() {
         return $this->url_key;
     }
 }
-/**
- * Change Log:
- * **************************************
- * v1.0.0                      Murat Ünal
- * 13.09.2013
- * **************************************
- * A getBlog()
- * A getDescription()
- * A getLanguage()
- * A getMetaDescription()
- * A getMetaKeywords()
- * A getTitle()
- * A getUrlKey()
- *
- * A setBlog()
- * A setDescription()
- * A setLanguage()
- * A setMetaDescription()
- * A setMetaKeywords()
- * A setTitle()
- * A setUrlKey()
- *
- */
