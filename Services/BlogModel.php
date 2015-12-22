@@ -2516,12 +2516,13 @@ class BlogModel extends CoreModel
      * @param           $site
      * @param \DateTime $dateStart
      * @param \DateTime $dateEnd
+     * @param bool      $inclusive
      * @param null      $sortOrder
      * @param null      $limit
      *
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPostRevisionsOfSiteUpdatedBetween($site, \DateTime $dateStart, \DateTime $dateEnd, $sortOrder = null, $limit = null){
+    public function listPostRevisionsOfSiteUpdatedBetween($site, \DateTime $dateStart, \DateTime $dateEnd, $inclusive = true, $sortOrder = null, $limit = null){
         $timeStamp = time();
         $sModel = new SMMService\SiteManagementModel($this->kernel, $this->dbConnection, $this->orm);
         $response = $sModel->getSite($site);
@@ -2529,6 +2530,12 @@ class BlogModel extends CoreModel
             return $response;
         }
         $site = $response->result->set;
+        $lt = '<';
+        $gt = '>';
+        if($inclusive){
+            $lt = $lt.'=';
+            $gt = $gt.'=';
+        }
 
         $filter[] = array(
             'glue' => 'and',
