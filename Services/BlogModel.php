@@ -2562,7 +2562,7 @@ class BlogModel extends CoreModel
             'condition' => array(
                 array(
                     'glue' => 'and',
-                    'condition' => array('column' => $this->entity['bpr']['alias'].'.id', 'comparison' => 'IN', 'value' => $postIds),
+                    'condition' => array('column' => $this->entity['bpr']['alias'].'.id', 'comparison' => 'in', 'value' => $postIds),
                 ),
                 array(
                     'glue' => 'and',
