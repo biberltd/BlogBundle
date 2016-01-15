@@ -65,7 +65,7 @@ class BlogPost extends CoreLocalizableEntity
     private $date_approved;
 
     /** 
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=false)
      */
     private $date_published;
 
@@ -104,18 +104,23 @@ class BlogPost extends CoreLocalizableEntity
      */
 	public $date_removed;
 
+	/**
+	 * @ORM\Column(type="text", nullable=true)
+	 */
+	private $active_locales;
+
     /**
      * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostModeration", mappedBy="post")
      */
 	public $moderations;
 
     /**
-     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostLocalization", mappedBy="blog_post", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostLocalization", mappedBy="blog_post")
      */
     protected $localizations;
 
     /**
-     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment", mappedBy="post")
+     * @ORM\OneToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment", mappedBy="post")
      */
     private $comments;
 
@@ -817,6 +822,41 @@ class BlogPost extends CoreLocalizableEntity
 			return $this;
 		}
 		$this->preview_image = $preview_image;
+
+		return $this;
+	}
+
+	/**
+	 * @name        getActiveLocales ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.0
+	 * @version     1.0.0
+	 *
+	 * @return      mixed
+	 */
+	public function getActiveLocales(){
+		return $this->active_locales;
+	}
+
+	/**
+	 * @name              setActiveLocales ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.0
+	 * @version     1.0.0
+	 *
+	 * @param       mixed $active_locales
+	 *
+	 * @return      $this
+	 */
+	public function setActiveLocales($active_locales){
+		if(!$this->setModified('active_locales', $active_locales)->isModified()){
+			return $this;
+		}
+		$this->active_locales = $active_locales;
 
 		return $this;
 	}
