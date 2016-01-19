@@ -137,7 +137,7 @@ class BlogPostModeration extends CoreEntity
 	 *
 	 * @return $this
 	 */
-    public function setComment(\string $comment) {
+    public function setComment(string $comment) {
         if(!$this->setModified('comment', $comment)->isModified()) {
             return $this;
         }
@@ -197,7 +197,7 @@ class BlogPostModeration extends CoreEntity
 	 *
 	 * @return $this
 	 */
-    public function setStatus(\string $status) {
+    public function setStatus(string $status) {
         if(!$this->setModified('status', $status)->isModified()) {
             return $this;
         }

@@ -87,7 +87,7 @@ class BlogLocalization extends CoreEntity
      *
      * @return $this
      */
-    public function setDescription(\string $description) {
+    public function setDescription(string $description) {
         if(!$this->setModified('description', $description)->isModified()) {
             return $this;
         }
@@ -127,7 +127,7 @@ class BlogLocalization extends CoreEntity
      *
      * @return $this
      */
-    public function setMetaDescription(\string $metaDescription) {
+    public function setMetaDescription(string $metaDescription) {
         if(!$this->setModified('meta_description', $metaDescription)->isModified()) {
             return $this;
         }
@@ -167,7 +167,7 @@ class BlogLocalization extends CoreEntity
      *
      * @return $this
      */
-    public function setTitle(\string $title) {
+    public function setTitle(string $title) {
         if(!$this->setModified('title', $title)->isModified()) {
             return $this;
         }
@@ -187,7 +187,7 @@ class BlogLocalization extends CoreEntity
      *
      * @return $this
      */
-    public function setUrlKey(\string $urlKey) {
+    public function setUrlKey(string $urlKey) {
         if(!$this->setModified('url_key', $urlKey)->isModified()) {
             return $this;
         }

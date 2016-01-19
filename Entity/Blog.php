@@ -143,7 +143,7 @@ class Blog extends CoreLocalizableEntity{
 	 *
 	 * @return $this
 	 */
-	public function setCountPosts(\integer $count) {
+	public function setCountPosts(int $count) {
 		if(!$this->setModified('count_posts', $count)->isModified()) {
 			return $this;
 		}

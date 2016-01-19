@@ -71,7 +71,7 @@ class BlogPostAction extends CoreEntity
 	 *
 	 * @return $this
 	 */
-    public function setAction(\string $action) {
+    public function setAction(string $action) {
         if(!$this->setModified('action', $action)->isModified()) {
             return $this;
         }

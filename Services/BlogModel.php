@@ -70,8 +70,8 @@ class BlogModel extends CoreModel
      *
      * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function addCategoriesToPost(array $categories, $post, \string $isPrimary = 'n'){
-        $timeStamp = time();
+    public function addCategoriesToPost(array $categories, $post, string $isPrimary = 'n'){
+        $timeStamp = microtime(true);
         $response = $this->getBlogPost($post);
         if($response->error->exist){
             return $response;
@@ -81,7 +81,7 @@ class BlogModel extends CoreModel
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. $categories parameter must be an array collection', 'E:S:001');
         }
         unset($count);
-        $collection = array();
+        $collection = [];
         $count = 0;
         /** Start persisting files */
         $now = new \DateTime('now', new \DateTimezone($this->kernel->getContainer()->getParameter('app_timezone')));
@@ -108,9 +108,9 @@ class BlogModel extends CoreModel
         /** flush all into database */
         if ($count > 0) {
             $this->em->flush();
-            return new ModelResponse($collection, $count, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+            return new ModelResponse($collection, $count, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime(true));
         }
-        return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+        return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -120,7 +120,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function addFilesToBlogPost(array $files, $post) {
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         $response = $this->getBlogPost($post);
         if($response->error->exist){
             return $response;
@@ -129,7 +129,7 @@ class BlogModel extends CoreModel
         if (!is_array($files)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. $files parameter must be an array collection', 'E:S:001');
         }
-        $toAdd = array();
+        $toAdd = [];
         $fModel = $this->kernel->getContainer()->get('filemanagement.model');
         foreach ($files as $file) {
             $response = $fModel->getFile($file);
@@ -142,7 +142,7 @@ class BlogModel extends CoreModel
             }
         }
         $now = new \DateTime('now', new \DateTimezone($this->kernel->getContainer()->getParameter('app_timezone')));
-        $insertedItems = array();
+        $insertedItems = [];
         foreach ($toAdd as $file) {
             $entity = new BundleEntity\FilesOfBlogPost();
             $entity->setFile($file)->setPost($post)->setDateAdded($now);
@@ -152,9 +152,9 @@ class BlogModel extends CoreModel
         $countInserts = count($toAdd);
         if($countInserts > 0){
             $this->em->flush();
-            return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+            return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime(true));
         }
-        return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+        return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -164,8 +164,8 @@ class BlogModel extends CoreModel
      *
      * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function addPostsToCategory(array $posts, $category, \string $isPrimary = 'n'){
-        $timeStamp = time();
+    public function addPostsToCategory(array $posts, $category, string $isPrimary = 'n'){
+        $timeStamp = microtime(true);
         $response = $this->getBlogPostCategory($category);
         if($response->error->exist){
             return $response;
@@ -176,7 +176,7 @@ class BlogModel extends CoreModel
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. $posts parameter must be an array collection', 'E:S:001');
         }
         unset($count);
-        $collection = array();
+        $collection = [];
         $count = 0;
         /** Start persisting files */
         $now = new \DateTime('now', new \DateTimezone($this->kernel->getContainer()->getParameter('app_timezone')));
@@ -203,9 +203,9 @@ class BlogModel extends CoreModel
         /** flush all into database */
         if ($count > 0) {
             $this->em->flush();
-            return new ModelResponse($collection, $count, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+            return new ModelResponse($collection, $count, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime(true));
         }
-        return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+        return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -223,7 +223,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function deleteBlogs(array $collection){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
         }
@@ -242,11 +242,11 @@ class BlogModel extends CoreModel
             }
         }
         if($countDeleted < 0){
-            return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
+            return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, microtime(true));
         }
         $this->em->flush();
 
-        return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+        return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -264,7 +264,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function deleteBlogPosts(array $collection){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
         }
@@ -283,11 +283,11 @@ class BlogModel extends CoreModel
             }
         }
         if($countDeleted < 0){
-            return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
+            return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, microtime(true));
         }
         $this->em->flush();
 
-        return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+        return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -305,7 +305,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function deleteBlogPostCategories(array $collection){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
         }
@@ -324,11 +324,11 @@ class BlogModel extends CoreModel
             }
         }
         if($countDeleted < 0){
-            return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
+            return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, microtime(true));
         }
         $this->em->flush();
 
-        return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+        return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -346,7 +346,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function deleteBlogPostRevisions(array $collection){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
         }
@@ -365,11 +365,11 @@ class BlogModel extends CoreModel
             }
         }
         if($countDeleted < 0){
-            return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
+            return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, microtime(true));
         }
         $this->em->flush();
 
-        return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+        return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -378,9 +378,9 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function getBlog($blog) {
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         if($blog instanceof BundleEntity\Blog){
-            return new ModelResponse($blog, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+            return new ModelResponse($blog, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
         }
         $result = null;
         switch($blog){
@@ -396,10 +396,10 @@ class BlogModel extends CoreModel
                 break;
         }
         if(is_null($result)){
-            return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, time());
+            return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, microtime(true));
         }
 
-        return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+        return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -408,8 +408,8 @@ class BlogModel extends CoreModel
      *
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getBlogByUrlKey(\string $urlKey, $language = null){
-        $timeStamp = time();
+    public function getBlogByUrlKey(string $urlKey, $language = null){
+        $timeStamp = microtime(true);
         if(!is_string($urlKey)){
             return $this->createException('InvalidParameterValueException', '$urlKey must be a string.', 'E:S:007');
         }
@@ -441,7 +441,7 @@ class BlogModel extends CoreModel
         if ($response->error->exist) {
             return $response;
         }
-        return new ModelResponse($response->result->set[0], 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+        return new ModelResponse($response->result->set[0], 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -450,9 +450,9 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function getBlogPost($post) {
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         if($post instanceof BundleEntity\BlogPost){
-            return new ModelResponse($post, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+            return new ModelResponse($post, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
         }
         $result = null;
         switch($post){
@@ -468,10 +468,10 @@ class BlogModel extends CoreModel
                 break;
         }
         if(is_null($result)){
-            return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, time());
+            return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, microtime(true));
         }
 
-        return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+        return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -480,8 +480,8 @@ class BlogModel extends CoreModel
      *
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getBlogPostByUrlKey(\string $urlKey, $language = null){
-        $timeStamp = time();
+    public function getBlogPostByUrlKey(string $urlKey, $language = null){
+        $timeStamp = microtime(true);
         if(!is_string($urlKey)){
             return $this->createException('InvalidParameterValueException', '$urlKey must be a string.', 'E:S:007');
         }
@@ -513,7 +513,7 @@ class BlogModel extends CoreModel
         if ($response->error->exist) {
             return $response;
         }
-        return new ModelResponse($response->result->set[0], 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+        return new ModelResponse($response->result->set[0], 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -522,9 +522,9 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function getBlogPostCategory($category) {
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         if($category instanceof BundleEntity\BlogPostCategory){
-            return new ModelResponse($category, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+            return new ModelResponse($category, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
         }
         $result = null;
         switch($category){
@@ -540,10 +540,10 @@ class BlogModel extends CoreModel
                 break;
         }
         if(is_null($result)){
-            return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, time());
+            return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, microtime(true));
         }
 
-        return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+        return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -552,8 +552,8 @@ class BlogModel extends CoreModel
      *
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getBlogPostByMetaTitle(\string $metaTitle, $language = null){
-        $timeStamp = time();
+    public function getBlogPostByMetaTitle(string $metaTitle, $language = null){
+        $timeStamp = microtime(true);
         if(!is_string($metaTitle)){
             return $this->createException('InvalidParameterValueException', '$metaTitle must be a string.', 'E:S:007');
         }
@@ -585,7 +585,7 @@ class BlogModel extends CoreModel
         if ($response->error->exist) {
             return $response;
         }
-        return new ModelResponse($response->result->set[0], 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+        return new ModelResponse($response->result->set[0], 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -594,8 +594,8 @@ class BlogModel extends CoreModel
      *
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getBlogPostCategoryByUrlKey(\string $urlKey, $language = null){
-        $timeStamp = time();
+    public function getBlogPostCategoryByUrlKey(string $urlKey, $language = null){
+        $timeStamp = microtime(true);
         if(!is_string($urlKey)){
             return $this->createException('InvalidParameterValueException', '$urlKey must be a string.', 'E:S:007');
         }
@@ -627,7 +627,7 @@ class BlogModel extends CoreModel
         if($response->error->exist){
             return $response;
         }
-        return new ModelResponse($response->result->set[0], 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+        return new ModelResponse($response->result->set[0], 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -637,8 +637,8 @@ class BlogModel extends CoreModel
      *
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getBlogPostRevision($post, $language, \string $revisionNumber){
-        $timeStamp = time();
+    public function getBlogPostRevision($post, $language, string $revisionNumber){
+        $timeStamp = microtime(true);
 
         $response = $this->getBlogPost($post);
         if($response->error->exist){
@@ -664,10 +664,10 @@ class BlogModel extends CoreModel
         $result = $q->getResult();
 
         if(is_null($result)){
-            return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, time());
+            return new ModelResponse($result, 0, 0, null, true, 'E:D:002', 'Unable to find request entry in database.', $timeStamp, microtime(true));
         }
 
-        return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+        return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -676,7 +676,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function getLastRevisionOfBlogPost($post){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         $response = $this->getBlogPost($post);
         if($response->error->exist){
             return $response;
@@ -697,7 +697,7 @@ class BlogModel extends CoreModel
             return $response;
         }
         $response->stats->execution->start = $timeStamp;
-        $response->stats->execution->end = time();
+        $response->stats->execution->end = microtime(true);
         $response->result->set = $response->result->set[0];
         return $response;
     }
@@ -708,8 +708,8 @@ class BlogModel extends CoreModel
      *
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getMaxSortOrderOfBlogPostFile($post, \bool $bypass = false){
-        $timeStamp = time();
+    public function getMaxSortOrderOfBlogPostFile($post, bool $bypass = false){
+        $timeStamp = microtime(true);
         $response = $this->getBlogPost($post);
         if($response->error->exist){
             return $response;
@@ -723,7 +723,7 @@ class BlogModel extends CoreModel
         if ($bypass) {
             return $result;
         }
-        return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+        return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -741,12 +741,12 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function insertBlogLocalizations(array $collection) {
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
         }
         $countInserts = 0;
-        $insertedItems = array();
+        $insertedItems = [];
         foreach($collection as $data){
             if($data instanceof BundleEntity\BlogLocalization){
                 $entity = $data;
@@ -785,9 +785,9 @@ class BlogModel extends CoreModel
         }
         if($countInserts > 0){
             $this->em->flush();
-            return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+            return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime(true));
         }
-        return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+        return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -796,14 +796,14 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function insertBlogs(array $collection){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         /** Parameter must be an array */
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
         }
         $countInserts = 0;
         $countLocalizations = 0;
-        $insertedItems = array();
+        $insertedItems = [];
         foreach ($collection as $data) {
             if ($data instanceof BundleEntity\Blog) {
                 $entity = $data;
@@ -812,7 +812,7 @@ class BlogModel extends CoreModel
                 $countInserts++;
             }
             else if (is_object($data)) {
-                $localizations = array();
+                $localizations = [];
                 $entity = new BundleEntity\Blog;
                 if (!property_exists($data, 'date_created')) {
                     $data->date_added = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
@@ -869,9 +869,9 @@ class BlogModel extends CoreModel
         }
         if($countInserts > 0){
             $this->em->flush();
-            return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+            return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime(true));
         }
-        return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+        return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -889,12 +889,12 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function insertBlogPostLocalizations(array $collection){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
         }
         $countInserts = 0;
-        $insertedItems = array();
+        $insertedItems = [];
         foreach($collection as $data){
             if($data instanceof BundleEntity\BlogPostLocalization){
                 $entity = $data;
@@ -933,9 +933,9 @@ class BlogModel extends CoreModel
         }
         if($countInserts > 0){
             $this->em->flush();
-            return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+            return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime(true));
         }
-        return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+        return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -953,13 +953,13 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function insertBlogPostRevisions(array $collection) {
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         /** Parameter must be an array */
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
         }
         $countInserts = 0;
-        $insertedItems = array();
+        $insertedItems = [];
         foreach ($collection as $data) {
             if ($data instanceof BundleEntity\BlogPostRevision) {
                 $entity = $data;
@@ -1002,9 +1002,9 @@ class BlogModel extends CoreModel
         }
         if($countInserts > 0){
             $this->em->flush();
-            return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+            return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime(true));
         }
-        return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+        return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -1013,13 +1013,13 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function insertBlogPosts(array $collection){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
         }
         $countInserts = 0;
         $countLocalizations = 0;
-        $insertedItems = array();
+        $insertedItems = [];
         foreach ($collection as $data) {
             if ($data instanceof BundleEntity\BlogPost) {
                 $entity = $data;
@@ -1028,7 +1028,7 @@ class BlogModel extends CoreModel
                 $countInserts++;
             }
             else if (is_object($data)) {
-                $localizations = array();
+                $localizations = [];
                 $entity = new BundleEntity\BlogPost();
                 if (!property_exists($data, 'date_added')) {
                     $data->date_added = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
@@ -1128,9 +1128,9 @@ class BlogModel extends CoreModel
         }
         if($countInserts > 0){
             $this->em->flush();
-            return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+            return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime(true));
         }
-        return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+        return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -1148,12 +1148,12 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function insertBlogPostCategoryLocalizations(array $collection) {
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
         }
         $countInserts = 0;
-        $insertedItems = array();
+        $insertedItems = [];
         foreach($collection as $data){
             if($data instanceof BundleEntity\BlogPostCategoryLocalization){
                 $entity = $data;
@@ -1192,9 +1192,9 @@ class BlogModel extends CoreModel
         }
         if($countInserts > 0){
             $this->em->flush();
-            return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+            return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime(true));
         }
-        return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+        return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -1203,15 +1203,15 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function insertBlogPostCategories(array $collection){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         /** Parameter must be an array */
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
         }
         $countInserts = 0;
         $countLocalizations = 0;
-        $insertedItems = array();
-        $localizations = array();
+        $insertedItems = [];
+        $localizations = [];
         foreach ($collection as $data) {
             if ($data instanceof BundleEntity\BlogPostCategory) {
                 $entity = $data;
@@ -1220,7 +1220,7 @@ class BlogModel extends CoreModel
                 $countInserts++;
             }
             else if (is_object($data)) {
-                $localizations = array();
+                $localizations = [];
                 $entity = new BundleEntity\BlogPostCategory();
                 if (!property_exists($data, 'date_added')) {
                     $data->date_added = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
@@ -1293,9 +1293,9 @@ class BlogModel extends CoreModel
         }
         if($countInserts > 0){
             $this->em->flush();
-            return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+            return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime(true));
         }
-        return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+        return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -1305,8 +1305,8 @@ class BlogModel extends CoreModel
      *
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|bool
      */
-    public function isFileAssociatedWithBlogPost($file, $post, \bool $bypass = false){
-        $timeStamp = time();
+    public function isFileAssociatedWithBlogPost($file, $post, bool $bypass = false){
+        $timeStamp = microtime(true);
         $fModel = new FileService\FileManagementModel($this->kernel, $this->dbConnection, $this->orm);
 
         $response = $fModel->getFile($file);
@@ -1340,7 +1340,7 @@ class BlogModel extends CoreModel
             return $found;
         }
 
-        return new ModelResponse($found, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+        return new ModelResponse($found, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -1350,8 +1350,8 @@ class BlogModel extends CoreModel
      *
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|bool
      */
-    public function isPostAssociatedWithCategory($post, $category, \bool $bypass = false){
-        $timeStamp = time();
+    public function isPostAssociatedWithCategory($post, $category, bool $bypass = false){
+        $timeStamp = microtime(true);
         $response = $this->getBlogPost($post);
         if($response->error->exist){
             return $response;
@@ -1382,7 +1382,7 @@ class BlogModel extends CoreModel
         if ($bypass) {
             return $found;
         }
-        return new ModelResponse($found, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+        return new ModelResponse($found, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -1393,7 +1393,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listBlogPostCategories(array $filter = null, array $sortOrder = null, array $limit = null){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         if(!is_array($sortOrder) && !is_null($sortOrder)){
             return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
         }
@@ -1437,7 +1437,7 @@ class BlogModel extends CoreModel
 
         $result = $q->getResult();
 
-        $entities = array();
+        $entities = [];
         foreach($result as $entry){
             $id = $entry->getCategory()->getId();
             if(!isset($unique[$id])){
@@ -1447,9 +1447,9 @@ class BlogModel extends CoreModel
         }
         $totalRows = count($entities);
         if ($totalRows < 1) {
-            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime(true));
         }
-        return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+        return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -1460,7 +1460,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listBlogPostRevisions(array $filter = null, array $sortOrder = null, array $limit = null){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         if(!is_array($sortOrder) && !is_null($sortOrder)){
             return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
         }
@@ -1500,9 +1500,9 @@ class BlogModel extends CoreModel
 
         $totalRows = count($result);
         if ($totalRows < 1) {
-            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime(true));
         }
-        return new ModelResponse($result, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+        return new ModelResponse($result, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -1513,7 +1513,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listBlogPosts(array $filter = null, array $sortOrder = null, array $limit = null){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         if(!is_array($sortOrder) && !is_null($sortOrder)){
             return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
         }
@@ -1564,7 +1564,7 @@ class BlogModel extends CoreModel
         $q = $this->addLimit($q, $limit);
         $result = $q->getResult();
 
-        $entities = array();
+        $entities = [];
         foreach($result as $entry){
             $id = $entry->getBlogPost()->getId();
             if(!isset($unique[$id])){
@@ -1574,9 +1574,9 @@ class BlogModel extends CoreModel
         }
         $totalRows = count($entities);
         if ($totalRows < 1) {
-            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime(true));
         }
-        return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+        return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -1587,7 +1587,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listBlogs(array $filter = null, array $sortOrder = null, array $limit = null){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         if(!is_array($sortOrder) && !is_null($sortOrder)){
             return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
         }
@@ -1629,8 +1629,8 @@ class BlogModel extends CoreModel
         $q = $this->addLimit($q, $limit);
         $result = $q->getResult();
 
-        $entities = array();
-        $unique = array();
+        $entities = [];
+        $unique = [];
         foreach($result as $entry){
             $id = $entry->getBlog()->getId();
             if(!isset($unique[$id])){
@@ -1640,9 +1640,9 @@ class BlogModel extends CoreModel
         }
         $totalRows = count($entities);
         if ($totalRows < 1) {
-            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime(true));
         }
-        return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+        return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -1654,7 +1654,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listCategoriesOfPost($post, array $filter = null, array $sortOrder = null, array $limit = null){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         $response = $this->getBlogPost($post);
         if($response->error->exist){
             return $response;
@@ -1666,14 +1666,14 @@ class BlogModel extends CoreModel
         $query = $this->em->createQuery($query_str);
         $result = $query->getResult();
 
-        $catsInPost = array();
+        $catsInPost = [];
         if (count($result) > 0) {
             foreach ($result as $cobp) {
                 $catsInPost[] = $cobp->getCategory()->getId();
             }
         }
         if (count($catsInPost) < 1) {
-            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime(true));
         }
         $columnI = $this->entity['bpc']['alias'] . '.id';
         $conditionI = array('column' => $columnI, 'comparison' => 'in', 'value' => $catsInPost);
@@ -1698,8 +1698,8 @@ class BlogModel extends CoreModel
      *
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listMediaOfBlogPost($post, \string $mediaType = 'all', array $sortOrder = null, array $limit = null, array $filter = null){
-        $timeStamp = time();
+    public function listMediaOfBlogPost($post, string $mediaType = 'all', array $sortOrder = null, array $limit = null, array $filter = null){
+        $timeStamp = microtime(true);
         $allowedTypes = array('i', 'a', 'v', 'f', 'd', 'p', 's');
         $response = $this->getBlogPost($post);
         if($response->error->exist){
@@ -1723,7 +1723,7 @@ class BlogModel extends CoreModel
 
         $result = $q->getResult();
 
-        $fileIds = array();
+        $fileIds = [];
         $totalRows = count($result);
 
         if($totalRows > 0){
@@ -1732,7 +1732,7 @@ class BlogModel extends CoreModel
             }
         }
         else{
-            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime(true));
         }
 
         $filter[] = array('glue' => 'and',
@@ -1761,7 +1761,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listPostRevisionsInCategory($category, array $filter = null, array $sortOrder = null, array $limit = null){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         $response = $this->getBlogPostCategory($category);
         if($response->error->exist){
             return $response;
@@ -1774,7 +1774,7 @@ class BlogModel extends CoreModel
         $query = $this->em->createQuery($query_str);
         $result = $query->getResult();
 
-        $revisions = array();
+        $revisions = [];
         if (count($result) > 0) {
             foreach ($result as $cobp) {
                 $revisionResponse = $this->getLastRevisionOfBlogPost($cobp->getPost());
@@ -1784,9 +1784,9 @@ class BlogModel extends CoreModel
             }
         }
         if (count($revisions) < 1) {
-            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime(true));
         }
-        return new ModelResponse($revisions, count($revisions), 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());;
+        return new ModelResponse($revisions, count($revisions), 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));;
     }
 
     /**
@@ -1798,7 +1798,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listPostsInCategory($category, array $filter = null, array $sortOrder = null, array $limit = null){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         $response = $this->getBlogPostCategory($category);
         if($response->error->exist){
             return $response;
@@ -1811,14 +1811,14 @@ class BlogModel extends CoreModel
         $query = $this->em->createQuery($query_str);
         $result = $query->getResult();
 
-        $postsInCat = array();
+        $postsInCat = [];
         if (count($result) > 0) {
             foreach ($result as $cobp) {
                 $postsInCat[] = $cobp->getPost()->getId();
             }
         }
         if (count($postsInCat)<1) {
-            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime(true));
         }
         $columnI = $this->entity['bp']['alias'] . '.id';
         $filter[] = array(
@@ -1845,7 +1845,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listPostCategoriesOfBlog($blog, array $filter = null, array $sortOrder = null, array $limit = null){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         $response = $this->getBlog($blog);
         if($response->error->exist){
             return $response;
@@ -1879,7 +1879,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listPostsOfBlog($blog, array $filter = null, array $sortOrder = null, array $limit = null){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         $response = $this->getBlog($blog);
         if($response->error->exist){
             return $response;
@@ -1909,7 +1909,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listPostsOfBlogInCategory($blog, $category, array $filter = null, array $sortOrder = null, array $limit = null){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         $response = $this->getBlog($blog);
         if($response->error->exist){
             return $response;
@@ -1925,9 +1925,9 @@ class BlogModel extends CoreModel
             . ' WHERE ' . $this->entity['cobp']['alias'] . '.category = ' . $category->getId();
         $q = $this->em->createQuery($qStr);
         $result = $q->getResult();
-        $postsInCat = array();
+        $postsInCat = [];
         if (count($result) < 1) {
-            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime(true));
         }
         foreach ($result as $cobp) {
             $postsInCat[] = $cobp->getPost()->getId();
@@ -1961,7 +1961,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listPostsOfBlogInCategoryAndSite($blog, $category, $site, array $filter = null, array $sortOrder = null, array $limit = null){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         $response = $this->getBlog($blog);
         if($this->error->exist){
             return $response;
@@ -1987,7 +1987,7 @@ class BlogModel extends CoreModel
         $q = $this->em->createQuery($qStr);
         $result = $q->getResult();
 
-        $postsInCat = array();
+        $postsInCat = [];
         if (count($result) > 0) {
             foreach ($result as $cobp) {
                 $postsInCat[] = $cobp->getPost()->getId();
@@ -2026,7 +2026,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listPostsOfBlogInSite($blog, $site, array $filter = null, array $sortOrder = null, array $limit = null){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         $response = $this->getBlog($blog);
         if($response->error->exist){
             return $response;
@@ -2089,7 +2089,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listPostsOfBlogInSiteWithStatuses($blog, $site, array $statuses, array $filter = null, array $sortOrder = null, array $limit = null){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         $response = $this->getBlog($blog);
         if($response->error->exist){
             return $response;
@@ -2131,7 +2131,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listPublishedPosts(array $filter = null, array $sortOrder = null, array $limit = null){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         $now = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
         $columnDA = $this->entity['bp']['alias'] . '.date_published';
         $conditionDA = array('column' => $columnDA, 'comparison' => '<=', 'value' => $now->format('Y-m-d h:i:s'));
@@ -2166,7 +2166,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listPublishedPostsOfBlog($blog, array $filter = null, array $sortOrder = null, array $limit = null){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         $response = $this->getBlog($blog);
         if($response->error->exist){
             return $response;
@@ -2198,7 +2198,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listPublishedPostsOfBlogInCategory($blog, $category, array $filter = null, array $sortOrder = null, array $limit = null){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         $response = $this->getBlog($blog);
         if($response->error->exist){
             return $response;
@@ -2216,7 +2216,7 @@ class BlogModel extends CoreModel
         $query = $this->em->createQuery($qStr);
         $result = $query->getResult();
 
-        $postsInCat = array();
+        $postsInCat = [];
         if (count($result) > 0) {
             foreach ($result as $cobp) {
                 $postsInCat[] = $cobp->getPost()->getId();
@@ -2248,12 +2248,12 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function markPostsAsDeleted(array $collection){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
         }
         $now = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
-        $toUpdate = array();
+        $toUpdate = [];
         foreach ($collection as $post) {
             if(!$post instanceof BundleEntity\BlogPost){
                 $response = $this->getBlogPost($post);
@@ -2269,7 +2269,7 @@ class BlogModel extends CoreModel
         }
         $response = $this->updateBlogPosts($toUpdate);
         $response->stats->execution->start = $timeStamp;
-        $response->stats->execution->end = time();
+        $response->stats->execution->end = microtime(true);
 
         return $response;
     }
@@ -2280,12 +2280,12 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function publishBlogPosts(array $collection){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
         }
         $now = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
-        $toUpdate = array();
+        $toUpdate = [];
         foreach ($collection as $post) {
             if(!$post instanceof BundleEntity\BlogPost){
                 $response = $this->getBlogPost($post);
@@ -2302,7 +2302,7 @@ class BlogModel extends CoreModel
         }
         $response = $this->updateBlogPosts($toUpdate);
         $response->stats->execution->start = $timeStamp;
-        $response->stats->execution->end = time();
+        $response->stats->execution->end = microtime(true);
 
         return $response;
     }
@@ -2314,13 +2314,13 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function removeCategoriesFromPost(array $categories, $post){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         $response = $this->getBlogPost($post);
         if($response->error->exist){
             return $response;
         }
         $post = $response->result->set;
-        $idsToRemove = array();
+        $idsToRemove = [];
         foreach ($categories as $category) {
             $response = $this->getBlogPostCategory($category);
             if($response->error->exist){
@@ -2341,9 +2341,9 @@ class BlogModel extends CoreModel
             $deleted = false;
         }
         if ($deleted) {
-            return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+            return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, microtime(true));
         }
-        return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
+        return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, microtime(true));
     }
 
     /**
@@ -2353,13 +2353,13 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function removePostsFromCategory(array $posts, $category){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         $response = $this->getBlogPostCategory($category);
         if($response->error->exist){
             return $response;
         }
         $category = $response->result->set;
-        $idsToRemove = array();
+        $idsToRemove = [];
         foreach ($posts as $post) {
             $response = $this->getBlogPost($post);
             if($response->error->exist){
@@ -2380,9 +2380,9 @@ class BlogModel extends CoreModel
             $deleted = false;
         }
         if ($deleted) {
-            return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+            return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, microtime(true));
         }
-        return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
+        return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, microtime(true));
     }
 
     /**
@@ -2391,12 +2391,12 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function unpublishBlogPosts(array $collection){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
         }
         $now = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
-        $toUpdate = array();
+        $toUpdate = [];
         foreach ($collection as $post) {
             if(!$post instanceof BundleEntity\BlogPost){
                 $response = $this->getBlogPost($post);
@@ -2412,7 +2412,7 @@ class BlogModel extends CoreModel
         }
         $response = $this->updateBlogPosts($toUpdate);
         $response->stats->execution->start = $timeStamp;
-        $response->stats->execution->end = time();
+        $response->stats->execution->end = microtime(true);
 
         return $response;
     }
@@ -2446,12 +2446,12 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function updateBlogs(array $collection){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
         }
         $countUpdates = 0;
-        $updatedItems = array();
+        $updatedItems = [];
         foreach ($collection as $data) {
             if ($data instanceof BundleEntity\Blog) {
                 $entity = $data;
@@ -2478,7 +2478,7 @@ class BlogModel extends CoreModel
                     $set = 'set' . $this->translateColumnName($column);
                     switch ($column) {
                         case 'local':
-                            $localizations = array();
+                            $localizations = [];
                             foreach ($value as $langCode => $translation) {
                                 $localization = $oldEntity->getLocalization($langCode, true);
                                 $newLocalization = false;
@@ -2528,9 +2528,9 @@ class BlogModel extends CoreModel
         }
         if($countUpdates > 0){
             $this->em->flush();
-            return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, time());
+            return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, microtime(true));
         }
-        return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
+        return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -2548,12 +2548,12 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function updateBlogPosts(array $collection){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
         }
         $countUpdates = 0;
-        $updatedItems = array();
+        $updatedItems = [];
         foreach ($collection as $data) {
             if ($data instanceof BundleEntity\BlogPost) {
                 $entity = $data;
@@ -2576,7 +2576,7 @@ class BlogModel extends CoreModel
                     $set = 'set' . $this->translateColumnName($column);
                     switch ($column) {
                         case 'local':
-                            $localizations = array();
+                            $localizations = [];
                             foreach ($value as $langCode => $translation) {
                                 $localization = $oldEntity->getLocalization($langCode, true);
                                 $newLocalization = false;
@@ -2662,9 +2662,9 @@ class BlogModel extends CoreModel
         }
         if($countUpdates > 0){
             $this->em->flush();
-            return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, time());
+            return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, microtime(true));
         }
-        return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
+        return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -2682,12 +2682,12 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function updateBlogPostCategories(array $collection){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
         }
         $countUpdates = 0;
-        $updatedItems = array();
+        $updatedItems = [];
         foreach ($collection as $data) {
             if ($data instanceof BundleEntity\BlogPostCategory) {
                 $entity = $data;
@@ -2710,7 +2710,7 @@ class BlogModel extends CoreModel
                     $set = 'set' . $this->translateColumnName($column);
                     switch ($column) {
                         case 'local':
-                            $localizations = array();
+                            $localizations = [];
                             foreach ($value as $langCode => $translation) {
                                 $localization = $oldEntity->getLocalization($langCode, true);
                                 $newLocalization = false;
@@ -2777,9 +2777,9 @@ class BlogModel extends CoreModel
         }
         if($countUpdates > 0){
             $this->em->flush();
-            return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, time());
+            return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, microtime(true));
         }
-        return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
+        return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -2804,13 +2804,13 @@ class BlogModel extends CoreModel
      * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function updateBlogPostRevisions($collection) {
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         /** Parameter must be an array */
         if (!is_array($collection)) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
         }
         $countUpdates = 0;
-        $updatedItems = array();
+        $updatedItems = [];
         foreach ($collection as $data) {
             if ($data instanceof BundleEntity\BlogPostRevision) {
                 $entity = $data;
@@ -2869,9 +2869,9 @@ class BlogModel extends CoreModel
         }
         if($countUpdates > 0){
             $this->em->flush();
-            return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, time());
+            return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, microtime(true));
         }
-        return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
+        return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, microtime(true));
     }
 
     /**
@@ -2896,7 +2896,7 @@ class BlogModel extends CoreModel
      *
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getNextPostInCategoryByPublishDate($post, $category, \string $order = 'asc', array $filter = null){
+    public function getNextPostInCategoryByPublishDate($post, $category, string $order = 'asc', array $filter = null){
         $response = $this->listPostsInCategoryByPublishDate($category, $order, $filter, null);
         if ($response->error->exist) {
             return $response;
@@ -2920,7 +2920,7 @@ class BlogModel extends CoreModel
      *
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getPreviousPostInCategoryByPublishDate($post, $category, \string $order = 'asc', array $filter = null){
+    public function getPreviousPostInCategoryByPublishDate($post, $category, string $order = 'asc', array $filter = null){
         $response = $this->listPostsInCategoryByPublishDate($category, $order, $filter, null);
         if ($response->error->exist) {
             return $response;
@@ -2943,7 +2943,7 @@ class BlogModel extends CoreModel
      *
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getFirstPostInCategoryByPublishDate($category, \string $order = 'asc', array $filter = null){
+    public function getFirstPostInCategoryByPublishDate($category, string $order = 'asc', array $filter = null){
         $response = $this->listPostsInCategoryByPublishDate($category, $order, $filter, null);
         if ($response->error->exist) {
             return $response;
@@ -2962,7 +2962,7 @@ class BlogModel extends CoreModel
      *
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function getLastPostInCategoryByPublishDate($category, \string $order = 'asc', array $filter = null){
+    public function getLastPostInCategoryByPublishDate($category, string $order = 'asc', array $filter = null){
         $response = $this->listPostsInCategoryByPublishDate($category, $order, $filter, null);
         if ($response->error->exist) {
             return $response;
@@ -3037,13 +3037,13 @@ class BlogModel extends CoreModel
      *
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listBlogPostsByDateColumnWhichBeforeGivenDate(\STRİNG $dateColumn, \DateTime $date, array $filter = array(), array $sortOrder = null, array $limit = null){
-        $timeStamp = time();
+    public function listBlogPostsByDateColumnWhichBeforeGivenDate(string $dateColumn, \DateTime $date, array $filter = [], array $sortOrder = null, array $limit = null){
+        $timeStamp = microtime(true);
         if (! $date instanceof \DateTime) {
-            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'Invalid date object.', $timeStamp, time());
+            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'Invalid date object.', $timeStamp, microtime(true));
         }
         if (!in_array($dateColumn,array('date_added','date_published','date_unpublished'))) {
-            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'Invalid date column.', $timeStamp, time());
+            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'Invalid date column.', $timeStamp, microtime(true));
         }
         // Prepare SQL conditions
         $filter[] = array(
@@ -3052,7 +3052,7 @@ class BlogModel extends CoreModel
         );
         $response = $this->listBlogPosts($filter,$sortOrder,$limit);
         $response->stats->execution->start = $timeStamp;
-        $response->stats->execution->end = time();
+        $response->stats->execution->end = microtime(true);
         return $response;
     }
 
@@ -3062,9 +3062,9 @@ class BlogModel extends CoreModel
      *
      * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function unPublishActiveBlogPostsByDateColumnWhichBeforeGivenDate(\string $dateColumn, \DateTime $date){
-        $timeStamp = time();
-        $filter = array();
+    public function unPublishActiveBlogPostsByDateColumnWhichBeforeGivenDate(string $dateColumn, \DateTime $date){
+        $timeStamp = microtime(true);
+        $filter = [];
         $filter[] = array(
             'glue' => 'and',
             'condition' => array('column' => $this->entity['bp']['alias'] . '.status', 'comparison' => '!=', 'value' => 'u'),
@@ -3075,7 +3075,7 @@ class BlogModel extends CoreModel
         }
         $response = $this->unpublishBlogPosts($response->result->set);
         $response->stats->execution->start = $timeStamp;
-        $response->stats->execution->end = time();
+        $response->stats->execution->end = microtime(true);
         return $response;
     }
 
@@ -3085,15 +3085,15 @@ class BlogModel extends CoreModel
      *
      * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function unPublishBlogPostsByDateColumnWhichBeforeGivenDate(\string $dateColumn, \DateTime $date){
-        $timeStamp = time();
+    public function unPublishBlogPostsByDateColumnWhichBeforeGivenDate(string $dateColumn, \DateTime $date){
+        $timeStamp = microtime(true);
         $response = $this->listBlogPostsByDateColumnWhichBeforeGivenDate($dateColumn,$date);
         if ($response->error->exist()) {
             return $response;
         }
         $response = $this->unpublishBlogPosts($response->result->set);
         $response->stats->execution->start = $timeStamp;
-        $response->stats->execution->end = time();
+        $response->stats->execution->end = microtime(true);
         return $response;
     }
     /**
@@ -3105,7 +3105,7 @@ class BlogModel extends CoreModel
      * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listPostRevisionsOfSite($site, $filter = null, $sortOrder = null, $limit = null){
-        $timeStamp = time();
+        $timeStamp = microtime(true);
         $sModel = new SMMService\SiteManagementModel($this->kernel, $this->dbConnection, $this->orm);
         $response = $sModel->getSite($site);
         if($response->error->exist){
@@ -3127,7 +3127,7 @@ class BlogModel extends CoreModel
             return $response;
         }
         $entries = $response->result->set;
-        $postIds = array();
+        $postIds = [];
         foreach($entries as $entry){
             $postIds[] = $entry->getId();
         }
@@ -3156,8 +3156,8 @@ class BlogModel extends CoreModel
      *
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPostRevisionsOfSiteUpdatedBetween($site, \DateTime $dateStart, \DateTime $dateEnd, \bool $inclusive = true, $sortOrder = null, $limit = null){
-        $timeStamp = time();
+    public function listPostRevisionsOfSiteUpdatedBetween($site, \DateTime $dateStart, \DateTime $dateEnd, bool $inclusive = true, $sortOrder = null, $limit = null){
+        $timeStamp = microtime(true);
         $sModel = new SMMService\SiteManagementModel($this->kernel, $this->dbConnection, $this->orm);
         $response = $sModel->getSite($site);
         if($response->error->exist){
@@ -3185,7 +3185,7 @@ class BlogModel extends CoreModel
             return $response;
         }
         $entries = $response->result->set;
-        $postIds = array();
+        $postIds = [];
         foreach($entries as $entry){
             $postIds[] = $entry->getId();
         }

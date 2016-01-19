@@ -95,7 +95,7 @@ class CategoriesOfBlogPost extends CoreEntity
      *
      * @return $this
      */
-    public function setIsPrimary(\string $is_primary) {
+    public function setIsPrimary(string $is_primary) {
         if(!$this->setModified('is_primary', $is_primary)->isModified()) {
             return $this;
         }

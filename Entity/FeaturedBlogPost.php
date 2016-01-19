@@ -152,7 +152,7 @@ class FeaturedBlogPost extends CoreEntity
 	 *
 	 * @return $this
 	 */
-    public function setSortOrder(\integer $sort_order) {
+    public function setSortOrder(int $sort_order) {
         if(!$this->setModified('sort_order', $sort_order)->isModified()) {
             return $this;
         }

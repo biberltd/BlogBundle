@@ -156,7 +156,7 @@ class BlogPostComment extends CoreEntity
 	 *
 	 * @return $this
 	 */
-    public function setCountDislikes(\integer $count_dislikes) {
+    public function setCountDislikes(int $count_dislikes) {
         if(!$this->setModified('count_dislikes', $count_dislikes)->isModified()) {
             return $this;
         }
@@ -176,7 +176,7 @@ class BlogPostComment extends CoreEntity
 	 *
 	 * @return $this
 	 */
-    public function setCountLikes(\integer $count_likes) {
+    public function setCountLikes(int $count_likes) {
         if(!$this->setModified('count_likes', $count_likes)->isModified()) {
             return $this;
         }
@@ -216,7 +216,7 @@ class BlogPostComment extends CoreEntity
 	 *
 	 * @return $this
 	 */
-    public function setEmail(\string $email) {
+    public function setEmail(string $email) {
         if(!$this->setModified('email', $email)->isModified()) {
             return $this;
         }
@@ -256,7 +256,7 @@ class BlogPostComment extends CoreEntity
 	 *
 	 * @return $this
 	 */
-    public function setName(\string $name) {
+    public function setName(string $name) {
         if(!$this->setModified('name', $name)->isModified()) {
             return $this;
         }
@@ -296,7 +296,7 @@ class BlogPostComment extends CoreEntity
 	 *
 	 * @return $this
 	 */
-    public function setUrl(\string $url) {
+    public function setUrl(string $url) {
         if(!$this->setModified('url', $url)->isModified()) {
             return $this;
         }

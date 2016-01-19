@@ -273,7 +273,7 @@ class BlogPost extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-    public function setCountComment(\integer $count_comment) {
+    public function setCountComment(int $count_comment) {
         if(!$this->setModified('count_comment', $count_comment)->isModified()) {
             return $this;
         }
@@ -293,7 +293,7 @@ class BlogPost extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-    public function setCountDislike(\integer $count_dislike) {
+    public function setCountDislike(int $count_dislike) {
         if(!$this->setModified('count_dislike', $count_dislike)->isModified()) {
             return $this;
         }
@@ -313,7 +313,7 @@ class BlogPost extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-    public function setCountLike(\integer $count_like) {
+    public function setCountLike(int $count_like) {
         if(!$this->setModified('count_like', $count_like)->isModified()) {
             return $this;
         }
@@ -333,7 +333,7 @@ class BlogPost extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-    public function setCountView(\integer $count_view) {
+    public function setCountView(int $count_view) {
         if(!$this->setModified('count_view', $count_view)->isModified()) {
             return $this;
         }
@@ -473,7 +473,7 @@ class BlogPost extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-    public function setStatus(\string $status) {
+    public function setStatus(string $status) {
         if(!$this->setModified('status', $status)->isModified()) {
             return $this;
         }
@@ -493,7 +493,7 @@ class BlogPost extends CoreLocalizableEntity
 	 *
 	 * @return $this
 	 */
-    public function setType(\string $type) {
+    public function setType(string $type) {
         if(!$this->setModified('type', $type)->isModified()) {
             return $this;
         }

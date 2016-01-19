@@ -132,7 +132,7 @@ class BlogPostLocalization extends CoreEntity
      *
      * @return $this
      */
-    public function setMetaDescription(\string $meta_description) {
+    public function setMetaDescription(string $meta_description) {
         if(!$this->setModified('meta_description', $meta_description)->isModified()) {
             return $this;
         }
@@ -152,7 +152,7 @@ class BlogPostLocalization extends CoreEntity
      *
      * @return $this
      */
-    public function setMetaKeywords(\string $meta_keywords) {
+    public function setMetaKeywords(string $meta_keywords) {
         if(!$this->setModified('meta_keywords', $meta_keywords)->isModified()) {
             return $this;
         }
@@ -172,7 +172,7 @@ class BlogPostLocalization extends CoreEntity
      *
      * @return $this
      */
-    public function setSummary(\string $summary) {
+    public function setSummary(string $summary) {
         if(!$this->setModified('summary', $summary)->isModified()) {
             return $this;
         }
@@ -192,7 +192,7 @@ class BlogPostLocalization extends CoreEntity
      *
      * @return $this
      */
-    public function setTitle(\string $title) {
+    public function setTitle(string $title) {
         if(!$this->setModified('title', $title)->isModified()) {
             return $this;
         }
@@ -212,7 +212,7 @@ class BlogPostLocalization extends CoreEntity
      *
      * @return $this
      */
-    public function setUrlKey(\string $url_key) {
+    public function setUrlKey(string $url_key) {
         if(!$this->setModified('url_key', $url_key)->isModified()) {
             return $this;
         }
@@ -232,7 +232,7 @@ class BlogPostLocalization extends CoreEntity
      *
      * @return $this
      */
-    public function setContent(\string $content) {
+    public function setContent(string $content) {
         if(!$this->setModified('content', $content)->isModified()) {
             return $this;
         }
@@ -259,7 +259,7 @@ class BlogPostLocalization extends CoreEntity
      *
      * @return $this
      */
-    public function setMetaTitle(\string $meta_title) {
+    public function setMetaTitle(string $meta_title) {
         if (!$this->setModified('meta_title', $meta_title)->isModified()) {
             return $this;
         }

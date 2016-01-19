@@ -51,7 +51,7 @@ class FeaturedBlogPostLocalization extends CoreEntity
      *
      * @return $this
      */
-    public function setContent(\string $content) {
+    public function setContent(string $content) {
         if(!$this->setModified('content', $content)->isModified()) {
             return $this;
         }
