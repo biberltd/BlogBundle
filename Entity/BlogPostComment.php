@@ -99,10 +99,17 @@ class BlogPostComment extends CoreEntity
     private $author;
 
     /**
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost", inversedBy="comments")
-     * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
+     * 
+     * @var
+     * @ORM\OneToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost", inversedBy="comments") \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
      */
     private $post;
+
+    /**
+     * @ORM\OneToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment", inversedBy="parent")
+     * @ORM\JoinColumn(name="parent", referencedColumnName="id", nullable=false, unique=true)
+     */
+    private $comment;
 
 	/**
 	 * @return mixed

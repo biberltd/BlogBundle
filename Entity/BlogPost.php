@@ -63,7 +63,7 @@ class BlogPost extends CoreLocalizableEntity
     private $date_approved;
 
     /** 
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=false)
      * @var \DateTime
      */
     private $date_published;
@@ -117,14 +117,15 @@ class BlogPost extends CoreLocalizableEntity
 	public $moderations;
 
     /**
-     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostLocalization", mappedBy="blog_post", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostLocalization", mappedBy="blog_post")
      * @var array
      */
     protected $localizations;
 
     /**
-     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment", mappedBy="post")
-     * @var  array
+     * 
+     * @var
+     * @ORM\OneToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment", mappedBy="post")  array
      */
     private $comments;
 
