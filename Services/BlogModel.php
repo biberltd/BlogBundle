@@ -30,6 +30,7 @@ class BlogModel extends CoreModel
         parent::__construct($kernel, $dbConnection, $orm);
 
         $this->entity = array(
+            'abpl' 		=> array('name' => 'BlogBundle:ActiveBlogPostLocale', 'alias' => 'abpl'),
             'b' 		=> array('name' => 'BlogBundle:Blog', 'alias' => 'b'),
             'bl'		=> array('name' => 'BlogBundle:BlogLocalization', 'alias' => 'bl'),
             'bm' 		=> array('name' => 'BlogBundle:BlogModerator', 'alias' => 'bm'),
@@ -3212,5 +3213,125 @@ class BlogModel extends CoreModel
         }
         $response->stats->execution->start = $timeStamp;
         return $response;
+    }
+
+    /**
+     * @param array $locales
+     * @param mixed $blogPost
+     * @return ModelResponse
+     */
+    public function addLocalesToBlogPost(array $locales, $blogPost){
+        $timeStamp = microtime(true);
+        $response = $this->getBlogPost($blogPost);
+
+        if($response->error->exist){
+            return $response;
+        }
+        $blogPost = $response->result->set;
+        unset($response);
+        $abplCollection = array();
+        $count = 0;
+        $mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+        foreach ($locales as $locale) {
+            $response = $mlsModel->getLanguage($locale);
+            if($response->error->exist){
+                return $response;
+            }
+            $locale = $response->result->set;
+            unset($response);
+            /** If no entity s provided as file we need to check if it does exist */
+            /** Check if association exists */
+            if(!$this->isLocaleAssociatedWithBlogPost($locale, $blogPost, true)) {
+                $abpl = new BundleEntity\ActiveBlogPostLocale();
+                $abpl->setLanguage($locale)->setBlogPost($blogPost);
+                $this->em->persist($abpl);
+                $abplCollection[] = $abpl;
+                $count++;
+            }
+        }
+        if($count > 0){
+            $this->em->flush();
+            return new ModelResponse($abplCollection, $count, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+        }
+        return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+    }
+
+    /**
+     * @param mixed $locale
+     * @param mixed $blogPost
+     * @param bool|null $bypass
+     * @return ModelResponse|bool
+     */
+    public function isLocaleAssociatedWithBlogPost($locale, $blogPost, bool  $bypass = null){
+        $timeStamp = microtime(true);
+        $bypass = $bypass ?? false;
+        $response = $this->getBlogPost($blogPost);
+        if($response->error->exist){
+            return $response;
+        }
+        $blogPost = $response->result->set;
+        $mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+        $response = $mlsModel->getLanguage($locale);
+        if($response->error->exist){
+            return $response;
+        }
+        $locale = $response->result->set;
+        unset($response);
+        $found = false;
+
+        $qStr = 'SELECT COUNT(' . $this->entity['abpl']['alias'] . '.blog_post)'
+            . ' FROM ' . $this->entity['abpl']['name'] . ' ' . $this->entity['abpl']['alias']
+            . ' WHERE ' . $this->entity['abpl']['alias'] . '.language = ' . $locale->getId()
+            . ' AND ' . $this->entity['abpl']['alias'] . '.blog_post = ' . $blogPost->getId();
+        $q = $this->em->createQuery($qStr);
+
+        $result = $q->getSingleScalarResult();
+
+        if ($result > 0) {
+            $found = true;
+        }
+        if ($bypass) {
+            return $found;
+        }
+        return new ModelResponse($found, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+    }
+
+    /**
+     * @param array $locales
+     * @param mixed $blogPost
+     * @return ModelResponse
+     */
+    public function removeLocalesFromBlogPost(array $locales, $blogPost){
+        $timeStamp = microtime(true);
+        $response = $this->getBlogPost($blogPost);
+        if($response->error->exist){
+            return $response;
+        }
+        $blogPost = $response->result->set;
+        $idsToRemove = array();
+        $mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+        foreach ($locales as $locale) {
+            $response = $mlsModel->getLanguage($locale);
+            if($response->error->exist){
+                continue;
+            }
+            $idsToRemove[] = $response->result->set->getId();
+        }
+        $in = ' IN (' . implode(',', $idsToRemove) . ')';
+        $qStr = 'DELETE FROM '.$this->entity['abpl']['name'].' '.$this->entity['abpl']['alias']
+            .' WHERE '.$this->entity['abpl']['alias'].'.blog_post = '.$blogPost->getId()
+            .' AND '.$this->entity['abpl']['alias'].'.language '.$in;
+
+        $q = $this->em->createQuery($qStr);
+        $result = $q->getResult();
+
+        $deleted = true;
+        if (!$result) {
+            $deleted = false;
+        }
+        if ($deleted) {
+            return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+        }
+        return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
     }
 }
