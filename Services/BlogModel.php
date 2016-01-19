@@ -48,6 +48,7 @@ class BlogModel extends CoreModel
         parent::__construct($kernel, $dbConnection, $orm);
 
         $this->entity = array(
+            'abpl' 		=> array('name' => 'BlogBundle:ActiveBlogPostLocale', 'alias' => 'abpl'),
             'b' 		=> array('name' => 'BlogBundle:Blog', 'alias' => 'b'),
             'bl'		=> array('name' => 'BlogBundle:BlogLocalization', 'alias' => 'bl'),
             'bm' 		=> array('name' => 'BlogBundle:BlogModerator', 'alias' => 'bm'),
