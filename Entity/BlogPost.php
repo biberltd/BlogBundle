@@ -105,7 +105,7 @@ class BlogPost extends CoreLocalizableEntity
 	public $date_removed;
 
 	/**
-	 * @ORM\Column(type="text", nullable=true)
+	 * 
 	 */
 	private $active_locales;
 
