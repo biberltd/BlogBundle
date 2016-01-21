@@ -3996,6 +3996,51 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
     }
+
+    /**
+     * @name            listActiveLocalesOfBlogPost()
+     *                  List active locales of a given gallery.
+     *
+     * @since           1.1.3
+     * @version         1.1.4
+     * @author          S.S.Aylak
+     *
+     * @use             $this->createException()
+     *
+     * @param           mixed           $blogpost entity, id, or sku
+     *
+     * @return          array           $blogpost
+     */
+    public function listActiveLocalesOfBlogPost($blogPost){
+        $timeStamp = time();
+        $response = $this->getBlogPost($blogPost);
+        if($response->error->exist){
+            return $response;
+        }
+        $blogPost = $response->result->set;
+        unset($response);
+        $qStr = 'SELECT ' . $this->entity['abpl']['alias']
+            . ' FROM ' . $this->entity['abpl']['name'] . ' ' . $this->entity['abpl']['alias']
+            . ' WHERE ' . $this->entity['abpl']['alias'] . '.blog_post = ' . $blogPost->getId();
+        $query = $this->em->createQuery($qStr);
+
+        $result = $query->getResult();
+        $locales = array();
+        $unique = array();
+        foreach ($result as $entry) {
+            $id = $entry->getLanguage()->getId();
+            if (!isset($unique[$id])) {
+                $locales[] = $entry->getLanguage();
+                $unique[$id] = $entry->getLanguage();
+            }
+        }
+        unset($unique);
+        $totalRows = count($locales);
+        if ($totalRows < 1) {
+            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+        }
+        return new ModelResponse($locales, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+    }
 }
 
 /**
