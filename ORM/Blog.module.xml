@@ -231,22 +231,26 @@
         <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
     </association>
-    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\ActiveBlogPostLocale" local-name="ActiveBlogPostLocale" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Associates languages in which the post will be visible." uuid="3044c8f9-33a6-4aff-98ab-a4989389dde5">
-      <field name="blog_post" type="integer" size="10" required="true" primary="true" uuid="8c95e90d-8a0a-4ddd-acf7-9665d2fdcecf"/>
-      <field name="language" type="integer" size="5" required="true" primary="true" uuid="2bf39544-1324-460b-ace7-a2f601fe9735"/>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\ActiveBlogPostLocale" local-name="ActiveBlogPostLocale" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Matches blog post with language" uuid="33457120-6a30-4eb7-b687-7ecbfa782959">
+      <field name="blogPost" description="The blog post that is selected as active" type="integer" size="10" required="true" primary="true" unsigned="true" uuid="08b3fd91-3ccf-434d-9d55-7decf9617722"/>
+      <field name="language" description="The language that the blog post is active." type="integer" size="5" required="true" primary="true" unsigned="true" uuid="74abe7ef-4e3d-4e8f-92fc-70cb5b6b328d"/>
       <orm-attributes>
-        <attribute name="export-file-name">ActiveBlogPostLocale.php</attribute>
         <attribute name="table">active_blog_post_locale</attribute>
         <attribute name="options">
           <attribute name="charset">utf8</attribute>
           <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
         </attribute>
+        <attribute name="export-file-name">ActiveBlogPostLocale.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\ActiveBlogPostLocale" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFActiveBlogPostOfLanguage" inverse-alias="blogPost" many-owner="true" many-inverse="false" parent-required="true" uuid="451f960e-5778-4aee-b2cf-d0073a3c16ec">
-      <association-field from="blog_post" to="id"/>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\ActiveBlogPostLocale" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFBlogPostOfLanguage" inverse-alias="blogPost" many-owner="true" many-inverse="false" parent-required="true" uuid="2e11dfb4-951b-4311-9b99-0058da64cf29">
+      <association-field from="blogPost" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\ActiveBlogPostLocale" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFActiveLanguageOfBlogPost" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="996910a8-f52e-46c6-bef2-cb94b6da89d9">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\ActiveBlogPostLocale" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFLanguageOfBlogPost" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="bf992406-ef40-47f0-8613-3cad692b951b">
       <association-field from="language" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -849,7 +853,7 @@
     <entity uuid="124be203-cd78-4b96-bc03-210c1f0db117" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="-154" position-y="368" size-x="0" size-x2="149" size-y="0" size-y2="129"/>
     <entity uuid="1421f0f1-e591-42f7-b63c-2a522d14a937" bg-color="4294967295" hdr-color="4292006610" position-x="-126" position-y="1" size-x="0" size-x2="127" size-y="0" size-y2="115"/>
     <entity uuid="239c27b0-2883-46e8-bcbd-010fd9235aaf" bg-color="4294967295" hdr-color="4292006610" position-x="-126" position-y="186" size-x="0" size-x2="130" size-y="0" size-y2="115"/>
-    <entity uuid="3044c8f9-33a6-4aff-98ab-a4989389dde5" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="378" position-y="868" size-x="0" size-x2="118" size-y="0" size-y2="45"/>
+    <entity uuid="33457120-6a30-4eb7-b687-7ecbfa782959" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="-105" position-y="67" size-x="0" size-x2="114" size-y="0" size-y2="45"/>
     <entity uuid="37003f2f-c374-4082-855d-b3cf8a3206a7" bg-color="4294967295" hdr-color="4292006610" position-x="58" position-y="64" size-x="0" size-x2="142" size-y="0" size-y2="129"/>
     <entity uuid="38d1693c-170e-457b-87d7-b0d358797df7" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="62" position-y="368" size-x="0" size-x2="149" size-y="0" size-y2="185"/>
     <entity uuid="51ec9be8-4890-4887-addd-6819fa8f6fb7" bg-color="4294967295" hdr-color="4292006610" position-x="-326" position-y="201" size-x="0" size-x2="147" size-y="0" size-y2="87"/>

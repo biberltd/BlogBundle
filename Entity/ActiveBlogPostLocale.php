@@ -22,9 +22,8 @@ use Doctrine\ORM\Mapping AS ORM;
 /**
  * @ORM\Entity
  * @ORM\Table(
- *     name="active_blogpost_locale",
- *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
- *     uniqueConstraints={@ORM\UniqueConstraint(name="idx_u_active_blogpost_locale", columns={"blog_post","language"})}
+ *     name="active_blog_post_locale",
+ *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"}
  * )
  */
 class ActiveBlogPostLocale extends CoreEntity
@@ -32,14 +31,20 @@ class ActiveBlogPostLocale extends CoreEntity
     /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost")
-     * @ORM\JoinColumn(name="blog_post", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="blogPost", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     */
+    private $blogPost;
+    /**
+     * 
+     * 
+     * 
      */
     private $blog_post;
 
     /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language")
-     * @ORM\JoinColumn(name="language", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="language", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $language;
 
