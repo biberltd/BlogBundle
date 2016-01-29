@@ -232,8 +232,8 @@
       </orm-attributes>
     </association>
     <entity name="\BiberLtd\Bundle\BlogBundle\Entity\ActiveBlogPostLocale" local-name="ActiveBlogPostLocale" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Matches blog post with language." uuid="33457120-6a30-4eb7-b687-7ecbfa782959">
-      <field name="blogPost" type="integer" size="10" required="true" primary="true" unsigned="true" uuid="08b3fd91-3ccf-434d-9d55-7decf9617722"/>
-      <field name="language" type="integer" size="5" required="true" primary="true" unsigned="true" uuid="74abe7ef-4e3d-4e8f-92fc-70cb5b6b328d"/>
+      <field name="blogPost" description="The blog post that is selected as active" type="integer" size="10" required="true" primary="true" unsigned="true" uuid="08b3fd91-3ccf-434d-9d55-7decf9617722"/>
+      <field name="language" description="The language that the blog post is active." type="integer" size="5" required="true" primary="true" unsigned="true" uuid="74abe7ef-4e3d-4e8f-92fc-70cb5b6b328d"/>
       <orm-attributes>
         <attribute name="table">active_blog_post_locale</attribute>
         <attribute name="options">
