@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<skipper version="3.2.1.1226" mvc="Symfony2" orm="Doctrine2">
+<skipper version="3.2.4.1256" mvc="Symfony2" orm="Doctrine2">
   <module name="\BlogBundle" local-name="BlogBundle" namespace="\BiberLtd\Bundle\BlogBundle\Entity" local-namespace="BiberLtd\Bundle\BlogBundle\Entity" export-format="Doctrine2Php" export-path="../Entity" uuid="1b76a8f1-70bf-4d0d-9efe-09cd274f555f">
     <entity name="\BiberLtd\Bundle\BlogBundle\Entity\Blog" local-name="Blog" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Stores all blog definitions." uuid="c221008d-3462-4c58-b3b3-b4d027b70afc">
       <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="35a92f07-cbe6-4ea0-b0cb-f039bf660c38"/>
@@ -227,6 +227,31 @@
     </association>
     <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostRevision" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFBlogPostOfRevision" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="03f34d17-af6d-4c06-994b-e4fa33b45051">
       <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\ActiveBlogPostLocale" local-name="ActiveBlogPostLocale" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Matches blog post with language." uuid="33457120-6a30-4eb7-b687-7ecbfa782959">
+      <field name="blogPost" type="integer" size="10" required="true" primary="true" unsigned="true" uuid="08b3fd91-3ccf-434d-9d55-7decf9617722"/>
+      <field name="language" type="integer" size="5" required="true" primary="true" unsigned="true" uuid="74abe7ef-4e3d-4e8f-92fc-70cb5b6b328d"/>
+      <orm-attributes>
+        <attribute name="table">active_blog_post_locale</attribute>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="export-file-name">ActiveBlogPostLocale.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\ActiveBlogPostLocale" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFBlogPostOfLanguage" inverse-alias="blogPost" many-owner="true" many-inverse="false" parent-required="true" uuid="2e11dfb4-951b-4311-9b99-0058da64cf29">
+      <association-field from="blogPost" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\ActiveBlogPostLocale" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFLanguageOfBlogPost" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="bf992406-ef40-47f0-8613-3cad692b951b">
+      <association-field from="language" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
@@ -827,31 +852,32 @@
     <entity uuid="0935da16-1ed5-48ac-b4bc-16b04799f560" bg-color="4294967295" hdr-color="4292006610" position-x="208" position-y="214" size-x="0" size-x2="118" size-y="0" size-y2="73"/>
     <entity uuid="124be203-cd78-4b96-bc03-210c1f0db117" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="-154" position-y="368" size-x="0" size-x2="149" size-y="0" size-y2="129"/>
     <entity uuid="1421f0f1-e591-42f7-b63c-2a522d14a937" bg-color="4294967295" hdr-color="4292006610" position-x="-126" position-y="1" size-x="0" size-x2="127" size-y="0" size-y2="115"/>
-    <region uuid="17dd8f17-8eed-4535-bda3-bdcca80b4d95" bg-color="4292728527" position-x="1280" position-y="81" size-x="384" size-x2="66" size-y="13" size-y2="337"/>
-    <module uuid="1b76a8f1-70bf-4d0d-9efe-09cd274f555f" bg-color="#A2C700" size-x="354" size-x2="1396" size-y="-18" size-y2="1068"/>
     <entity uuid="239c27b0-2883-46e8-bcbd-010fd9235aaf" bg-color="4294967295" hdr-color="4292006610" position-x="-126" position-y="186" size-x="0" size-x2="130" size-y="0" size-y2="115"/>
-    <region uuid="3449791f-06a3-4081-a8c0-4ea5cf36f46e" bg-color="4292728527" position-x="274" position-y="409" size-x="-22" size-x2="422" size-y="-9" size-y2="309"/>
+    <entity uuid="33457120-6a30-4eb7-b687-7ecbfa782959" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="-104" position-y="67" size-x="0" size-x2="114" size-y="0" size-y2="45"/>
     <entity uuid="37003f2f-c374-4082-855d-b3cf8a3206a7" bg-color="4294967295" hdr-color="4292006610" position-x="58" position-y="64" size-x="0" size-x2="142" size-y="0" size-y2="129"/>
     <entity uuid="38d1693c-170e-457b-87d7-b0d358797df7" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="62" position-y="368" size-x="0" size-x2="149" size-y="0" size-y2="185"/>
-    <region uuid="40ef7a91-816f-4c6e-a580-0f01d93f36ee" bg-color="4292728527" position-x="446" position-y="68" size-x="0" size-x2="350" size-y="0" size-y2="300"/>
-    <region uuid="440e5af7-ace6-4cec-b07e-2c516be0d5d1" bg-color="4292728527" position-x="-304" position-y="768" size-x="0" size-x2="250" size-y="0" size-y2="250"/>
     <entity uuid="51ec9be8-4890-4887-addd-6819fa8f6fb7" bg-color="4294967295" hdr-color="4292006610" position-x="-326" position-y="201" size-x="0" size-x2="147" size-y="0" size-y2="87"/>
     <entity uuid="52633a6e-346a-4e12-b99e-0f492b048a4c" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="-304" position-y="68" size-x="0" size-x2="145" size-y="0" size-y2="255"/>
     <entity uuid="5caac17f-21c3-4d96-ad7e-e5c9c46f3072" bg-color="4294967295" hdr-color="4292006610" position-x="280" position-y="73" size-x="0" size-x2="121" size-y="0" size-y2="73"/>
     <entity uuid="7a06efe4-87ce-4810-9039-1e1c8ffb811f" bg-color="4294967295" hdr-color="4292006610" position-x="41" position-y="2" size-x="0" size-x2="137" size-y="0" size-y2="185"/>
-    <region uuid="8513c45d-b4e7-413f-b7c6-4d58b3c53d3b" bg-color="4292728527" position-x="46" position-y="754" size-x="0" size-x2="209" size-y="-14" size-y2="200"/>
-    <region uuid="a0a3337a-6806-4eb6-9695-0a1051ae2e7e" bg-color="4292728527" position-x="46" position-y="68" size-x="0" size-x2="250" size-y="0" size-y2="150"/>
     <entity uuid="a70427d3-c8e0-4829-93e3-de66bb9c9c61" bg-color="4294967295" hdr-color="4292006610" position-x="8" position-y="77" size-x="0" size-x2="118" size-y="0" size-y2="87"/>
     <entity uuid="a89cf5c8-aa5d-42ec-bbba-163c5a014c3d" bg-color="4294967295" hdr-color="4292006610" position-x="80" position-y="73" size-x="0" size-x2="130" size-y="0" size-y2="129"/>
     <entity uuid="a8ac4769-debb-43f7-a155-857b0534ef04" bg-color="4294967295" hdr-color="4292006610" position-x="-326" position-y="51" size-x="0" size-x2="120" size-y="0" size-y2="73"/>
-    <region uuid="b0c195a4-e41b-4486-9231-7fe07d88781c" bg-color="4292728527" position-x="813" position-y="530" size-x="17" size-x2="283" size-y="62" size-y2="202"/>
     <entity uuid="c04d3548-e6b1-452c-b622-8f3986a8e693" bg-color="4294967295" hdr-color="4292006610" position-x="58" position-y="64" size-x="0" size-x2="129" size-y="0" size-y2="59"/>
     <entity uuid="c221008d-3462-4c58-b3b3-b4d027b70afc" bg-color="4294967295" hdr-color="4292006610" position-x="-304" position-y="618" size-x="0" size-x2="130" size-y="0" size-y2="101"/>
     <entity uuid="d01f6c43-64e1-452e-991f-036c673ac11c" bg-color="4294967295" hdr-color="4292006610" position-x="8" position-y="64" size-x="0" size-x2="130" size-y="0" size-y2="115"/>
     <entity uuid="d33e0252-193b-4ad3-a4bd-535b22a4dd54" bg-color="4294967295" hdr-color="4292006610" position-x="37" position-y="64" size-x="0" size-x2="121" size-y="0" size-y2="101"/>
     <entity uuid="d8535833-d214-46a5-a12e-bd11539eb18b" bg-color="4294967295" hdr-color="4292006610" position-x="280" position-y="223" size-x="0" size-x2="118" size-y="0" size-y2="59"/>
-    <region uuid="f59a7b6b-4543-40a0-a981-f13549bf4f23" bg-color="4292728527" position-x="1146" position-y="468" size-x="0" size-x2="202" size-y="0" size-y2="250"/>
     <entity uuid="f6d679d7-c495-4963-9006-98a851a54798" bg-color="4294967295" hdr-color="4292006610" position-x="-104" position-y="618" size-x="0" size-x2="149" size-y="0" size-y2="115"/>
+    <module uuid="1b76a8f1-70bf-4d0d-9efe-09cd274f555f" bg-color="#A2C700" size-x="354" size-x2="1396" size-y="-18" size-y2="1068"/>
+    <region uuid="17dd8f17-8eed-4535-bda3-bdcca80b4d95" bg-color="4292728527" position-x="1280" position-y="81" size-x="384" size-x2="66" size-y="13" size-y2="337"/>
+    <region uuid="3449791f-06a3-4081-a8c0-4ea5cf36f46e" bg-color="4292728527" position-x="274" position-y="409" size-x="-22" size-x2="422" size-y="-9" size-y2="309"/>
+    <region uuid="40ef7a91-816f-4c6e-a580-0f01d93f36ee" bg-color="4292728527" position-x="446" position-y="68" size-x="0" size-x2="350" size-y="0" size-y2="300"/>
+    <region uuid="440e5af7-ace6-4cec-b07e-2c516be0d5d1" bg-color="4292728527" position-x="-304" position-y="768" size-x="0" size-x2="250" size-y="0" size-y2="250"/>
+    <region uuid="8513c45d-b4e7-413f-b7c6-4d58b3c53d3b" bg-color="4292728527" position-x="46" position-y="754" size-x="0" size-x2="209" size-y="-14" size-y2="200"/>
+    <region uuid="a0a3337a-6806-4eb6-9695-0a1051ae2e7e" bg-color="4292728527" position-x="46" position-y="68" size-x="0" size-x2="250" size-y="0" size-y2="150"/>
+    <region uuid="b0c195a4-e41b-4486-9231-7fe07d88781c" bg-color="4292728527" position-x="813" position-y="530" size-x="17" size-x2="283" size-y="62" size-y2="202"/>
+    <region uuid="f59a7b6b-4543-40a0-a981-f13549bf4f23" bg-color="4292728527" position-x="1146" position-y="468" size-x="0" size-x2="202" size-y="0" size-y2="250"/>
     <region uuid="f7210e58-9166-4aba-8f79-e0e996a741d7" bg-color="4292728527" position-x="1146" position-y="768" size-x="0" size-x2="150" size-y="0" size-y2="250"/>
   </visual-data>
 </skipper>
