@@ -1,14 +1,4 @@
 <?php
-/**
- * @author		Can Berkol
- * @author      Caner Buga
- * @author		Suleyman Aylak
- *
- * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
- * @license     GPLv3
- *
- * @date        19.01.2016
- */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use BiberLtd\Bundle\CoreBundle\CoreEntity;
 use BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language;
@@ -16,11 +6,7 @@ use Doctrine\ORM\Mapping AS ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(
- *     name="active_blogpost_locale",
- *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
- *     uniqueConstraints={@ORM\UniqueConstraint(name="idx_u_active_blogpost_locale", columns={"blog_post","language"})}
- * )
+ * @ORM\Table(name="active_blog_post_locale", options={"charset":"utf8","collate":"utf8_turkish_ci"})
  */
 class ActiveBlogPostLocale extends CoreEntity
 {
@@ -28,35 +14,35 @@ class ActiveBlogPostLocale extends CoreEntity
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost")
      * @ORM\JoinColumn(name="blog_post", referencedColumnName="id", nullable=false)
-     * @var BiberLtd\Bundle\BlogBundle\Entity\BlogPost
+     * @var BlogPost
      */
-    private $blog_post;
+    private $blogPost;
 
     /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language")
-     * @ORM\JoinColumn(name="language", referencedColumnName="id", nullable=false)
-     * @var BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language
+     * @ORM\JoinColumn(name="language", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var Language
      */
     private $language;
 
     /**
      * @return mixed
      */
-    public function getBlogPost()
-    {
-        return $this->blog_post;
+    public function getLanguage(){
+        return $this->language;
     }
 
     /**
-     * @param BlogPost $blog_post
+     * @param \BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language $language
+     *
      * @return $this
      */
-    public function setBlogPost(BlogPost $blog_post)
-    {
-        if($this->setModified('blog_post', $blog_post)->isModified()) {
-            $this->blog_post = $blog_post;
+    public function setLanguage(Language $language){
+        if(!$this->setModified('language', $language)->isModified()){
+            return $this;
         }
+        $this->language = $language;
 
         return $this;
     }
@@ -64,20 +50,20 @@ class ActiveBlogPostLocale extends CoreEntity
     /**
      * @return mixed
      */
-    public function getLanguage()
-    {
-        return $this->language;
+    public function getBlogPost(){
+        return $this->blogPost;
     }
 
     /**
-     * @param Language $language
+     * @param \BiberLtd\Bundle\BlogBundle\Entity\BlogPost $blogPost
+     *
      * @return $this
      */
-    public function setLanguage(Language $language)
-    {
-        if($this->setModified('language', $language)->isModified()) {
-            $this->language = $language;
+    public function setBlogPost(BlogPost $blogPost){
+        if(!$this->setModified('blogPost', $blogPost)->isModified()){
+            return $this;
         }
+        $this->blogPost = $blogPost;
 
         return $this;
     }
