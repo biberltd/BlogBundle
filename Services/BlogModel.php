@@ -1694,7 +1694,7 @@ class BlogModel extends CoreModel
 
         $qStr = 'SELECT '.$this->entity['bpc']['alias'].', '.$this->entity['bpcl']['alias']
             .' FROM '.$this->entity['bpcl']['name'].' '.$this->entity['bpcl']['alias']
-            .' JOIN '.$this->entity['bpcl']['alias'].'.category '.$this->entity['bpc']['alias'];
+            .' JOIN '.$this->entity['bpcl']['alias'].'.post_category '.$this->entity['bpc']['alias'];
 
         if(!is_null($sortOrder)){
             foreach($sortOrder as $column => $direction){

@@ -76,7 +76,7 @@ class BlogPostCategoryLocalization extends CoreEntity
      * @return          object                $this
      */
     public function setCategory($blog_post_category) {
-        if(!$this->setModified('category', $blog_post_category)->isModified()) {
+        if(!$this->setModified('post_category', $blog_post_category)->isModified()) {
             return $this;
         }
         $this->post_category = $blog_post_category;
