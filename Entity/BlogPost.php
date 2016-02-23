@@ -120,7 +120,7 @@ class BlogPost extends CoreLocalizableEntity
     protected $localizations;
 
     /**
-     * @ORM\OneToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment", mappedBy="post")
+     * 
      */
     private $comments;
 

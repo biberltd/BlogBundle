@@ -1,10 +1,1921 @@
 <?xml version="1.0"?>
-<skipper version="3.2.4.1256" mvc="Symfony2" orm="Doctrine2" name="BiberLtdBlogBundle" uuid="608045b6-71ab-4037-87fb-0c6ba4ca5408">
-  <external-module storage-path="../../site-management-bundle/ORM/SiteManagement.module.xml"/>
-  <external-module storage-path="../../multilanguage-support-bundle/ORM/MultiLanguageSupport.module.xml"/>
-  <external-module storage-path="../../file-management-bundle/ORM/FileManagement.module.xml"/>
-  <external-module storage-path="../../member-management-bundle/ORM/MemberManagement.module.xml"/>
-  <external-module storage-path="Blog.module.xml"/>
+<skipper version="3.2.5.1283" mvc="Symfony2" orm="Doctrine2" name="BiberLtdBlogBundle" uuid="608045b6-71ab-4037-87fb-0c6ba4ca5408">
+  <module name="\SiteManagementBundle" local-name="SiteManagementBundle" namespace="\BiberLtd\Bundle\SiteManagementBundle\Entity" local-namespace="BiberLtd\Bundle\SiteManagementBundle\Entity" export-format="Doctrine2Php" export-path="../../site-management-bundle/Entity" uuid="860bb986-ef71-4cef-9da2-f560e58c2569">
+    <entity name="\BiberLtd\Bundle\SiteManagementBundle\Entity\DomainAliases" local-name="DomainAliases" namespace="\BiberLtd\Bundle\SiteManagementBundle\Entity" description="Holds a list of alternative domains that the site will be served in." uuid="04602777-d7d4-4b5f-9557-c3a1ba1f9dbb">
+      <field name="domain" description="Alias - domain. i.e. biberltd.com" type="text" required="true" unique="true" primary="true" uuid="766b4e3f-328f-4708-a9ff-d82d177d7e5c"/>
+      <field name="site" description="Site of domain" type="integer" size="10" required="true" primary="true" uuid="defc4d41-db0c-4c89-967f-cd5ebf41f111"/>
+      <orm-attributes>
+        <attribute name="export-file-name">DomainAliases.php</attribute>
+        <attribute name="table">domain_aliases</attribute>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\SiteManagementBundle\Entity\DomainAliases" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxFSiteOfDomainAlias" owner-alias="domains" inverse-alias="site" many-owner="true" many-inverse="false" parent-required="true" uuid="45c125cd-0ba3-4a9c-973e-92bbcfb91a59">
+      <association-field from="site" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" local-name="Site" namespace="\BiberLtd\Bundle\SiteManagementBundle\Entity" description="Stores site definitions." uuid="45fa10e6-64bd-4726-82aa-61fd301b1b5f">
+      <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="bc017c6b-132e-4cb4-b4d5-fe7363303a48">
+        <orm-attributes>
+          <attribute name="generator">
+            <attribute name="strategy">AUTO</attribute>
+          </attribute>
+        </orm-attributes>
+      </field>
+      <field name="title" description="Title of the site." type="string" size="155" required="true" uuid="bbe9a83e-efa3-4224-9269-5fc21dea664c"/>
+      <field name="url_key" description="Url key of the site." type="string" size="255" required="true" unique="true" uuid="61479228-9125-4987-9628-8925d36a186e"/>
+      <field name="description" description="Description of the site." type="string" size="255" uuid="190689a1-cf47-4c18-87df-bb2d2adeda44"/>
+      <field name="default_language" description="Default language of the site." type="smallint" size="5" uuid="6f52232d-6d89-4144-b236-ad7f08e8d343"/>
+      <field name="settings" description="Base64 Encoded and serialized site settings information." type="text" uuid="4a4bef14-73af-4f62-af06-18c26dd1b125"/>
+      <field name="date_added" description="Date when the site is first added." type="datetime" required="true" uuid="5dfe56f7-1eba-4492-9275-1cc2ee106c55"/>
+      <field name="date_updated" description="Date when the site's details last added." type="datetime" required="true" uuid="392dc78f-5653-437b-bd17-e5d56ffc9241"/>
+      <field name="date_removed" description="Date when the entry is removed." type="datetime" uuid="a763526b-555a-40f5-bec2-8d8113da41f2"/>
+      <field name="domain" description="Domain of the site if a domain controller is used." type="text" uuid="bd028fe9-8566-4139-938d-00f7734b08f6"/>
+      <index name="idxUSiteId" description="Site id must be unique." unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idxUSiteUrlKey" description="Site url key must be unique." unique="true">
+        <index-field name="url_key"/>
+      </index>
+      <index name="idxNSiteDateAdded">
+        <index-field name="date_added"/>
+      </index>
+      <index name="idxNSiteDateUpdated">
+        <index-field name="date_updated"/>
+      </index>
+      <index name="idxNSiteDateRemoved">
+        <index-field name="date_removed"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">site</attribute>
+        <attribute name="export-file-name">Site.php</attribute>
+      </orm-attributes>
+    </entity>
+    <orm-attributes>
+      <attribute name="namespace">BiberLtd\Bundle\SiteManagementBundle\Entity</attribute>
+      <attribute name="file-suffix">without-suffix</attribute>
+      <attribute name="filename-format">entity-name-only</attribute>
+    </orm-attributes>
+  </module>
+  <module name="\MultiLanguageSupportBundle" local-name="MultiLanguageSupportBundle" namespace="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity" local-namespace="BiberLtd\Bundle\MultiLanguageSupportBundle\Entity" export-format="Doctrine2Php" export-path="../../multilanguage-support-bundle/Entity" uuid="264804cf-5ddd-4089-aaa2-d7c0f129a5ed">
+    <entity name="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" local-name="Language" namespace="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity" description="Stores language definitions to be used in the site." uuid="7ce99bbb-4d97-4ee5-8703-dfe82e965514">
+      <field name="id" description="System given id." type="integer" size="5" required="true" unique="true" primary="true" auto-increment="true" uuid="93714214-3a52-4799-9c0a-f74e937d83f0">
+        <orm-attributes>
+          <attribute name="generator">
+            <attribute name="strategy">AUTO</attribute>
+          </attribute>
+        </orm-attributes>
+      </field>
+      <field name="name" description="Name of language." type="string" size="155" required="true" uuid="4c3297e2-df9f-4d4a-9047-6c650341b243">
+        <orm-attributes>
+          <attribute name="column">`name`</attribute>
+        </orm-attributes>
+      </field>
+      <field name="url_key" description="Url key of language." type="string" size="255" required="true" uuid="48347d90-d011-4088-acaf-cf3a2b80b585"/>
+      <field name="iso_code" description="ISO code of language." type="string" size="7" uuid="c2111922-7d4d-45d9-86c0-8940c5b7da4d"/>
+      <field name="schema" description="ltr:left to right, rtl: right to left, btt: bottom to top; ttb: top to bottom." type="string" size="3" default="ltr" required="true" uuid="3db27c75-e0d7-4193-a66e-38edb7e73723">
+        <orm-attributes>
+          <attribute name="column">`schema`</attribute>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="site" description="Site that language belongs to." type="integer" size="10" uuid="0c90b4bb-51b4-466b-b775-0d451ec8b526"/>
+      <field name="status" description="a:active,i:inactive" type="string" size="1" default="a" required="true" uuid="457f41df-c8bc-405e-a2a9-19504225a4f0">
+        <orm-attributes>
+          <attribute name="column">`status`</attribute>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <index name="idxULanguageId" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idxULanguageUrlKey" unique="true">
+        <index-field name="url_key"/>
+        <index-field name="site"/>
+      </index>
+      <index name="idxULanguageIsoCode" unique="true">
+        <index-field name="iso_code"/>
+        <index-field name="site"/>
+      </index>
+      <index name="idxNLanguageSchema">
+        <index-field name="schema"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">language</attribute>
+        <attribute name="export-file-name">Language.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxFSiteOfLanguage" owner-alias="" inverse-alias="site" many-owner="true" many-inverse="false" uuid="dcbf1caf-6474-4dfe-90be-7b58aa71c5c7">
+      <association-field from="site" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Translation" local-name="Translation" namespace="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity" description="Holds site translations for each language." uuid="41bcf7a2-e5e3-42a8-af5a-39de1f0e86ff">
+      <field name="id" description="System given id." type="integer" size="20" required="true" unique="true" primary="true" auto-increment="true" uuid="8ff3c01b-d52b-4b5c-be10-8f79409147f3">
+        <orm-attributes>
+          <attribute name="generator">
+            <attribute name="strategy">AUTO</attribute>
+          </attribute>
+        </orm-attributes>
+      </field>
+      <field name="domain" description="Translation domain - required for symfony2." type="string" size="255" uuid="d05419a4-c74a-4cbc-840e-015abf8c4718"/>
+      <field name="key" description="Translation key." type="string" size="255" required="true" uuid="c621ebd3-f562-443d-a94a-3a114b72500c"/>
+      <field name="date_added" description="Date when the translation is added." type="datetime" required="true" uuid="7429e347-02fd-41ab-ad4e-e22e98de713c"/>
+      <field name="date_updated" description="Date when the translation is updated." type="datetime" required="true" uuid="879c9cc9-5930-4b1d-979b-401539dfef7a"/>
+      <field name="date_removed" description="Date when the entry is marked as removed." type="datetime" uuid="714f6168-d980-4b98-a23e-e978f733ecf4"/>
+      <field name="site" description="Site that translation belongs to, if any." type="integer" size="10" uuid="b617238f-a2b9-4917-ab7d-9db095d514e8"/>
+      <index name="idxUTranslationId" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idxUTranslationKey" unique="true">
+        <index-field name="key"/>
+        <index-field name="site"/>
+      </index>
+      <index name="idxNTranslationDateAdded">
+        <index-field name="date_added"/>
+      </index>
+      <index name="idxNTranslationDateUpdated">
+        <index-field name="date_updated"/>
+      </index>
+      <index name="idxNTranslationDateRemoved">
+        <index-field name="date_removed"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">translation</attribute>
+        <attribute name="export-file-name">Translation.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Translation" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxFSiteOfTranslation" owner-alias="" inverse-alias="site" many-owner="true" many-inverse="false" uuid="691cd89a-3534-4a4c-bf70-544fa15a4c35">
+      <association-field from="site" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\TranslationLocalization" local-name="TranslationLocalization" namespace="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity" description="Holds localized translation values." uuid="2d0a30b3-246d-47fa-b198-331e87d4a439">
+      <field name="translation" description="Localized translation." type="integer" size="20" required="true" primary="true" uuid="11e947c3-cd20-40aa-b05f-aaf56764ee96"/>
+      <field name="language" description="Localizati&#x131;n language." type="integer" size="5" required="true" primary="true" uuid="9cf7a832-5166-4d19-b011-b8efeabefbd9"/>
+      <field name="phrase" description="Localized value." type="text" required="true" uuid="e27b9354-801e-4560-8d89-5c25d3155026"/>
+      <index name="idxUTranslationLocalization" unique="true">
+        <index-field name="translation"/>
+        <index-field name="language"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">translation_localization</attribute>
+        <attribute name="export-file-name">TranslationLocalization.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\TranslationLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFTranslationLocalizationLanguage" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="4a21a97e-810e-4e2d-a330-69d23cf801c7">
+      <association-field from="language" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\TranslationLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Translation" caption="idxFLocalizedTranslation" owner-alias="localizations" inverse-alias="translation" many-owner="true" many-inverse="false" parent-required="true" uuid="71f15a54-6bc9-4510-84b1-2b2817781440">
+      <association-field from="translation" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <orm-attributes>
+      <attribute name="filename-format">entity-name-only</attribute>
+      <attribute name="file-suffix">without-suffix</attribute>
+      <attribute name="namespace">BiberLtd\Bundle\MultiLanguageSupportBundle\Entity</attribute>
+    </orm-attributes>
+  </module>
+  <module name="\FileManagementBundle" local-name="FileManagementBundle" namespace="\BiberLtd\Bundle\FileManagementBundle\Entity" local-namespace="BiberLtd\Bundle\FileManagementBundle\Entity" export-format="Doctrine2Php" export-path="../../file-management-bundle/Entity" uuid="9d574194-22af-4673-a2ee-bb67ec7d212e">
+    <entity name="\BiberLtd\Bundle\FileManagementBundle\Entity\File" local-name="File" namespace="\BiberLtd\Bundle\FileManagementBundle\Entity" description="Stores information of uploaded files." uuid="edc820a6-e14d-41ad-a986-7cabb15fd53a">
+      <field name="id" description="System given id." type="integer" size="15" required="true" unique="true" primary="true" auto-increment="true" uuid="eb48c822-d519-40b2-846f-f8ee5774cb6c">
+        <orm-attributes>
+          <attribute name="generator">
+            <attribute name="strategy">AUTO</attribute>
+          </attribute>
+        </orm-attributes>
+      </field>
+      <field name="name" description="File name." type="string" size="165" required="true" uuid="850075c7-b27a-4ac6-9da5-9d6923873a7a"/>
+      <field name="url_key" description="Url key of file." type="string" size="255" required="true" uuid="4b9aa182-f322-42a8-9435-73bdcf173806"/>
+      <field name="source_original" description="File path of the original file." type="text" required="true" uuid="43b12b82-fd3b-493f-9a59-0d7331ffd637"/>
+      <field name="source_preview" description="File path of the preview file." type="text" uuid="e39cf1fa-8621-4087-877f-baac9711dadd"/>
+      <field name="type" description="i:image,a:audio,v:video,f:flash,d:document,p:package,s:software" type="string" size="1" default="i" required="true" uuid="b5111692-a20a-42e7-a7c1-11ff407e0ffc">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="width" description="Width of file if exists." type="integer" size="5" uuid="9227ef8c-f9d8-4531-852e-bd41b5344246"/>
+      <field name="height" description="Height of file if exists." type="integer" size="5" uuid="6c300880-1ab5-47db-81b1-914c8adc35eb"/>
+      <field name="size" description="Size of file." type="decimal" size="5" default="0" required="true" unique="true" uuid="288b896d-a3dc-4063-934b-82ba160c4ef0">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="mime_type" description="MIME type of file." type="string" size="45" required="true" uuid="7084cfd7-11a3-4fe4-9c06-5c6f3f78437e"/>
+      <field name="extension" description="File extension." type="string" size="6" required="true" uuid="db4bca7f-2194-4de9-bbee-2b09c01dee86"/>
+      <field name="site" description="If associated with a site..." type="integer" size="5" uuid="671d6423-c40e-4a20-a608-737032bad9ce"/>
+      <field name="folder" description="Folder where file is located" type="integer" size="10" required="true" uuid="7bc3e47f-9ab1-459d-9e07-30fbb7ab9312"/>
+      <field name="exif" description="If file is image, this field stores exif data." type="text" uuid="077ba7eb-6150-4a7e-9ba9-994a1efb84a6"/>
+      <field name="tags" description="Comma delimited tags." type="text" uuid="e293976f-f993-4281-8021-8723c49d5925"/>
+      <field name="date_added" description="Date when the entry is first added." type="datetime" required="true" uuid="96696d1b-92c6-4107-b24f-9e53ff996acb"/>
+      <field name="date_updated" description="Date when the entry is last updated." type="datetime" required="true" uuid="ef855725-7264-48e0-bfe8-ec3db0ad8058"/>
+      <field name="date_removed" description="Date when the entry is marked as removed." type="datetime" uuid="257827dd-bf5c-4f7b-b9d1-9abcb54cc0d8"/>
+      <index name="idxUFileId" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idxNFileMimeType">
+        <index-field name="mime_type"/>
+      </index>
+      <index name="idxNFileExtension">
+        <index-field name="extension"/>
+      </index>
+      <index name="idxNFileDimension">
+        <index-field name="width"/>
+        <index-field name="height"/>
+      </index>
+      <index name="idxNFileDateAdded">
+        <index-field name="date_added"/>
+      </index>
+      <index name="idxNFileDateUpdated">
+        <index-field name="date_updated"/>
+      </index>
+      <index name="idxNFileDateRemoved">
+        <index-field name="date_removed"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">file</attribute>
+        <attribute name="export-file-name">File.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\FileManagementBundle\Entity\File" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxFSiteOfFile" owner-alias="" inverse-alias="site" many-owner="true" many-inverse="false" uuid="b210e152-462a-45f8-b840-75b0217b73c5">
+      <association-field from="site" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\FileManagementBundle\Entity\File" to="\BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder" caption="idxFFolderOfFile" owner-alias="files" inverse-alias="folder" many-owner="true" many-inverse="false" parent-required="true" uuid="e759f273-144f-4e29-817a-0fe9f39c4187">
+      <association-field from="folder" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\FileManagementBundle\Entity\FileLocalization" local-name="FileLocalization" namespace="\BiberLtd\Bundle\FileManagementBundle\Entity" description="Holds localized details of file." uuid="e19f9517-5f61-4eeb-ba10-cbc7ba6448e0">
+      <field name="file" description="Localized file." type="integer" size="15" required="true" primary="true" uuid="8bdc8934-0b68-44a2-a118-7a57142a779a"/>
+      <field name="language" description="Localization language." type="integer" size="5" required="true" primary="true" uuid="09cc25bc-6a29-45c5-946c-a3f17fdabb0e"/>
+      <field name="title" description="Localized title." type="string" size="155" required="true" uuid="6175de78-b91d-47c4-ac72-7e312a0275cb"/>
+      <field name="description" description="File description" type="text" uuid="d78d1109-b2bb-4788-9b95-1a0af2f7a951"/>
+      <index name="idxUFileLocalization" unique="true">
+        <index-field name="file"/>
+        <index-field name="language"/>
+      </index>
+      <orm-attributes>
+        <attribute name="export-file-name">FileLocalization.php</attribute>
+        <attribute name="table">file_localization</attribute>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\FileManagementBundle\Entity\FileLocalization" to="\BiberLtd\Bundle\FileManagementBundle\Entity\File" caption="idxFLocalizedFile" owner-alias="localizations" inverse-alias="file" many-owner="true" many-inverse="false" parent-required="true" uuid="02e3ef16-39f8-42b5-891d-96224803b169">
+      <association-field from="file" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-inverse">
+          <attribute name="cascade">
+            <attribute name="cascade-persist">true</attribute>
+          </attribute>
+        </attribute>
+        <attribute name="side-owning"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\FileManagementBundle\Entity\FileLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFFileLocalizationLanguage" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="93fd6dcc-590e-4490-ad0f-03a9b480fa94">
+      <association-field from="language" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-inverse">
+          <attribute name="cascade">
+            <attribute name="cascade-persist">true</attribute>
+          </attribute>
+        </attribute>
+        <attribute name="side-owning"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder" local-name="FileUploadFolder" namespace="\BiberLtd\Bundle\FileManagementBundle\Entity" description="Stores definitions of file upload folders and sets upload restrictions." uuid="c04c801c-5047-41eb-9209-dfd6732d5e31">
+      <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="70077195-d083-4431-8742-0e911b8c90c7">
+        <orm-attributes>
+          <attribute name="generator">
+            <attribute name="strategy">AUTO</attribute>
+          </attribute>
+        </orm-attributes>
+      </field>
+      <field name="name" description="User given folder name." type="string" size="155" required="true" uuid="0ae3bfca-4c08-4260-afe3-c1b1084c9ea2"/>
+      <field name="url_key" description="Url key of upload folder." type="string" size="255" required="true" uuid="fd82d3bb-6a9e-495c-8f34-42e8f2421da1"/>
+      <field name="path_absolute" description="Absolute folder path in system." type="text" required="true" uuid="a9536997-a308-4f9f-8be6-b92e96ad4261"/>
+      <field name="url" description="Full URL of file (if file is online)" type="text" uuid="08c3a603-d995-459b-881b-e82046c9c9d0"/>
+      <field name="type" description="i:internal,e:external" type="string" size="1" default="i" required="true" uuid="8c9896cf-6a44-4573-adb7-cd3df9dd8933">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="allowed_max_size" description="Maximum size aloowed." type="decimal" size="5" uuid="b7ab033b-a6a4-4f77-90a8-5bbcb2e36367"/>
+      <field name="allowed_min_size" description="Minimum size allowed." type="decimal" size="5" uuid="4de80fa8-95ef-4c17-948d-85da82517631"/>
+      <field name="allowed_max_width" description="Max width allowed in pixels." type="integer" size="5" uuid="052d2b5f-89a7-4cac-b505-e706dda49067"/>
+      <field name="allowed_min_width" description="Min width allowed in pixels." type="integer" size="5" uuid="33743d14-9588-4405-86de-393c76a0a55d"/>
+      <field name="allowed_max_height" description="Max height allowed in pixels." type="integer" size="5" uuid="95ea1081-b86b-4cf5-acf6-995f90576fe5"/>
+      <field name="allowed_min_height" description="Min height allowed in pixels." type="integer" size="5" uuid="18d68715-6b43-4f0a-9904-d852cb650af0"/>
+      <field name="count_files" description="Count of files associated with this folder." type="integer" size="10" default="0" required="true" uuid="521ea023-a142-44b6-81a6-f24ec2973cc4">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="site" description="Associated site." type="integer" size="10" required="true" uuid="6b41465b-e879-494d-9acc-048d1c000d2c"/>
+      <field name="date_added" description="Date when the entry is first added." type="datetime" required="true" uuid="6cc7dc1e-f00b-417c-b41e-2e7463c44248"/>
+      <field name="date_updated" description="Date when the entry is last updated." type="datetime" required="true" uuid="effcaa8c-5757-4788-bbf2-7faa65994431"/>
+      <field name="date_removed" description="Date when the entry is marked as removed." type="datetime" uuid="cac5838e-209c-4e45-a8c2-d5c75be0ad0d"/>
+      <index name="idxUFileUploadFolderId" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idxUFileUploadFolderUrlKey" unique="true">
+        <index-field name="url_key"/>
+        <index-field name="site"/>
+      </index>
+      <index name="idxNFileUploadFolderDateAdded">
+        <index-field name="date_added"/>
+      </index>
+      <index name="idxNFileUploadFolderDateUpdated">
+        <index-field name="date_updated"/>
+      </index>
+      <index name="idxNFileUploadFolderDateRemoved">
+        <index-field name="date_removed"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">file_upload_folder</attribute>
+        <attribute name="export-file-name">FileUploadFolder.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\FileManagementBundle\Entity\FileUploadFolder" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxFSiteOfFileUploadFolder" owner-alias="" inverse-alias="site" many-owner="true" many-inverse="false" parent-required="true" uuid="a50bcd82-290b-4009-b270-6e47a63148cc">
+      <association-field from="site" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <orm-attributes>
+      <attribute name="namespace">BiberLtd\Bundle\FileManagementBundle\Entity</attribute>
+      <attribute name="filename-format">entity-name-only</attribute>
+      <attribute name="file-suffix">without-suffix</attribute>
+    </orm-attributes>
+  </module>
+  <module name="\MemberManagementBundle" local-name="MemberManagementBundle" namespace="\BiberLtd\Bundle\MemberManagementBundle\Entity" local-namespace="BiberLtd\Bundle\MemberManagementBundle\Entity" export-format="Doctrine2Php" export-path="../../member-management-bundle/Entity" uuid="d40aa0eb-3691-4818-880c-0a9ad1dd9833">
+    <entity name="\BiberLtd\Bundle\MemberManagementBundle\Entity\FilesOfMember" local-name="FilesOfMember" namespace="\BiberLtd\Bundle\MemberManagementBundle\Entity" description="Associates files with members." uuid="07eeeac7-da1a-48f5-96c1-665a12f5d84f">
+      <field name="file" description="Associated file." type="integer" size="15" required="true" primary="true" uuid="10fe7d79-6b4e-453b-87fb-1184aa09fe78"/>
+      <field name="member" description="Associated member." type="integer" size="10" required="true" primary="true" uuid="85657dc1-baff-4d5f-a466-2774443ee2a1"/>
+      <field name="count_view" description="Total number of views of this file." type="integer" size="10" default="0" required="true" uuid="42a72279-ee1d-4956-ac72-a12747e534ae">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <index name="idxUFilesOfMember" unique="true">
+        <index-field name="member"/>
+        <index-field name="file"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="engine">innodb</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+        </attribute>
+        <attribute name="export-file-name">FilesOfMember.php</attribute>
+        <attribute name="table">files_of_member</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\MemberManagementBundle\Entity\FilesOfMember" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFMemberOfFiles" owner-alias="" inverse-alias="member" many-owner="true" many-inverse="false" parent-required="true" uuid="ae4257ec-40ad-4a53-95bc-43688e025441">
+      <association-field from="member" to="id"/>
+      <orm-attributes>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\MemberManagementBundle\Entity\FilesOfMember" to="\BiberLtd\Bundle\FileManagementBundle\Entity\File" caption="idxFFileOfMember" owner-alias="" inverse-alias="file" many-owner="true" many-inverse="false" parent-required="true" uuid="5d9fbbab-e6e7-446b-b35a-5a92b2665907">
+      <association-field from="file" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" local-name="Member" namespace="\BiberLtd\Bundle\MemberManagementBundle\Entity" description="Stores member account details." uuid="afaa4cd5-a9f4-4fa8-a0f3-c68989c619fc">
+      <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="208ba264-7ded-450f-8908-e8add036ddda">
+        <orm-attributes>
+          <attribute name="generator">
+            <attribute name="strategy">AUTO</attribute>
+          </attribute>
+        </orm-attributes>
+      </field>
+      <field name="name_first" description="First name of member." type="string" size="155" uuid="506cff93-a7db-47a5-b4a7-20a517cecfef"/>
+      <field name="name_last" description="Last name of member." type="string" size="155" uuid="96c9095a-6035-42a3-a841-54f5bee1260c"/>
+      <field name="email" description="Email of the account owner." type="string" size="255" required="true" unique="true" uuid="4b050af5-6a77-4f90-8ff7-49a2470bde58"/>
+      <field name="username" description="username of the account owner." type="string" size="155" required="true" unique="true" uuid="9d062d3e-f9bd-4e47-b6fd-9285101acfbe"/>
+      <field name="password" description="Encoded password of the user." type="text" required="true" uuid="c6ea77ec-0930-42b3-86ad-4113b83e6052"/>
+      <field name="date_birth" description="Birth date of the member." type="datetime" uuid="247b4de5-b35d-47c1-98fd-7ea975a37b91"/>
+      <field name="file_avatar" description="If exitsts, path to the avatar of the member." type="text" uuid="26747695-1220-4376-ae00-136e565914ad"/>
+      <field name="date_registration" description="Account registration date." type="datetime" required="true" uuid="99a6b542-01a4-4ae1-942a-018fc38967e7"/>
+      <field name="date_activation" description="Account activation date." type="datetime" required="true" uuid="c03c3bed-1f6c-468b-aa0f-8d63c0a19e17"/>
+      <field name="date_status_changed" description="Date when the account status last changed." type="datetime" required="true" uuid="961fc7b1-5168-4b9a-a8b2-b8002c53194b"/>
+      <field name="status" description="a:active,i:inactive,b:banned,n:never activated" type="string" size="1" default="i" required="true" uuid="3d5f335f-3bee-4b2d-83cd-bb040aad4a94">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="key_activation" description="Activation key / string." type="text" uuid="33d0e83b-9cb4-4af9-84d1-1c5fdf66793d"/>
+      <field name="language" description="Member's default language." type="integer" size="5" uuid="52b469e8-b488-4e30-b008-7f62a031cfe1"/>
+      <field name="site" description="Primary site that user has registered with." type="integer" size="10" uuid="15cbd727-4a4c-4456-8d3b-4191d068c53a"/>
+      <field name="gender" description="m:male,f:female" type="string" size="1" default="f" uuid="5e6e69d8-a78b-4807-805b-4de16e45414e">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="date_last_login" description="Date when the user last loggedin." type="datetime" uuid="89974941-8aa3-4153-972c-45b9898a4b41"/>
+      <field name="extra_info" description="Extra user details such as settings etc." type="text" uuid="06d8f3d1-22b2-403d-ac25-60798bbb361f"/>
+      <index name="idxUMemberId" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idxNFullNameOfMember">
+        <index-field name="name_first"/>
+        <index-field name="name_last"/>
+      </index>
+      <index name="idxUMemberUsername" unique="true">
+        <index-field name="username"/>
+        <index-field name="site"/>
+      </index>
+      <index name="idxUMemberEmail" unique="true">
+        <index-field name="email"/>
+        <index-field name="site"/>
+      </index>
+      <index name="idxNMemberDateRegitration">
+        <index-field name="date_registration"/>
+      </index>
+      <index name="idxNMemberDateBirth">
+        <index-field name="date_birth"/>
+      </index>
+      <index name="idxNMemberDateActivation">
+        <index-field name="date_activation"/>
+      </index>
+      <index name="idxNMemberDateStatusChanged">
+        <index-field name="date_status_changed"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">member</attribute>
+        <attribute name="export-file-name">Member.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFDefaultLanguageOfMember" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" uuid="9aa319f9-0057-4338-9baa-01096d251a53">
+      <association-field from="language" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxFDefaultSiteOfMember" owner-alias="" inverse-alias="site" many-owner="true" many-inverse="false" uuid="98d48d17-f488-4b18-833f-1671af44d614">
+      <association-field from="site" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\MemberManagementBundle\Entity\MemberGroup" local-name="MemberGroup" namespace="\BiberLtd\Bundle\MemberManagementBundle\Entity" description="Stores member group definitions." uuid="d731b316-305d-4125-8824-3385eb5120ea">
+      <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="f12f3cc9-d7ed-4bce-ba74-12261fed014a">
+        <orm-attributes>
+          <attribute name="generator">
+            <attribute name="strategy">AUTO</attribute>
+          </attribute>
+        </orm-attributes>
+      </field>
+      <field name="code" description="Member group code. This is not editable." type="string" size="45" required="true" unique="true" uuid="5065cbbc-8d1e-4008-abc2-d625883939f2"/>
+      <field name="date_added" description="Date when the member group is created." type="datetime" required="true" uuid="9c0c1be6-2582-4b8a-8175-e87a6f5ffe4b"/>
+      <field name="date_updated" description="Date when the member group is last updated." type="datetime" required="true" uuid="37adbd02-e691-4c70-8fb8-b920fcb0fab2"/>
+      <field name="date_removed" description="Date when the entry is marked as removed." type="datetime" uuid="e79073a8-76cf-49c6-b43c-3b5db185bd0e"/>
+      <field name="type" description="r:regular,a:admin,s:support" type="string" size="1" default="r" required="true" uuid="b478f8ff-bbd5-4f54-8a4b-a3d5afc85969">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="count_members" description="Number of members associated with the group." type="integer" default="0" required="true" uuid="82011d13-ece5-4fda-95d8-71d03b6c13f7">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="site" description="Site that member group is associated with." type="integer" size="10" uuid="e817226d-d208-42b0-8042-11eab69ef270"/>
+      <index name="idxUMemberGroupId" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idxUMemberGroupCode" unique="true">
+        <index-field name="code"/>
+      </index>
+      <index name="idxNMemberGroupDateAdded">
+        <index-field name="date_added"/>
+      </index>
+      <index name="idxNMemberGroupDateUpdated">
+        <index-field name="date_updated"/>
+      </index>
+      <index name="idxNMemberGroupDateRemoved">
+        <index-field name="date_removed"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">member_group</attribute>
+        <attribute name="export-file-name">MemberGroup.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\MemberManagementBundle\Entity\MemberGroup" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxFSiteOfMemberGroup" owner-alias="" inverse-alias="site" many-owner="true" many-inverse="false" uuid="5c053399-bdfe-4fd2-b79b-2eebb1c870ef">
+      <association-field from="site" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\MemberManagementBundle\Entity\MemberGroupLocalization" local-name="MemberGroupLocalization" namespace="\BiberLtd\Bundle\MemberManagementBundle\Entity" description="Stores localized values of member group entries." uuid="9109d3a6-7a5c-4ab9-8ff7-8b5da86662c6">
+      <field name="member_group" description="Localized member group." type="integer" size="10" required="true" primary="true" uuid="50cea140-df01-48c0-acf5-c4eb21f055ba"/>
+      <field name="language" description="Localization language." type="integer" size="5" required="true" primary="true" uuid="ba9a27ae-211a-4b5b-b339-3e6dd10e8cb0"/>
+      <field name="name" description="Localized name of member group." type="string" size="45" required="true" uuid="fd15aca4-89e3-4898-967b-f0d7cdfc2ef9"/>
+      <field name="url_key" description="Localized url key of member group." type="string" size="55" required="true" uuid="3a9c0e6c-e959-4ae1-ab4a-1648abe633b7"/>
+      <field name="description" description="Localized description of member group." type="text" uuid="cd63de3f-fc90-4f32-b8b9-3a0f25ef6067"/>
+      <index name="idxUMemberGroupLocalization" unique="true">
+        <index-field name="member_group"/>
+        <index-field name="language"/>
+      </index>
+      <index name="idxUMemberGroupLocalizationUrlKey" unique="true">
+        <index-field name="language"/>
+        <index-field name="url_key"/>
+      </index>
+      <orm-attributes>
+        <attribute name="table">member_group_localization</attribute>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="export-file-name">MemberGroupLocalization.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\MemberManagementBundle\Entity\MemberGroupLocalization" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\MemberGroup" caption="idxFLocalizedMemberGroup" owner-alias="localizations" inverse-alias="group" many-owner="true" many-inverse="false" parent-required="true" uuid="0132b5a4-c206-4f06-bcf7-08bf61d249f3">
+      <association-field from="member_group" to="id"/>
+      <orm-attributes>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\MemberManagementBundle\Entity\MemberGroupLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFMemberGroupLocalizationLanguage" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="1bc49ece-cade-4d01-b739-aa1d5fe2d1e9">
+      <association-field from="language" to="id"/>
+      <orm-attributes>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\MemberManagementBundle\Entity\MemberLocalization" local-name="MemberLocalization" namespace="\BiberLtd\Bundle\MemberManagementBundle\Entity" description="Stores localized values of member entries." uuid="9df7cd56-6a97-410f-b0fe-2fd5538bd528">
+      <field name="member" description="Localized member." type="integer" size="10" required="true" primary="true" uuid="3e97f3e0-a679-42eb-b6f5-8b66e14d05d5"/>
+      <field name="language" description="Localization laguage." type="integer" size="5" required="true" primary="true" uuid="28ce8907-b175-4c3f-93c4-c8728e174c35"/>
+      <field name="title" description="Localized title of member." type="string" size="255" uuid="4424a1f5-b879-4797-b71d-b90f22a6246c"/>
+      <field name="biography" description="Localized biography of member." type="text" uuid="8e715f50-303c-4ed0-982e-77d62db3bfe8"/>
+      <field name="extra_data" description="Localized extra data - serializaed array - of member." type="text" uuid="42a14804-1cfc-460b-9026-c8a18f39939f"/>
+      <index name="idxUMemberLocalization" unique="true">
+        <index-field name="member"/>
+        <index-field name="language"/>
+      </index>
+      <orm-attributes>
+        <attribute name="table">member_localization</attribute>
+        <attribute name="export-file-name">MemberLocalization.php</attribute>
+        <attribute name="options">
+          <attribute name="engine">innodb</attribute>
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+        </attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\MemberManagementBundle\Entity\MemberLocalization" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFLocalizedMember" owner-alias="localizations" inverse-alias="member" many-owner="true" many-inverse="false" parent-required="true" uuid="b9e4d241-2e4f-4fbf-a78c-0414234947d6">
+      <association-field from="member" to="id"/>
+      <orm-attributes>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\MemberManagementBundle\Entity\MemberLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFMemberLocalizationLanguage" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="e615dfba-7f2b-4dac-a61b-519c9538e9f0">
+      <association-field from="language" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\MemberManagementBundle\Entity\MembersOfGroup" local-name="MembersOfGroup" namespace="\BiberLtd\Bundle\MemberManagementBundle\Entity" description="Associates members with groups." uuid="a12d9552-e3b0-4189-870d-82bf4cd5b6ed">
+      <field name="member" description="Associated member." type="integer" size="10" required="true" primary="true" uuid="1077ce84-fde9-4b93-811c-5ce669391ffb"/>
+      <field name="member_group" description="Associated member group." type="integer" required="true" primary="true" uuid="f3180ba8-0ec2-4500-a85f-0581d85fa3c5"/>
+      <field name="date_added" description="Date when the member is added to group." type="datetime" required="true" uuid="f38e4038-b02b-4c40-9b7c-63c34ef1f970"/>
+      <field name="date_updated" description="Date when the entry is last updated." type="datetime" required="true" uuid="0c3204d1-0740-4166-828e-3a594f816465"/>
+      <field name="date_removed" description="Date when the entry is last removed." type="datetime" uuid="e50fcc76-476c-4f29-951d-3d2747e28291"/>
+      <index name="idxUMembersOfGroup" unique="true">
+        <index-field name="member"/>
+        <index-field name="member_group"/>
+      </index>
+      <index name="idxNMembersOfGroupDateAdded">
+        <index-field name="date_added"/>
+      </index>
+      <index name="idxNMembersOfGroupDateUpdated">
+        <index-field name="date_updated"/>
+      </index>
+      <index name="idxNMembersOfGroupDateRemoved">
+        <index-field name="date_removed"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">members_of_group</attribute>
+        <attribute name="export-file-name">MembersOfGroup.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\MemberManagementBundle\Entity\MembersOfGroup" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFMemberOfGroup" owner-alias="" inverse-alias="member" many-owner="true" many-inverse="false" parent-required="true" uuid="804845fb-f53d-4ae3-923e-e8d8a46ebef1">
+      <association-field from="member" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\MemberManagementBundle\Entity\MembersOfGroup" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\MemberGroup" caption="idxFGroupOfMember" owner-alias="" inverse-alias="group" many-owner="true" many-inverse="false" parent-required="true" uuid="d120204e-3d7c-47ea-bfe6-c33110876e00">
+      <association-field from="member_group" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\MemberManagementBundle\Entity\MembersOfSite" local-name="MembersOfSite" namespace="\BiberLtd\Bundle\MemberManagementBundle\Entity" description="Associates members with sites." uuid="062dc364-3d01-474f-8a28-77bb8b1e21fd">
+      <field name="member" description="Associated member." type="integer" size="10" required="true" primary="true" uuid="e2998ad5-2e62-48ea-af77-50e77dc02ea0"/>
+      <field name="site" description="Associated site." type="integer" size="10" required="true" primary="true" uuid="2f4ef3be-bf71-4a9c-b633-8ba1c6095444"/>
+      <field name="date_added" description="Date when the member is added to site." type="datetime" required="true" uuid="72dcad1e-000d-417e-bc2f-b18ee3a32bb4"/>
+      <field name="date_updated" description="Date when the entry is last updated." type="datetime" required="true" uuid="a4281f12-9e6e-46df-aad1-cb7f90d10cfd"/>
+      <field name="date_removed" description="Date when the entry is marked as removed." type="datetime" uuid="0f78c242-b66b-44dc-991b-d19059ba7383"/>
+      <index name="idxUMembersOfSite" unique="true">
+        <index-field name="member"/>
+        <index-field name="site"/>
+      </index>
+      <index name="idxNMembersOfSiteDateAdded">
+        <index-field name="date_added"/>
+      </index>
+      <index name="idxNMembersOfSiteDateUpdated">
+        <index-field name="date_updated"/>
+      </index>
+      <index name="idxNMembersOfSiteDateRemoved">
+        <index-field name="date_removed"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">members_of_site</attribute>
+        <attribute name="export-file-name">MembersOfSite.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\MemberManagementBundle\Entity\MembersOfSite" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFMemberOfSite" owner-alias="" inverse-alias="member" many-owner="true" many-inverse="false" parent-required="true" uuid="b1bb0d0b-841e-42dd-9eb4-9e33e559358b">
+      <association-field from="member" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\MemberManagementBundle\Entity\MembersOfSite" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxFSiteOfMember" owner-alias="" inverse-alias="site" many-owner="true" many-inverse="false" parent-required="true" uuid="d0a6295c-5f68-40e3-bfb4-da2ca6e40fb6">
+      <association-field from="site" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <orm-attributes>
+      <attribute name="namespace">BiberLtd\Core\Bundles\MemberManagementBundle\Entity</attribute>
+      <attribute name="file-suffix">without-suffix</attribute>
+      <attribute name="filename-format">entity-name-only</attribute>
+    </orm-attributes>
+  </module>
+  <module name="\BlogBundle" local-name="BlogBundle" namespace="\BiberLtd\Bundle\BlogBundle\Entity" local-namespace="BiberLtd\Bundle\BlogBundle\Entity" export-format="Doctrine2Php" export-path="../Entity" uuid="1b76a8f1-70bf-4d0d-9efe-09cd274f555f">
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\ActiveBlogPostLocale" local-name="ActiveBlogPostLocale" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Associates languages in which the post will be visible." uuid="3044c8f9-33a6-4aff-98ab-a4989389dde5">
+      <field name="blog_post" type="integer" size="10" required="true" primary="true" uuid="8c95e90d-8a0a-4ddd-acf7-9665d2fdcecf"/>
+      <field name="language" type="integer" size="5" required="true" primary="true" uuid="2bf39544-1324-460b-ace7-a2f601fe9735"/>
+      <orm-attributes>
+        <attribute name="export-file-name">ActiveBlogPostLocale.php</attribute>
+        <attribute name="table">active_blog_post_locale</attribute>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+        </attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\ActiveBlogPostLocale" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFActiveBlogPostOfLanguage" owner-alias="" inverse-alias="blogPost" many-owner="true" many-inverse="false" parent-required="true" uuid="451f960e-5778-4aee-b2cf-d0073a3c16ec">
+      <association-field from="blog_post" to="id"/>
+      <orm-attributes>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\ActiveBlogPostLocale" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFActiveLanguageOfBlogPost" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="996910a8-f52e-46c6-bef2-cb94b6da89d9">
+      <association-field from="language" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\Blog" local-name="Blog" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Stores all blog definitions." uuid="c221008d-3462-4c58-b3b3-b4d027b70afc">
+      <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="35a92f07-cbe6-4ea0-b0cb-f039bf660c38">
+        <orm-attributes>
+          <attribute name="generator">
+            <attribute name="strategy">AUTO</attribute>
+          </attribute>
+        </orm-attributes>
+      </field>
+      <field name="date_added" description="Date when the blog is created." type="datetime" required="true" uuid="d41a50cc-a1b1-4d01-bf56-db8f5666a850"/>
+      <field name="date_updated" description="Date when the blog is last updated." type="datetime" required="true" uuid="874fda4a-c74f-46cc-a8fe-8eeb4b428405"/>
+      <field name="count_posts" description="Number of total posts within blog." type="integer" size="10" default="0" required="true" uuid="2a846a01-9b8a-4a4d-ba40-76016553141c">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="site" description="Site that blog belongs to." type="integer" size="10" uuid="0582530d-975e-4522-8530-9e1d2fc34da1"/>
+      <field name="date_removed" description="Date when the entry is marked as removed." type="datetime" uuid="60a72263-55a7-40fa-bb9f-881ee1e0769a"/>
+      <index name="idxUBlogId" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idxNBlogDateAdded">
+        <index-field name="date_added"/>
+      </index>
+      <index name="idxNBlogDateUpdated">
+        <index-field name="date_updated"/>
+      </index>
+      <index name="idxNBlogDateRemoved"/>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog</attribute>
+        <attribute name="export-file-name">Blog.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\Blog" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxFSiteOfBlog" owner-alias="" inverse-alias="site" many-owner="true" many-inverse="false" uuid="8e84cd0e-865c-47c4-b0d9-203fd6d27e27">
+      <association-field from="site" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\BlogLocalization" local-name="BlogLocalization" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Stores localized values for each blog entry&#xE7;" uuid="f6d679d7-c495-4963-9006-98a851a54798">
+      <field name="blog" description="Localized blog." type="integer" size="10" required="true" primary="true" uuid="6640a90b-b0c0-4c3e-ac43-10aba26028a5"/>
+      <field name="language" description="Localization language." type="integer" size="5" required="true" primary="true" uuid="ec9d0867-6726-4e77-a5db-a721530518bf"/>
+      <field name="title" description="Localized title of blog." type="string" size="155" required="true" uuid="c2d966a4-9027-4a38-baf9-8c85c8f80402"/>
+      <field name="url_key" description="Localized url key of blog." type="string" size="255" required="true" uuid="8a863498-acc0-4a8f-ba4e-dba17b5d80b9"/>
+      <field name="description" description="Localized description of blog." type="string" size="255" uuid="049f00b8-a0be-4370-b96d-57f743b1e72c"/>
+      <field name="meta_description" description="Localized meta description of blog." type="string" size="255" uuid="bd294a14-68ba-4e0c-8396-3fa2ffe2da8f"/>
+      <field name="meta_keywords" description="Localized keywords of blog." type="string" size="155" uuid="0e95e5cc-71f2-4297-aa8b-2ba9458cbb12"/>
+      <index name="idxUBlogLocalization" unique="true">
+        <index-field name="blog"/>
+        <index-field name="language"/>
+      </index>
+      <index name="idxUBlogUrlKey">
+        <index-field name="language"/>
+        <index-field name="url_key"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_localization</attribute>
+        <attribute name="export-file-name">BlogLocalization.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFBlogLocalizationLanguage" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="a263e690-a22d-4910-8b24-76753282e836">
+      <association-field from="language" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogLocalization" to="\BiberLtd\Bundle\BlogBundle\Entity\Blog" caption="idxFLocalizedBlog" owner-alias="localizations" inverse-alias="blog" many-owner="true" many-inverse="false" parent-required="true" uuid="3ce7245a-507f-41c8-8012-764b5b34c637">
+      <association-field from="blog" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\BlogModerator" local-name="BlogModerator" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Associates members with moderation rights with blogs or blog post categories.&#10;&#10;Requires: MemberManagemetBundle" uuid="a8ac4769-debb-43f7-a155-857b0534ef04">
+      <field name="moderator" description="Associated member." type="integer" size="10" required="true" primary="true" uuid="11d6b5f7-be15-4aca-b00b-25baa3c67a88"/>
+      <field name="blog" description="Associated blog." type="integer" size="10" required="true" primary="true" uuid="05a496b8-74cc-48e2-8195-077a63348c8d"/>
+      <field name="date_added" description="Date when the member is assigned to blog as moderator." type="datetime" required="true" uuid="389152dd-fd15-4d25-ab45-c77805a9c796"/>
+      <field name="category" description="If member is a moderator of only a specific category." type="integer" size="10" required="true" uuid="391e3caa-8743-49c7-81a4-86e56aefd9a2"/>
+      <index name="idxUBlogModerator" unique="true">
+        <index-field name="moderator"/>
+        <index-field name="blog"/>
+        <index-field name="category"/>
+      </index>
+      <index name="idxNBlogModeratorDateAdded">
+        <index-field name="date_added"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_moderator</attribute>
+        <attribute name="export-file-name">BlogModerator.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogModerator" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idx_f_blog_moderator_moderator" owner-alias="" inverse-alias="member" many-owner="true" many-inverse="false" parent-required="true" uuid="13acdf29-ae74-4ad2-a301-52bd877ef05b">
+      <association-field from="moderator" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogModerator" to="\BiberLtd\Bundle\BlogBundle\Entity\Blog" caption="idxFBlogOfModerator" owner-alias="moderators" inverse-alias="blog" many-owner="true" many-inverse="false" parent-required="true" uuid="af763499-aa02-411d-b4f3-ea3adc3879c7">
+      <association-field from="blog" to="id"/>
+      <orm-attributes>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogModerator" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory" caption="idxFBlogPostCategoryToModerate" owner-alias="moderators" inverse-alias="category" many-owner="true" many-inverse="false" parent-required="true" uuid="ffd383c2-e9de-458f-8324-3d04a22696cf">
+      <association-field from="category" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" local-name="BlogPost" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Holds definitions of blog posts." uuid="52633a6e-346a-4e12-b99e-0f492b048a4c">
+      <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="b0abd43c-348b-4ed3-9a6b-dca7733055fc">
+        <orm-attributes>
+          <attribute name="generator">
+            <attribute name="strategy">AUTO</attribute>
+          </attribute>
+        </orm-attributes>
+      </field>
+      <field name="author" description="Post author." type="integer" size="10" required="true" uuid="01e70203-e063-40e1-a482-4cf6ad054f7c"/>
+      <field name="blog" description="Blog that post is written for." type="integer" size="10" required="true" uuid="887a1547-80dc-447f-9146-3780e7447e33"/>
+      <field name="site" description="Site that blog post belongs to." type="integer" size="10" uuid="2865ba9c-7206-495d-adb8-25bd9da5bb5f"/>
+      <field name="type" description="a:article;i:image;g:gallery;v:video;d:document;" type="string" size="1" default="a" required="true" uuid="29ae9e85-3ca1-487d-9c96-4ee8be075c55">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="preview_image" description="Associated file for preview image." type="integer" size="15" uuid="047df1ba-7af9-4afe-b342-57ef89703b8a"/>
+      <field name="status" description="o:open,c:closed,p:published,m:modetation;u:unpublished" type="string" size="1" default="o" required="true" uuid="eefbd9c5-4f15-43ae-b109-a80f52193c7d">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="date_added" description="Date when the blog post is added." type="datetime" required="true" uuid="e8450f66-5163-48b6-bbc6-d796a127a3eb"/>
+      <field name="date_approved" description="Date when the blog post  is approved" type="datetime" uuid="029f174c-d24a-46f5-ab3f-0d3609ee9015"/>
+      <field name="date_published" description="Date when the blog post will be published." type="datetime" required="true" uuid="e907361a-fca5-44d0-8c02-f1db148b2461"/>
+      <field name="date_unpublished" description="Date when the blog post will be unpublished." type="datetime" uuid="f3af1802-944e-4924-b3f1-4b8bb6638c56"/>
+      <field name="count_view" description="Number of times a blog post viewed." type="integer" size="10" default="0" required="true" uuid="438817fd-7e8d-491e-9011-4aa642f2c54d">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="count_like" description="Total number of likes that blog post gets." type="integer" size="10" default="0" required="true" uuid="d8229fbb-0562-4ebf-a5fb-af73b8f52757">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="count_dislike" description="Total number of dislikes that the blog post gets." type="integer" size="10" default="0" required="true" uuid="d13a6085-9e9d-4e55-8319-64ca09d15c65">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="count_comment" description="Total number of comments associated with the blog post." type="integer" size="10" default="0" required="true" uuid="c8ad2eef-d2f7-485a-b330-dc04a38c0c00">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="date_updated" description="Date when the entry is last updated." type="datetime" required="true" uuid="65b0ffbe-06e0-4432-b73b-598f8540ae3d"/>
+      <field name="date_removed" description="Date wheb tge entry is marked as removed." type="datetime" uuid="6508f5ab-b01c-4f55-9c74-c15e542eb99c"/>
+      <index name="idxUBlogPostId" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idxNBlogPostDateAdded">
+        <index-field name="date_added"/>
+      </index>
+      <index name="idxNBlogPostDatePublished">
+        <index-field name="date_published"/>
+      </index>
+      <index name="idxNBlogPostDateApproved">
+        <index-field name="date_approved"/>
+      </index>
+      <index name="idxNBlogPostDateUnpublished">
+        <index-field name="date_unpublished"/>
+      </index>
+      <index name="idxNBlogPostDateUpdated">
+        <index-field name="date_updated"/>
+      </index>
+      <index name="idxNBlogPostDateRemoved">
+        <index-field name="date_removed"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_post</attribute>
+        <attribute name="export-file-name">BlogPost.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" to="\BiberLtd\Bundle\FileManagementBundle\Entity\File" caption="idxFPrevieImageOfBlogPost" owner-alias="" inverse-alias="preview_image" many-owner="true" many-inverse="false" uuid="ae7f15da-67f8-4011-86f2-3f040542cf19">
+      <association-field from="preview_image" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\Blog" caption="idxFBlogOfBlogPost" owner-alias="posts" inverse-alias="blog" many-owner="true" many-inverse="false" parent-required="true" uuid="3207bf25-161b-495c-823b-e56fd0643399">
+      <association-field from="blog" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxFSiteOfBlogPost" owner-alias="" inverse-alias="site" many-owner="true" many-inverse="false" uuid="7d72d3c7-e97d-4b81-bdce-151bec188ad7">
+      <association-field from="site" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFAuthorOfBlogPost" owner-alias="" inverse-alias="author" many-owner="true" many-inverse="false" parent-required="true" uuid="1d827c52-41ba-4ae7-aaab-47c8d3778a08">
+      <association-field from="author" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostAction" local-name="BlogPostAction" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Keeps track of actions (likes, dislikes) for each blog post. Tracks only member actions.&#10;&#10;Requires: MemberManagementBundle" uuid="a70427d3-c8e0-4829-93e3-de66bb9c9c61">
+      <field name="id" description="System given id." type="integer" size="15" required="true" unique="true" primary="true" auto-increment="true" uuid="04d5686c-441a-4edd-9f24-5e1818d95ba7">
+        <orm-attributes>
+          <attribute name="generator">
+            <attribute name="strategy">AUTO</attribute>
+          </attribute>
+        </orm-attributes>
+      </field>
+      <field name="post" description="Post action is made" type="integer" size="10" required="true" uuid="9bb7553b-f220-485f-aa38-40d026eefbb5"/>
+      <field name="member" description="Member who has done the action." type="integer" size="10" required="true" uuid="8552c055-ffc7-4f18-85d9-64b3a859a8eb"/>
+      <field name="action" description="v:view;l:like;d:dislike;f:favorite;u:unfavorite" type="string" size="1" default="v" required="true" uuid="13463ff8-6c3a-462b-aa93-592ee593e996">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="date_added" description="Date when the action is occured." type="datetime" required="true" uuid="8a9b8f38-fb77-4f38-a124-51cf64754673"/>
+      <index name="idxUBlogPostActionID">
+        <index-field name="id"/>
+      </index>
+      <index name="idxNBlogPostActionDateAdded">
+        <index-field name="date_added"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_post_action</attribute>
+        <attribute name="export-file-name">BlogPostAction.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostAction" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFBlogPostOfAction" owner-alias="actions" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="e12a81e2-734f-4e3f-b3a5-496cc581af51">
+      <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostAction" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFOwnerOfBlogPostAction" owner-alias="" inverse-alias="member" many-owner="true" many-inverse="false" parent-required="true" uuid="26f58696-02d0-4c67-9a61-cfd78d4e18ec">
+      <association-field from="member" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory" local-name="BlogPostCategory" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Stores definitions of blog post categories.&#10;&#10;Requires: [SiteManagementBundlle]" uuid="d01f6c43-64e1-452e-991f-036c673ac11c">
+      <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="0eac2abb-900b-4b99-8fa6-92011aff7c2b">
+        <orm-attributes>
+          <attribute name="generator">
+            <attribute name="strategy">AUTO</attribute>
+          </attribute>
+        </orm-attributes>
+      </field>
+      <field name="date_added" description="Date when category is added." type="datetime" required="true" uuid="cc59b077-de55-4219-ac51-b81ca821b4a0"/>
+      <field name="blog" description="Blog that post category belongs to." type="integer" size="10" required="true" uuid="0374f2d7-ee8d-4b1f-abd7-c704e551791d"/>
+      <field name="parent" description="Parent category if exists." type="integer" size="10" required="true" uuid="454be223-9b44-4c3e-acfa-8685ff68069b"/>
+      <field name="site" description="Site that blog post category belongs to." type="integer" size="10" uuid="6cb5bb58-b9d9-4bec-8e9c-0aaadbb1fb38"/>
+      <field name="date_updated" description="Date when the entry is last updated." type="datetime" required="true" uuid="f97a4c9a-df8e-4622-8e64-4b1f6ff8079f"/>
+      <field name="date_removed" description="Date when the entry is last removed." type="datetime" uuid="2dc946b5-943e-487c-9711-495190c9e953"/>
+      <index name="idxUBlogPostCategoryId" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idxNBlogPostCategoryDateAdded">
+        <index-field name="date_added"/>
+      </index>
+      <index name="idxNBlogPostCategoryDateUpdated">
+        <index-field name="date_updated"/>
+      </index>
+      <index name="idxNBlogPostCategoryDateRemoved">
+        <index-field name="date_removed"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_post_category</attribute>
+        <attribute name="export-file-name">BlogPostCategory.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxFSiteOfBlogPostCategory" owner-alias="" inverse-alias="site" many-owner="true" many-inverse="false" uuid="bed78311-e828-43f4-a4ed-951beb3ee5eb">
+      <association-field from="site" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory" to="\BiberLtd\Bundle\BlogBundle\Entity\Blog" caption="idxFBlogOfBlgPostCategory" owner-alias="" inverse-alias="blog" many-owner="true" many-inverse="false" parent-required="true" uuid="5acf3682-59f9-4105-8a6f-a21c1202c27a">
+      <association-field from="blog" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory" caption="idxFParentOfBlogPostCategory" owner-alias="children" inverse-alias="parents" many-owner="true" many-inverse="false" parent-required="true" uuid="39b83ac5-5c1b-4e05-8a3d-4c2789956f07">
+      <association-field from="parent" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategoryLocalization" local-name="BlogPostCategoryLocalization" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Stores localized values for each post category.&#10;&#10;Requires: MultiLanguageSupportBundle&#10;" uuid="51ec9be8-4890-4887-addd-6819fa8f6fb7">
+      <field name="category" description="Localized post category." type="integer" size="10" required="true" primary="true" uuid="2d1f900a-bfda-4aa2-9fec-56d97e09dee4"/>
+      <field name="language" description="Localization language." type="integer" size="5" required="true" primary="true" uuid="1f7acbb1-6096-49d9-8e05-6d32f0b1f464"/>
+      <field name="name" description="Localized name of category." type="string" size="155" required="true" uuid="ab280678-7709-4021-ad35-88211ef9692e"/>
+      <field name="url_key" description="Localized url key." type="string" size="255" required="true" uuid="fa2f8321-359b-4f7f-8801-d7327a64ba0c"/>
+      <field name="description" type="string" size="255" uuid="f328160d-06b0-47a0-8c2e-b7f177565160"/>
+      <index name="idxUBlogPostLocalization" unique="true">
+        <index-field name="category"/>
+        <index-field name="language"/>
+      </index>
+      <index name="idxUBlogPostUrlKey" unique="true">
+        <index-field name="language"/>
+        <index-field name="url_key"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_post_category_localization</attribute>
+        <attribute name="export-file-name">BlogPostCategoryLocalization.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategoryLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFBlogPostCategoryLocalizationLanguage" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="25f9e3da-4b68-4712-9643-34d5b86aee96">
+      <association-field from="language" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategoryLocalization" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory" caption="idxFLocalizedBlogPostCategory" owner-alias="localizations" inverse-alias="category" many-owner="true" many-inverse="false" parent-required="true" uuid="4c1f815c-2308-4cb1-baf6-a842cf08c2a2">
+      <association-field from="category" to="id"/>
+      <orm-attributes>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" local-name="BlogPostComment" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Holds a list of comments made to each blog post.&#10;&#10;Requires: MemberManagementBundle, [SiteManagementBundlle]" uuid="7a06efe4-87ce-4810-9039-1e1c8ffb811f">
+      <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="654db702-9016-4d29-93ca-793876c7e88b">
+        <orm-attributes>
+          <attribute name="generator">
+            <attribute name="strategy">AUTO</attribute>
+          </attribute>
+        </orm-attributes>
+      </field>
+      <field name="parent" description="If this is a comment-reply then the parent comment." type="integer" size="10" required="true" unique="true" uuid="569b9198-20ed-4e5b-b86c-f8c46eb4b59e"/>
+      <field name="author" description="Author of the comment if a registered member." type="integer" size="10" uuid="de6b5e4e-f89d-438f-8aee-3f7c8ed67fc4"/>
+      <field name="date_added" description="Date when the comment is added." type="datetime" required="true" uuid="5ec34359-860c-412b-abbb-d1e6789abe9a"/>
+      <field name="date_removed" description="Date when the comment is removed." type="datetime" uuid="df902d84-8131-4bf9-b967-e350f72f2205"/>
+      <field name="date_published" description="Date when the comment is published." type="datetime" required="true" uuid="84bbda21-96a4-40e6-ade3-2d22106aaa43"/>
+      <field name="name" description="Name of commentor." type="string" size="255" required="true" uuid="2c09f8b5-d2be-4984-a539-1579de5f0d79"/>
+      <field name="email" description="Email of commentor." type="string" size="255" required="true" uuid="c38697c1-ffec-4f10-9668-20cef1f5aed6"/>
+      <field name="url" description="URL of commentor." type="text" uuid="f9ebff80-e520-4d07-9576-fd1c5cce0dad"/>
+      <field name="count_likes" description="Number of likes that this comment gets." type="integer" size="10" default="0" required="true" uuid="11512975-aedc-4802-99f5-719ebdea5570">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="count_dislikes" description="Number of dislikes that this comment gets." type="integer" size="10" default="0" required="true" uuid="a51f3a7b-d831-4396-a82f-65016918fbd7">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="site" description="Site that blog post comment belongs to." type="integer" size="10" uuid="dcd4abb2-6e68-411f-a2fb-c8f09a8c5892"/>
+      <field name="post" type="integer" size="10" uuid="a71a6832-98d1-4b14-84bd-2232ad5e0556"/>
+      <index name="idxUBlogPostCommentId" unique="true">
+        <index-field name="id"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_post_comment</attribute>
+        <attribute name="export-file-name">BlogPostComment.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxSiteOfBlogPostComment" owner-alias="" inverse-alias="site" many-owner="true" many-inverse="false" uuid="921b62e8-bc57-4e52-9003-5da8643f9d96">
+      <association-field from="site" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxAuthorOfBlogPostComment" owner-alias="" inverse-alias="author" many-owner="true" many-inverse="false" uuid="2c2dd436-3289-4060-9538-3c902237a755">
+      <association-field from="author" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">SET NULL</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" caption="idxFParentBlogPostComment" owner-alias="parent" inverse-alias="comment" many-owner="false" many-inverse="false" parent-required="true" uuid="cbefcaa0-97cc-4c66-b65b-5d99804927f8">
+      <association-field from="parent" to="id"/>
+      <orm-attributes>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFPostOfComment" inverse-alias="post" many-owner="true" many-inverse="false" uuid="b8693121-34cd-4cee-98d0-194b0383c1f4">
+      <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCommentAction" local-name="BlogPostCommentAction" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Keeps track of actions (likes, dislikes) for each blog post comment.&#10;&#10;Requires: MemberManagementBundle" uuid="d33e0252-193b-4ad3-a4bd-535b22a4dd54">
+      <field name="id" description="System given id." type="integer" size="15" required="true" unique="true" primary="true" auto-increment="true" uuid="6d48389c-84ce-4294-8481-eeab42060212">
+        <orm-attributes>
+          <attribute name="generator">
+            <attribute name="strategy">AUTO</attribute>
+          </attribute>
+        </orm-attributes>
+      </field>
+      <field name="post" description="Blog post that action is made." type="integer" size="10" required="true" uuid="2e56bced-99e8-4018-bb8f-febfd81be74d"/>
+      <field name="comment" description="Blog post comment." type="integer" size="10" required="true" uuid="d900dacf-298d-4efb-8ac1-ef4c959d5890"/>
+      <field name="member" description="Only registered members can post actions." type="integer" size="10" required="true" uuid="5e9ebcdd-027e-4057-9705-efbfa583b9f6"/>
+      <field name="action" description="l:like;d:dislike" type="string" size="1" default="l" required="true" uuid="68f557f3-2e7a-4dda-bff0-59f9c15ba5ec">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="date_added" description="Date when the action has been added." type="datetime" required="true" uuid="f8d501b1-fd23-46e8-a290-9bbcbf132e32"/>
+      <index name="idxUBlogPostCommentActionId" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idxUBlogPostCommentAction" unique="true">
+        <index-field name="comment"/>
+        <index-field name="member"/>
+        <index-field name="post"/>
+      </index>
+      <index name="idxNBlogPostCommentActionDateAdded">
+        <index-field name="date_added"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_post_comment_action</attribute>
+        <attribute name="export-file-name">BlogPostCommentAction.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCommentAction" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFOwnerOfBlogPostCommentAction" owner-alias="" inverse-alias="member" many-owner="true" many-inverse="false" parent-required="true" uuid="826be9b9-4fd5-4da9-a8e6-62810155668c">
+      <association-field from="member" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCommentAction" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" caption="idxFActedCommentOfBlogPost" owner-alias="" inverse-alias="blog_post_comment" many-owner="true" many-inverse="false" parent-required="true" uuid="9c54d716-ed9a-48ab-9cd0-f38d14f7150e">
+      <association-field from="comment" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCommentAction" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFBlogPostOfActedComment" owner-alias="" inverse-alias="blog_post" many-owner="true" many-inverse="false" parent-required="true" uuid="13157d1d-3576-422b-8abb-7d6ac40e1ade">
+      <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostLocalization" local-name="BlogPostLocalization" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Stores localized values for each blog post entry." uuid="124be203-cd78-4b96-bc03-210c1f0db117">
+      <field name="post" description="Associated blog post." type="integer" size="10" required="true" primary="true" uuid="738e3a93-eec8-4b4c-a6d3-a3ceab89a968"/>
+      <field name="language" description="Localization language." type="integer" size="5" required="true" primary="true" uuid="ad3319bb-8b07-4a13-b496-b14bd0c8e8f2"/>
+      <field name="title" description="Localized title of blog post." type="string" size="155" required="true" uuid="96fa8129-00a7-4fc7-ae60-a3eb35b117ca"/>
+      <field name="url_key" description="Localized url key of blog post." type="string" size="255" required="true" uuid="59efe506-6977-4303-b594-beaf2b801ab4"/>
+      <field name="summary" description="Localized summary of blog post." type="string" size="255" uuid="168be092-d785-4fa8-aff5-826e393ce978"/>
+      <field name="meta_description" description="Localized meta description of blog post." type="string" size="255" uuid="ff1bbdd3-d790-4944-b6e7-c9b4fd4b880d"/>
+      <field name="meta_keywords" description="Localized meta keywords of blog posts." type="string" size="255" uuid="f670b061-f602-4f4a-a31e-53c4c55b01e9"/>
+      <field name="content" description="Blog post content - usually a json encoded string." type="text" uuid="56f3df3b-2cb1-4ef4-8ba7-8b109f0ee8f3"/>
+      <field name="meta_title" description="Meta title of blog post." type="string" size="155" uuid="ed39ca7c-8969-4aca-90b5-9d4499b85b4c"/>
+      <index name="idxUBlogPostLocalization" unique="true">
+        <index-field name="post"/>
+        <index-field name="language"/>
+      </index>
+      <index name="idxUBlogPostUrlKey" unique="true">
+        <index-field name="language"/>
+        <index-field name="url_key"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_post_localization</attribute>
+        <attribute name="export-file-name">BlogPostLocalization.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostLocalization" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFLocalizedBlogPost" owner-alias="localizations" inverse-alias="blog_post" many-owner="true" many-inverse="false" parent-required="true" uuid="432c0176-0a29-4845-87ee-88070753d665">
+      <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning">
+          <attribute name="cascade">
+            <attribute name="cascade-persist">true</attribute>
+          </attribute>
+        </attribute>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFBlogPostLocalizationLanguage" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="840e2a15-aa53-476a-9c39-9820b3b18031">
+      <association-field from="language" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostModeration" local-name="BlogPostModeration" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Tracks blog post moderation activities." uuid="239c27b0-2883-46e8-bcbd-010fd9235aaf">
+      <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="ab3dd4a4-f67a-44b1-8e23-d35ef68d2aa2">
+        <orm-attributes>
+          <attribute name="generator">
+            <attribute name="strategy">AUTO</attribute>
+          </attribute>
+        </orm-attributes>
+      </field>
+      <field name="post" description="Moderated post." type="integer" size="10" required="true" uuid="14010aa3-c606-4015-be69-56683b9ac5ac"/>
+      <field name="moderator" description="The person who has moderated blog post." type="integer" size="10" required="true" uuid="76915630-ae85-4e91-ad81-29ced6fdfeaf"/>
+      <field name="comment" description="Comment about blog post if available." type="string" size="255" uuid="2737afd1-dac1-4543-8860-2f43bd29c622"/>
+      <field name="status" description="a:accepted;d:denied;c:change requested" type="string" size="1" default="a" required="true" uuid="92f3c558-8813-40f7-ba5d-82f7486e813f">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="date_reviewed" description="Date of first review." type="datetime" uuid="dafc60d2-2e22-4674-9e45-459bf0f3134d"/>
+      <field name="date_updated" description="Date when the review is updated." type="datetime" uuid="b458fddf-1f86-482c-b3a8-6b31dc141110"/>
+      <index name="idxUBlogPostModerationId" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idxNBlogPostModerationDateReviewed">
+        <index-field name="date_reviewed"/>
+      </index>
+      <index name="idxNBlogPostModerationDateUpdated">
+        <index-field name="date_updated"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_post_moderation</attribute>
+        <attribute name="export-file-name">BlogPostModeration.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostModeration" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFModeratorOfBlogPost" owner-alias="" inverse-alias="moderator" many-owner="true" many-inverse="false" parent-required="true" uuid="302e9a0d-c92f-47d9-bae9-4e4b20c56c65">
+      <association-field from="moderator" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">RESTRICT</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostModeration" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFModeratedBlogPost" owner-alias="moderations" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="fbc3082b-9294-4f73-82ca-1e446236f969">
+      <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostModerationReply" local-name="BlogPostModerationReply" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Stores a list of moderation related conversations.&#10;&#10;Requires: MemberManagementBundle" uuid="1421f0f1-e591-42f7-b63c-2a522d14a937">
+      <field name="id" description="System given id." type="integer" size="15" required="true" unique="true" primary="true" auto-increment="true" uuid="f56344d3-1346-42ad-be41-88b7ff598f10">
+        <orm-attributes>
+          <attribute name="generator">
+            <attribute name="strategy">AUTO</attribute>
+          </attribute>
+        </orm-attributes>
+      </field>
+      <field name="moderation" description="Moderation that conversation belongs to." type="integer" size="10" required="true" uuid="68f630f4-bc8d-4c8f-82f7-ecf6993eaab1"/>
+      <field name="author" description="Author of the reply." type="integer" size="10" required="true" uuid="57730030-fab0-4ecc-93c4-62ef4321b186"/>
+      <field name="date_replied" description="Date of reply." type="datetime" required="true" uuid="5d6960cd-d24d-4ca4-bc01-c21488dda553"/>
+      <field name="comment" description="Reply to the moderation comment." type="string" size="255" required="true" uuid="39795466-f2fa-4a13-ae00-f468d5921a66"/>
+      <field name="sent_from" description="a:author;m:moderator" type="string" size="1" default="a" required="true" uuid="8131a687-36b1-4191-b749-2c3e440c24a2">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="is_read" description="y.yes;n:no" type="string" size="1" default="n" required="true" uuid="7f6d66cf-1a0c-4dca-a16d-b0c2e627bd81">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <index name="idxUBlogPostModerationReplyId" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idxNBlogPostModerationDateReplied">
+        <index-field name="date_replied"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="export-file-name">BlogPostModerationReply.php</attribute>
+        <attribute name="table">blog_post_moderation_reply</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostModerationReply" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostModeration" caption="idxFModerationOfBlogPostReply" owner-alias="replies" inverse-alias="moderation" many-owner="true" many-inverse="false" parent-required="true" uuid="ae6b2362-f162-4445-9648-30c5d7d44c30">
+      <association-field from="moderation" to="id"/>
+      <orm-attributes>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostModerationReply" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFMemberOfBlogPostReply" owner-alias="" inverse-alias="member" many-owner="true" many-inverse="false" parent-required="true" uuid="88830c55-2904-48c0-b947-e6d84eb6532a">
+      <association-field from="author" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostRevision" local-name="BlogPostRevision" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Holds revisions of blog post." uuid="38d1693c-170e-457b-87d7-b0d358797df7">
+      <field name="title" description="Post title." type="string" size="155" required="true" uuid="fe85deda-7768-416b-9810-c193f68cdefe"/>
+      <field name="url_key" description="Url key of post title." type="string" size="255" required="true" uuid="9ba7c00f-1275-47d3-b5eb-cc5b1671afa8"/>
+      <field name="summary" description="Summary of blog post." type="string" size="255" uuid="ae264671-466d-464b-b8dc-816b07330752"/>
+      <field name="meta_title" description="Meta title" type="string" size="155" uuid="c790af4f-3821-400f-9942-c25cc9e239bf"/>
+      <field name="meta_description" description="Description of blog post." type="string" size="255" uuid="7d0c5880-676d-4311-9bf9-d9bbd1581d4a"/>
+      <field name="meta_keywords" description="Meta keywords of blog post." type="text" uuid="67a226c9-98e3-4b45-ae1b-49c972185040"/>
+      <field name="content" description="Content of blog post." type="text" uuid="48ce1f3f-4e60-45fc-97d6-2fd5cc587e9c"/>
+      <field name="date_added" description="Date when the entry is added." type="datetime" required="true" uuid="21baa3a4-6f55-44f9-be62-35f7a77e8db4"/>
+      <field name="date_updated" description="Date when the entry is last updated." type="datetime" required="true" uuid="55b529f4-db6e-4f5d-91b8-4ec1b7c26288"/>
+      <field name="date_removed" description="Date when the entry is last removed." type="datetime" uuid="51b532bb-a594-47fd-b613-8e7dff7cfc1f"/>
+      <field name="revision_number" description="Revision number." type="integer" size="10" required="true" uuid="98db0b28-ad4a-4c45-91c7-1a456c6db5b4"/>
+      <field name="language" description="Language of revision." type="integer" size="5" required="true" primary="true" uuid="78c85179-19bb-4f86-9ec8-6499307ea896"/>
+      <field name="post" description="Post in revision." type="integer" size="10" required="true" primary="true" uuid="9a7c46e5-f45a-4ce5-a67b-0901bd6738e7"/>
+      <field name="status" description="a:approved,n:not approved,p:published,w:waiting for approval" type="string" size="1" default="w" uuid="eb2cd9d8-3f0f-4acc-8828-462a1d5465bd">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <index name="idxUBlogPostRevision" unique="true">
+        <index-field name="language"/>
+        <index-field name="post"/>
+      </index>
+      <orm-attributes>
+        <attribute name="table">blog_post_revision</attribute>
+        <attribute name="export-file-name">BlogPostRevision.php</attribute>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostRevision" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFLanguageOfBlogPostReview" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="cd1318f1-243b-4985-833d-9f24f4279801">
+      <association-field from="language" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostRevision" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFBlogPostOfRevision" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="03f34d17-af6d-4c06-994b-e4fa33b45051">
+      <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag" local-name="BlogPostTag" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Stores a list of tag definitions." uuid="a89cf5c8-aa5d-42ec-bbba-163c5a014c3d">
+      <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="3c5fa229-33a7-48ab-b580-c75dd7df3b75">
+        <orm-attributes>
+          <attribute name="generator">
+            <attribute name="strategy">AUTO</attribute>
+          </attribute>
+        </orm-attributes>
+      </field>
+      <field name="date_added" description="Date when the tag is added." type="datetime" required="true" uuid="70927a8d-33a4-448d-9d3b-e42af2c6d63f"/>
+      <field name="count_posts" description="Number of posts associated with this tag." type="integer" size="10" default="0" required="true" uuid="ce100ea2-e7a4-499c-856b-b166f28105a8">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="member" description="Member who added this tag." type="integer" size="10" required="true" uuid="325b61d0-2aa0-44a2-8e4c-8034cd7c45c4"/>
+      <field name="blog" description="Blog that this tag belongs to." type="integer" size="10" required="true" uuid="f9e65d2b-010d-4b4e-b092-ef74d9bfed28"/>
+      <field name="site" description="Site that this tag belongs to." type="integer" size="10" uuid="cc05006d-6e0e-4390-b57c-2dbebac04da2"/>
+      <field name="date_updated" description="Date when the entry is updated." type="datetime" required="true" uuid="26be20d0-281e-4902-a054-3fc83c153c0b"/>
+      <field name="date_removed" description="Date when the entry is marked as removed." type="datetime" uuid="96d36947-4323-4118-a75f-1c243f618422"/>
+      <index name="idxUBlogPostTagId" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idxNBlogPostTagAdded">
+        <index-field name="date_added"/>
+      </index>
+      <index name="idxNBlogPostTagUpdated">
+        <index-field name="date_updated"/>
+      </index>
+      <index name="idxNBlogPostTagRemoved">
+        <index-field name="date_removed"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_post_tag</attribute>
+        <attribute name="export-file-name">BlogPostTag.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxSiteOfBlogPostTag" owner-alias="" inverse-alias="site" many-owner="true" many-inverse="false" uuid="b9515313-83a8-41cd-8b13-4e1cf6280dec">
+      <association-field from="site" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag" to="\BiberLtd\Bundle\BlogBundle\Entity\Blog" caption="idxFBlogOfTag" owner-alias="" inverse-alias="blog" many-owner="true" many-inverse="false" parent-required="true" uuid="d3102fab-427e-46ae-9876-5e71e8807c77">
+      <association-field from="blog" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFMemberOfBlogPost" owner-alias="" inverse-alias="member" many-owner="true" many-inverse="false" parent-required="true" uuid="3873a818-fd4b-4b92-8ce6-2964e6e8b44a">
+      <association-field from="member" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTagLocalization" local-name="BlogPostTagLocalization" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Stores localized values of blog post tags.&#10;&#10;Requires: MultiLanguageSupportBundle&#10;" uuid="5caac17f-21c3-4d96-ad7e-e5c9c46f3072">
+      <field name="tag" description="Localized blog post tag." type="integer" size="10" required="true" primary="true" uuid="5877a747-c396-4525-baa6-f2eafef08e66"/>
+      <field name="language" description="Localization language." type="integer" size="5" required="true" unique="true" primary="true" uuid="334b0faa-83bd-485d-8e26-2f402ddedde5"/>
+      <field name="name" description="Localized tag name." type="string" size="155" required="true" uuid="924a4ebb-7091-4d18-a35b-28b406116709"/>
+      <field name="url_key" description="Localized url key of tag." type="string" size="255" required="true" uuid="f3560ad5-2746-48b2-9986-4548603b5390"/>
+      <index name="idxUBlogPostTagLocalization" unique="true">
+        <index-field name="tag"/>
+        <index-field name="language"/>
+      </index>
+      <index name="idxUBlogPostTagUrlKey" unique="true">
+        <index-field name="language"/>
+        <index-field name="url_key"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_post_tag_localization</attribute>
+        <attribute name="export-file-name">BlogPostTagLocalization.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTagLocalization" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag" caption="idxFLocalizedBlogPostTag" owner-alias="localizations" inverse-alias="tag" many-owner="true" many-inverse="false" parent-required="true" uuid="0aff81ea-4e3f-4bfd-bdf3-74245dfd259c">
+      <association-field from="tag" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTagLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFBlogPostTagLocalizationLanguage" owner-alias="" inverse-alias="language" many-owner="false" many-inverse="false" parent-required="true" uuid="796757ac-35eb-4155-bc3e-659b2d78666a">
+      <association-field from="language" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\CategoriesOfBlogPost" local-name="CategoriesOfBlogPost" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Associates blog posts with categories." uuid="0935da16-1ed5-48ac-b4bc-16b04799f560">
+      <field name="post" description="Associated post." type="integer" size="10" required="true" primary="true" uuid="1be8586e-9ab6-4866-912c-758a8973077d"/>
+      <field name="category" description="Associated category." type="integer" size="10" required="true" primary="true" uuid="e6bbaf6f-4fd2-4d34-bb2d-f67abac9013d"/>
+      <field name="date_added" description="Date when blog post added to category." type="datetime" required="true" uuid="c18adadd-5813-41c0-983e-a95d942cee65"/>
+      <field name="is_primary" description="y:yes;n:no" type="string" size="1" default="y" required="true" uuid="23fc9b0d-135e-4a49-9f82-a84beb3daab9">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <index name="idxUCategoriesOfBlogPost" unique="true">
+        <index-field name="post"/>
+        <index-field name="category"/>
+      </index>
+      <index name="idxNCategoriesOfBlogPostDateAdded">
+        <index-field name="date_added"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">categories_of_blog_post</attribute>
+        <attribute name="export-file-name">CategoriesOfBlogPost.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\CategoriesOfBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFBlogPostOfCategory" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="a044b579-9e18-4849-9740-dccb505935d9">
+      <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\CategoriesOfBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory" caption="idxFCategoryOfBlogPost" owner-alias="" inverse-alias="category" many-owner="true" many-inverse="false" parent-required="true" uuid="1a2118bf-3f11-4495-8ac8-39eada533ab8">
+      <association-field from="category" to="id"/>
+      <orm-attributes>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\FavoriteBlogPostsOfMember" local-name="FavoriteBlogPostsOfMember" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Keeps track of each user's favorite blog posts.&#10;&#10;Requires: MemberManagementBundle-" uuid="019e4713-ec7b-4600-b59d-3b7984060e19">
+      <field name="member" description="Associated member." type="integer" size="10" required="true" primary="true" uuid="8652aa06-8f8b-43f0-b9fb-78f712297041"/>
+      <field name="post" description="Associated blog post." type="integer" size="10" required="true" primary="true" uuid="36d1f295-ac12-42b7-b5c3-122ef072be38"/>
+      <field name="date_added" description="Date when the member favorited the blog post." type="datetime" required="true" uuid="3c506365-2724-4232-a6cf-aeea15b29547"/>
+      <index name="idxUFavoriteBlogPostOfMember" unique="true">
+        <index-field name="member"/>
+        <index-field name="post"/>
+      </index>
+      <index name="idxNFavoriteBlogPostOfMemberDateAdded">
+        <index-field name="date_added"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">favorite_blog_posts_of_member</attribute>
+        <attribute name="export-file-name">FavoriteBlogPostsOfMember.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\FavoriteBlogPostsOfMember" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFOwnerOfFavoriteBlogPost" owner-alias="" inverse-alias="member" many-owner="true" many-inverse="false" parent-required="true" uuid="eda725ac-394a-4fce-9662-066e59803f03">
+      <association-field from="member" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\FavoriteBlogPostsOfMember" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFFavoritedBlogPost" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="058a6e13-e0ea-4b66-b1f8-6a7498fdf188">
+      <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPost" local-name="FeaturedBlogPost" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Stores definitions of featured blog posts." uuid="37003f2f-c374-4082-855d-b3cf8a3206a7">
+      <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="ffd3f2fc-e10a-404a-997a-53eaa21283c4">
+        <orm-attributes>
+          <attribute name="generator">
+            <attribute name="strategy">AUTO</attribute>
+          </attribute>
+        </orm-attributes>
+      </field>
+      <field name="post" description="Blog post id." type="integer" size="10" required="true" uuid="326e96c1-a071-41f7-8efa-ba451c616180"/>
+      <field name="date_added" description="Date when post has been added to featured list." type="datetime" required="true" uuid="8f7c9d01-0376-44fd-8239-7af544faafab"/>
+      <field name="date_published" description="Date when post is published as featured." type="datetime" required="true" uuid="e07e5016-190e-4ad1-afc2-a8eb2cd3fab2"/>
+      <field name="date_unpublished" description="Date when the post will be removed from features aread." type="datetime" required="true" uuid="133e12d3-28e3-44e1-82ea-452af098930a"/>
+      <field name="sort_order" description="Custom sort order." type="integer" size="10" default="1" required="true" uuid="12ab7992-95cd-48d1-a7bd-d063a90f3de6">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="date_updated" description="Date when the entry is last updated." type="datetime" required="true" uuid="39365c24-b69d-4a1a-ad55-8b11c48c9830"/>
+      <field name="date_removed" description="Date when the entry is marked as removed." type="datetime" uuid="0b25eede-2e60-4ed9-8163-e4727c90036b"/>
+      <index name="idxUFeaturedBlogPostId" unique="true">
+        <index-field name="id"/>
+      </index>
+      <index name="idxNFeaturedBlogPostDateAdded">
+        <index-field name="date_added"/>
+      </index>
+      <index name="idxNFeaturedBlogPostDatePublished">
+        <index-field name="date_published"/>
+      </index>
+      <index name="idxNFeaturedBlogPostDateUnpublished">
+        <index-field name="date_unpublished"/>
+      </index>
+      <index name="idxNFeaturedBlogPostDateUpdated">
+        <index-field name="date_updated"/>
+      </index>
+      <index name="idxNFeaturedBlogPostDateRemoved">
+        <index-field name="date_removed"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">featured_blog_post</attribute>
+        <attribute name="export-file-name">FeaturedBlogPost.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFFeaturedBlogPost" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="b50044e5-d3bc-411c-a1d2-cb4db4473f37">
+      <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\RelatedBlogPost" local-name="RelatedBlogPost" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Defines all related posts that are associated with the original post." uuid="c04d3548-e6b1-452c-b622-8f3986a8e693">
+      <field name="post" description="Original post." type="integer" size="10" required="true" primary="true" uuid="ee60ce88-2815-4773-bd7c-722b26440d97"/>
+      <field name="related_post" description="Related post." type="integer" size="10" required="true" primary="true" uuid="7af22b3c-aabb-4fa3-a0e9-424c1fa68476"/>
+      <field name="date_added" description="Date when the post is related." type="datetime" required="true" uuid="ea3c7023-dbcf-41ca-966c-0571542aa407"/>
+      <index name="idxURelatedBlogPost" unique="true">
+        <index-field name="post"/>
+        <index-field name="related_post"/>
+      </index>
+      <index name="idxNRelatedBlogPostDateAdded">
+        <index-field name="date_added"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">related_blog_post</attribute>
+        <attribute name="export-file-name">RelatedBlogPost.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\RelatedBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFOwnerPost" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="6c4617fa-12a1-48da-acc8-0b7de14c8422">
+      <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\RelatedBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFRelatedPost" owner-alias="" inverse-alias="related_post" many-owner="true" many-inverse="false" parent-required="true" uuid="345f47c9-df4b-4b41-8793-4003eda7b64a">
+      <association-field from="related_post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\TagsOfBlogPost" local-name="TagsOfBlogPost" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Associates tags with posts." uuid="d8535833-d214-46a5-a12e-bd11539eb18b">
+      <field name="post" description="Associated post." type="integer" size="10" required="true" primary="true" uuid="17a8f648-7744-4ead-b011-9b75d12fe7d8"/>
+      <field name="tag" description="Associated tag." type="integer" size="10" required="true" primary="true" uuid="ad17a0b7-3135-46ca-8734-29b193979f6e"/>
+      <field name="date_added" description="Date when the tag has been added to the post." type="datetime" required="true" uuid="77672de2-fd7e-4992-bda8-338e04f18f55"/>
+      <index name="idxUTagsOfBlogPost" unique="true">
+        <index-field name="post"/>
+        <index-field name="tag"/>
+      </index>
+      <index name="idxNTagsOfBlogPostDateAdded">
+        <index-field name="date_added"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">tags_of_blog_post</attribute>
+        <attribute name="export-file-name">TagsOfBlogPost.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\TagsOfBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag" caption="idxFTagOfBlogPost" owner-alias="" inverse-alias="tag" many-owner="true" many-inverse="false" parent-required="true" uuid="43ab0ad0-b8c1-4f39-9865-9ae73771951f">
+      <association-field from="tag" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\TagsOfBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFTaggedBlogPost" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="eef48b82-733d-498b-acef-09421c9f4a1d">
+      <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <region namespace="\BiberLtd\Bundle\BlogBundle\Entity" caption="BlogPostModerationModule" uuid="17dd8f17-8eed-4535-bda3-bdcca80b4d95"/>
+    <region namespace="\BiberLtd\Bundle\BlogBundle\Entity" caption="BlogPostCommentModule" uuid="b0c195a4-e41b-4486-9231-7fe07d88781c"/>
+    <region namespace="\BiberLtd\Bundle\BlogBundle\Entity" caption="BlogPostActionTrackerModule" uuid="f7210e58-9166-4aba-8f79-e0e996a741d7"/>
+    <region namespace="\BiberLtd\Bundle\BlogBundle\Entity" caption="BlogPostCommentActionTrackerModule" uuid="f59a7b6b-4543-40a0-a981-f13549bf4f23"/>
+    <region namespace="\BiberLtd\Bundle\BlogBundle\Entity" caption="RelatedBlogPostsModule" uuid="8513c45d-b4e7-413f-b7c6-4d58b3c53d3b"/>
+    <region namespace="\BiberLtd\Bundle\BlogBundle\Entity" caption="FavoriteBlogPostsModule" uuid="a0a3337a-6806-4eb6-9695-0a1051ae2e7e"/>
+    <region namespace="\BiberLtd\Bundle\BlogBundle\Entity" caption="BlogPostCategoryManagementModule" uuid="40ef7a91-816f-4c6e-a580-0f01d93f36ee"/>
+    <region namespace="\BiberLtd\Bundle\BlogBundle\Entity" caption="FeaturedBlogPostModule" uuid="440e5af7-ace6-4cec-b07e-2c516be0d5d1"/>
+    <region namespace="\BiberLtd\Bundle\BlogBundle\Entity" caption="BlogPostTaggingModule" uuid="3449791f-06a3-4081-a8c0-4ea5cf36f46e"/>
+    <orm-attributes>
+      <attribute name="namespace">BiberLtd\Core\Bundles\BlogBundle\Entity</attribute>
+      <attribute name="file-suffix">without-suffix</attribute>
+      <attribute name="filename-format">entity-name-only</attribute>
+    </orm-attributes>
+  </module>
+  <module name="\../../site-management-bundle/Entity" local-name="../../site-management-bundle/Entity" namespace="\BiberLtd\Bundle\SiteManagementBundle\Entity" local-namespace="\BiberLtd\Bundle\SiteManagementBundle\Entity" export-format="Doctrine2Php" export-path="../../site-management-bundle/Entity" uuid="cacfab56-f311-4bcd-adc5-92de9ee8cf47"/>
+  <module name="\../../multilanguage-support-bundle/Entity" local-name="../../multilanguage-support-bundle/Entity" namespace="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity" local-namespace="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity" export-format="Doctrine2Php" export-path="../../multilanguage-support-bundle/Entity" uuid="b1378292-ca83-4897-bd0e-35cb3ca13d6a"/>
+  <module name="\../../file-management-bundle/Entity" local-name="../../file-management-bundle/Entity" namespace="\BiberLtd\Bundle\FileManagementBundle\Entity" local-namespace="\BiberLtd\Bundle\FileManagementBundle\Entity" export-format="Doctrine2Php" export-path="../../file-management-bundle/Entity" uuid="64a9bf6e-758c-494d-b0e2-54bba7dbc178"/>
+  <module name="\../../member-management-bundle/Entity" local-name="../../member-management-bundle/Entity" namespace="\BiberLtd\Bundle\MemberManagementBundle\Entity" local-namespace="\BiberLtd\Bundle\MemberManagementBundle\Entity" export-format="Doctrine2Php" export-path="../../member-management-bundle/Entity" uuid="8f1548e9-bd4c-448b-b9e6-023ac2c6d0ac"/>
+  <module name="\../Entity" local-name="../Entity" namespace="\BiberLtd\Bundle\BlogBundle\Entity" local-namespace="\BiberLtd\Bundle\BlogBundle\Entity" export-format="Doctrine2Php" export-path="../Entity" uuid="8c7a32b0-fdf8-4a82-bf3b-168c11d77a59">
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPostLocalization" local-name="FeaturedBlogPostLocalization" namespace="\BiberLtd\Bundle\BlogBundle\Entity" uuid="da681bce-bf94-4ba9-8453-773d07e7782e">
+      <field name="language" required="true" primary="true" uuid="1dc3dbe1-98ed-4464-8993-ae97f791af24"/>
+      <field name="content" type="text" required="true" uuid="317b519b-8294-408d-8b27-5675c26f9d7a"/>
+      <field name="post" required="true" uuid="36164450-c29b-4970-a0ec-51428af5eae4"/>
+      <index name="idx_u_featured_blog_post_localization" unique="true">
+        <index-field name="language"/>
+      </index>
+      <orm-attributes>
+        <attribute name="table">featured_blog_post_localization</attribute>
+        <attribute name="export-file-name">FeaturedBlogPostLocalization.php</attribute>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPostLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="6fe18d53-d398-450d-baf9-8001624e2eb2">
+      <association-field from="language" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPostLocalization" to="\BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPost" owner-alias="" inverse-alias="featured_blog_post" many-owner="true" many-inverse="false" parent-required="true" uuid="5102b31f-0132-4a6a-8d4b-527d68c2d2c1">
+      <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\FilesOfBlogPost" local-name="FilesOfBlogPost" namespace="\BiberLtd\Bundle\BlogBundle\Entity" uuid="37b9b75d-0543-4934-b984-79567684d865">
+      <field name="post" required="true" primary="true" uuid="b438fedf-c5eb-4eb5-ac5e-6e22b6616742"/>
+      <field name="file" required="true" primary="true" uuid="c41a4d7b-7f10-4192-8c20-9bebe68309a5"/>
+      <field name="date_added" type="datetime" required="true" uuid="b64e4d73-9228-45bb-abb5-931d8ac4154d"/>
+      <field name="sort_order" type="integer" size="10" required="true" uuid="9056c7c9-a3c1-4152-bddd-e59d5d62efc3"/>
+      <field name="type" type="string" size="1" required="true" uuid="247cf36d-df78-449d-8a7c-417f327fe705"/>
+      <field name="count_view" type="integer" required="true" uuid="dd7dfb62-f0d1-4f37-a2d6-283109c06254"/>
+      <index name="idx_n_files_of_blog_post_date_added">
+        <index-field name="date_added"/>
+      </index>
+      <index name="idx_u_files_of_blog_post" unique="true">
+        <index-field name="file"/>
+        <index-field name="post"/>
+      </index>
+      <orm-attributes>
+        <attribute name="table">files_of_blog_post</attribute>
+        <attribute name="export-file-name">FilesOfBlogPost.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\FilesOfBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="a3e7097e-ba36-4fde-89e4-a9123343b7bc">
+      <association-field from="post" to="id"/>
+      <orm-attributes>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\FilesOfBlogPost" to="\BiberLtd\Bundle\FileManagementBundle\Entity\File" owner-alias="" inverse-alias="file" many-owner="true" many-inverse="false" parent-required="true" uuid="a7a66a95-0edb-450a-90a8-fb24e640cae5">
+      <association-field from="file" to="id"/>
+      <orm-attributes>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+  </module>
   <visual-data>
     <association uuid="0132b5a4-c206-4f06-bcf7-08bf61d249f3" color="#969696"/>
     <association uuid="02e3ef16-39f8-42b5-891d-96224803b169" color="#969696"/>
@@ -31,11 +1942,13 @@
     <association uuid="45c125cd-0ba3-4a9c-973e-92bbcfb91a59" color="#969696"/>
     <association uuid="4a21a97e-810e-4e2d-a330-69d23cf801c7" color="#969696"/>
     <association uuid="4c1f815c-2308-4cb1-baf6-a842cf08c2a2" color="#969696"/>
+    <association uuid="5102b31f-0132-4a6a-8d4b-527d68c2d2c1" color="#969696"/>
     <association uuid="5acf3682-59f9-4105-8a6f-a21c1202c27a" color="#969696"/>
     <association uuid="5c053399-bdfe-4fd2-b79b-2eebb1c870ef" color="#969696"/>
     <association uuid="5d9fbbab-e6e7-446b-b35a-5a92b2665907" color="#969696"/>
     <association uuid="691cd89a-3534-4a4c-bf70-544fa15a4c35" color="#969696"/>
     <association uuid="6c4617fa-12a1-48da-acc8-0b7de14c8422" color="#969696"/>
+    <association uuid="6fe18d53-d398-450d-baf9-8001624e2eb2" color="#969696"/>
     <association uuid="71f15a54-6bc9-4510-84b1-2b2817781440" color="#969696"/>
     <association uuid="796757ac-35eb-4155-bc3e-659b2d78666a" color="#969696"/>
     <association uuid="7d72d3c7-e97d-4b81-bdce-151bec188ad7" color="#969696"/>
@@ -52,7 +1965,9 @@
     <association uuid="9c54d716-ed9a-48ab-9cd0-f38d14f7150e" color="#969696"/>
     <association uuid="a044b579-9e18-4849-9740-dccb505935d9" color="#969696"/>
     <association uuid="a263e690-a22d-4910-8b24-76753282e836" color="#969696"/>
+    <association uuid="a3e7097e-ba36-4fde-89e4-a9123343b7bc" color="#969696"/>
     <association uuid="a50bcd82-290b-4009-b270-6e47a63148cc" color="#969696"/>
+    <association uuid="a7a66a95-0edb-450a-90a8-fb24e640cae5" color="#969696"/>
     <association uuid="ae4257ec-40ad-4a53-95bc-43688e025441" color="#969696"/>
     <association uuid="ae6b2362-f162-4445-9648-30c5d7d44c30" color="#969696"/>
     <association uuid="ae7f15da-67f8-4011-86f2-3f040542cf19" color="#969696"/>
@@ -60,6 +1975,7 @@
     <association uuid="b1bb0d0b-841e-42dd-9eb4-9e33e559358b" color="#969696"/>
     <association uuid="b210e152-462a-45f8-b840-75b0217b73c5" color="#969696"/>
     <association uuid="b50044e5-d3bc-411c-a1d2-cb4db4473f37" color="#969696"/>
+    <association uuid="b8693121-34cd-4cee-98d0-194b0383c1f4" color="#969696"/>
     <association uuid="b9515313-83a8-41cd-8b13-4e1cf6280dec" color="#969696"/>
     <association uuid="b9e4d241-2e4f-4fbf-a78c-0414234947d6" color="#969696"/>
     <association uuid="bed78311-e828-43f4-a4ed-951beb3ee5eb" color="#969696"/>
@@ -68,7 +1984,6 @@
     <association uuid="d0a6295c-5f68-40e3-bfb4-da2ca6e40fb6" color="#969696"/>
     <association uuid="d120204e-3d7c-47ea-bfe6-c33110876e00" color="#969696"/>
     <association uuid="d3102fab-427e-46ae-9876-5e71e8807c77" color="#969696"/>
-    <association uuid="d72388eb-5bb3-45e1-990b-d10f121b3a1a" color="#969696"/>
     <association uuid="dcbf1caf-6474-4dfe-90be-7b58aa71c5c7" color="#969696"/>
     <association uuid="e12a81e2-734f-4e3f-b3a5-496cc581af51" color="#969696"/>
     <association uuid="e615dfba-7f2b-4dac-a61b-519c9538e9f0" color="#969696"/>
@@ -77,11 +1992,63 @@
     <association uuid="eef48b82-733d-498b-acef-09421c9f4a1d" color="#969696"/>
     <association uuid="fbc3082b-9294-4f73-82ca-1e446236f969" color="#969696"/>
     <association uuid="ffd383c2-e9de-458f-8324-3d04a22696cf" color="#969696"/>
-    <module uuid="1b76a8f1-70bf-4d0d-9efe-09cd274f555f" position-x="604" position-y="582"/>
-    <module uuid="264804cf-5ddd-4089-aaa2-d7c0f129a5ed" position-x="508" position-y="106"/>
-    <module uuid="860bb986-ef71-4cef-9da2-f560e58c2569" position-x="-42" position-y="50"/>
-    <module uuid="9d574194-22af-4673-a2ee-bb67ec7d212e" position-x="1334" position-y="51"/>
-    <module uuid="d40aa0eb-3691-4818-880c-0a9ad1dd9833" position-x="2129" position-y="99"/>
-    <project uuid="608045b6-71ab-4037-87fb-0c6ba4ca5408" size-x="92" size-x2="4567" size-y="0" size-y2="1990"/>
+    <entity uuid="019e4713-ec7b-4600-b59d-3b7984060e19" bg-color="4294967295" hdr-color="4292006610" position-x="58" position-y="64" size-x="0" size-x2="137" size-y="0" size-y2="59"/>
+    <entity uuid="04602777-d7d4-4b5f-9557-c3a1ba1f9dbb" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="350" position-y="100" size-x="0" size-x2="20" size-y="0" size-y2="20"/>
+    <entity uuid="062dc364-3d01-474f-8a28-77bb8b1e21fd" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="550" position-y="1" size-x="0" size-x2="130" size-y="0" size-y2="87"/>
+    <entity uuid="07eeeac7-da1a-48f5-96c1-665a12f5d84f" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="450" position-y="401" size-x="0" size-x2="125" size-y="0" size-y2="59"/>
+    <entity uuid="0935da16-1ed5-48ac-b4bc-16b04799f560" bg-color="4294967295" hdr-color="4292006610" position-x="208" position-y="214" size-x="0" size-x2="118" size-y="0" size-y2="73"/>
+    <entity uuid="124be203-cd78-4b96-bc03-210c1f0db117" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="-154" position-y="368" size-x="0" size-x2="149" size-y="0" size-y2="129"/>
+    <entity uuid="1421f0f1-e591-42f7-b63c-2a522d14a937" bg-color="4294967295" hdr-color="4292006610" position-x="-126" position-y="1" size-x="0" size-x2="127" size-y="0" size-y2="115"/>
+    <entity uuid="239c27b0-2883-46e8-bcbd-010fd9235aaf" bg-color="4294967295" hdr-color="4292006610" position-x="-126" position-y="186" size-x="0" size-x2="130" size-y="0" size-y2="115"/>
+    <entity uuid="2d0a30b3-246d-47fa-b198-331e87d4a439" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="200" position-y="294" size-x="0" size-x2="121" size-y="0" size-y2="59"/>
+    <entity uuid="3044c8f9-33a6-4aff-98ab-a4989389dde5" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="378" position-y="868" size-x="0" size-x2="118" size-y="0" size-y2="45"/>
+    <entity uuid="37003f2f-c374-4082-855d-b3cf8a3206a7" bg-color="4294967295" hdr-color="4292006610" position-x="58" position-y="64" size-x="0" size-x2="142" size-y="0" size-y2="129"/>
+    <entity uuid="37b9b75d-0543-4934-b984-79567684d865" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="33" position-y="181" size-x="0" size-x2="120" size-y="0" size-y2="101"/>
+    <entity uuid="38d1693c-170e-457b-87d7-b0d358797df7" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="62" position-y="368" size-x="0" size-x2="149" size-y="0" size-y2="185"/>
+    <entity uuid="41bcf7a2-e5e3-42a8-af5a-39de1f0e86ff" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="400" position-y="44" size-x="0" size-x2="130" size-y="0" size-y2="115"/>
+    <entity uuid="45fa10e6-64bd-4726-82aa-61fd301b1b5f" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="50" position-y="50" size-x="0" size-x2="148" size-y="0" size-y2="157"/>
+    <entity uuid="51ec9be8-4890-4887-addd-6819fa8f6fb7" bg-color="4294967295" hdr-color="4292006610" position-x="-326" position-y="201" size-x="0" size-x2="147" size-y="0" size-y2="87"/>
+    <entity uuid="52633a6e-346a-4e12-b99e-0f492b048a4c" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="-304" position-y="68" size-x="0" size-x2="145" size-y="0" size-y2="255"/>
+    <entity uuid="5caac17f-21c3-4d96-ad7e-e5c9c46f3072" bg-color="4294967295" hdr-color="4292006610" position-x="280" position-y="73" size-x="0" size-x2="121" size-y="0" size-y2="73"/>
+    <entity uuid="7a06efe4-87ce-4810-9039-1e1c8ffb811f" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="41" position-y="2" size-x="0" size-x2="137" size-y="0" size-y2="199"/>
+    <entity uuid="7ce99bbb-4d97-4ee5-8703-dfe82e965514" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="100" position-y="94" size-x="0" size-x2="109" size-y="0" size-y2="115"/>
+    <entity uuid="9109d3a6-7a5c-4ab9-8ff7-8b5da86662c6" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="50" position-y="401" size-x="0" size-x2="363" size-y="0" size-y2="87"/>
+    <entity uuid="9df7cd56-6a97-410f-b0fe-2fd5538bd528" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="350" position-y="51" size-x="0" size-x2="112" size-y="0" size-y2="87"/>
+    <entity uuid="a12d9552-e3b0-4189-870d-82bf4cd5b6ed" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="500" position-y="151" size-x="0" size-x2="130" size-y="0" size-y2="87"/>
+    <entity uuid="a70427d3-c8e0-4829-93e3-de66bb9c9c61" bg-color="4294967295" hdr-color="4292006610" position-x="8" position-y="77" size-x="0" size-x2="118" size-y="0" size-y2="87"/>
+    <entity uuid="a89cf5c8-aa5d-42ec-bbba-163c5a014c3d" bg-color="4294967295" hdr-color="4292006610" position-x="80" position-y="73" size-x="0" size-x2="130" size-y="0" size-y2="129"/>
+    <entity uuid="a8ac4769-debb-43f7-a155-857b0534ef04" bg-color="4294967295" hdr-color="4292006610" position-x="-326" position-y="51" size-x="0" size-x2="120" size-y="0" size-y2="73"/>
+    <entity uuid="afaa4cd5-a9f4-4fa8-a0f3-c68989c619fc" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="50" position-y="1" size-x="0" size-x2="159" size-y="0" size-y2="269"/>
+    <entity uuid="c04c801c-5047-41eb-9209-dfd6732d5e31" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="445" position-y="30" size-x="0" size-x2="156" size-y="0" size-y2="213"/>
+    <entity uuid="c04d3548-e6b1-452c-b622-8f3986a8e693" bg-color="4294967295" hdr-color="4292006610" position-x="58" position-y="64" size-x="0" size-x2="129" size-y="0" size-y2="59"/>
+    <entity uuid="c221008d-3462-4c58-b3b3-b4d027b70afc" bg-color="4294967295" hdr-color="4292006610" position-x="-304" position-y="618" size-x="0" size-x2="130" size-y="0" size-y2="101"/>
+    <entity uuid="d01f6c43-64e1-452e-991f-036c673ac11c" bg-color="4294967295" hdr-color="4292006610" position-x="8" position-y="64" size-x="0" size-x2="130" size-y="0" size-y2="115"/>
+    <entity uuid="d33e0252-193b-4ad3-a4bd-535b22a4dd54" bg-color="4294967295" hdr-color="4292006610" position-x="37" position-y="64" size-x="0" size-x2="121" size-y="0" size-y2="101"/>
+    <entity uuid="d731b316-305d-4125-8824-3385eb5120ea" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="300" position-y="251" size-x="0" size-x2="130" size-y="0" size-y2="129"/>
+    <entity uuid="d8535833-d214-46a5-a12e-bd11539eb18b" bg-color="4294967295" hdr-color="4292006610" position-x="280" position-y="223" size-x="0" size-x2="118" size-y="0" size-y2="59"/>
+    <entity uuid="da681bce-bf94-4ba9-8453-773d07e7782e" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="20" position-y="40" size-x="0" size-x2="146" size-y="0" size-y2="59"/>
+    <entity uuid="e19f9517-5f61-4eeb-ba10-cbc7ba6448e0" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="41" position-y="145" size-x="0" size-x2="20" size-y="0" size-y2="20"/>
+    <entity uuid="edc820a6-e14d-41ad-a986-7cabb15fd53a" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="197" position-y="99" size-x="0" size-x2="130" size-y="0" size-y2="269"/>
+    <entity uuid="f6d679d7-c495-4963-9006-98a851a54798" bg-color="4294967295" hdr-color="4292006610" position-x="-104" position-y="618" size-x="0" size-x2="149" size-y="0" size-y2="115"/>
+    <module uuid="1b76a8f1-70bf-4d0d-9efe-09cd274f555f" bg-color="#A2C700" position-x="604" position-y="582" size-x="354" size-x2="1396" size-y="-18" size-y2="1068"/>
+    <module uuid="264804cf-5ddd-4089-aaa2-d7c0f129a5ed" bg-color="#FDF5F3" position-x="508" position-y="106" size-x="0" size-x2="700" size-y="56" size-y2="417"/>
+    <module uuid="64a9bf6e-758c-494d-b0e2-54bba7dbc178" bg-color="#FEFCE8" position-x="3315" position-y="450" size-x="0" size-x2="100" size-y="0" size-y2="100"/>
+    <module uuid="860bb986-ef71-4cef-9da2-f560e58c2569" bg-color="#7E7975" position-x="-42" position-y="50" size-x="0" size-x2="490" size-y="0" size-y2="327"/>
+    <module uuid="8c7a32b0-fdf8-4a82-bf3b-168c11d77a59" bg-color="#FDEBEF" position-x="3029" position-y="50" size-x="0" size-x2="186" size-y="0" size-y2="302"/>
+    <module uuid="8f1548e9-bd4c-448b-b9e6-023ac2c6d0ac" bg-color="#FEEFE3" position-x="3515" position-y="450" size-x="0" size-x2="100" size-y="0" size-y2="100"/>
+    <module uuid="9d574194-22af-4673-a2ee-bb67ec7d212e" bg-color="#C70000" position-x="1334" position-y="51" size-x="26" size-x2="695" size-y="1" size-y2="487"/>
+    <module uuid="b1378292-ca83-4897-bd0e-35cb3ca13d6a" bg-color="#E7F3E7" position-x="3315" position-y="250" size-x="0" size-x2="100" size-y="0" size-y2="100"/>
+    <module uuid="cacfab56-f311-4bcd-adc5-92de9ee8cf47" bg-color="#E7F5FD" position-x="3315" position-y="50" size-x="0" size-x2="100" size-y="0" size-y2="100"/>
+    <module uuid="d40aa0eb-3691-4818-880c-0a9ad1dd9833" bg-color="#C70000" position-x="2129" position-y="99" size-x="0" size-x2="800" size-y="49" size-y2="559"/>
+    <project uuid="608045b6-71ab-4037-87fb-0c6ba4ca5408" size-x="92" size-x2="3573" size-y="0" size-y2="1700"/>
+    <region uuid="17dd8f17-8eed-4535-bda3-bdcca80b4d95" bg-color="4292728527" position-x="1280" position-y="81" size-x="384" size-x2="66" size-y="13" size-y2="337"/>
+    <region uuid="3449791f-06a3-4081-a8c0-4ea5cf36f46e" bg-color="4292728527" position-x="274" position-y="409" size-x="-22" size-x2="422" size-y="-9" size-y2="309"/>
+    <region uuid="40ef7a91-816f-4c6e-a580-0f01d93f36ee" bg-color="4292728527" position-x="446" position-y="68" size-x="0" size-x2="350" size-y="0" size-y2="300"/>
+    <region uuid="440e5af7-ace6-4cec-b07e-2c516be0d5d1" bg-color="4292728527" position-x="-304" position-y="768" size-x="0" size-x2="250" size-y="0" size-y2="250"/>
+    <region uuid="8513c45d-b4e7-413f-b7c6-4d58b3c53d3b" bg-color="4292728527" position-x="46" position-y="754" size-x="0" size-x2="209" size-y="-14" size-y2="200"/>
+    <region uuid="a0a3337a-6806-4eb6-9695-0a1051ae2e7e" bg-color="4292728527" position-x="46" position-y="68" size-x="0" size-x2="250" size-y="0" size-y2="150"/>
+    <region uuid="b0c195a4-e41b-4486-9231-7fe07d88781c" bg-color="4292728527" position-x="813" position-y="530" size-x="17" size-x2="283" size-y="62" size-y2="202"/>
+    <region uuid="f59a7b6b-4543-40a0-a981-f13549bf4f23" bg-color="4292728527" position-x="1146" position-y="468" size-x="0" size-x2="202" size-y="0" size-y2="250"/>
+    <region uuid="f7210e58-9166-4aba-8f79-e0e996a741d7" bg-color="4292728527" position-x="1146" position-y="768" size-x="0" size-x2="150" size-y="0" size-y2="250"/>
   </visual-data>
 </skipper>

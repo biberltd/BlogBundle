@@ -25,7 +25,7 @@ use BiberLtd\Bundle\CoreBundle\CoreEntity;
  *     name="blog_post_category_localization",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
  *     uniqueConstraints={
- *         @ORM\UniqueConstraint(name="idxUBlogPostLocalization", columns={"category","language"}),
+ *         @ORM\UniqueConstraint(name="idxUBlogPostLocalization", columns={"language"}),
  *         @ORM\UniqueConstraint(name="idxUBlogPostUrlKey", columns={"language","url_key"})
  *     }
  * )
@@ -55,11 +55,11 @@ class BlogPostCategoryLocalization extends CoreEntity
     private $language;
 
     /**
-     * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory", inversedBy="localizations")
-     * @ORM\JoinColumn(name="category", referencedColumnName="id", nullable=false)
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory")
+     * @ORM\JoinColumn(name="post_category", referencedColumnName="id")
      */
-    private $category;
+    private $post_category;
+
 
     /**
      * @name            setCategory ()
@@ -79,7 +79,7 @@ class BlogPostCategoryLocalization extends CoreEntity
         if(!$this->setModified('category', $blog_post_category)->isModified()) {
             return $this;
         }
-        $this->category = $blog_post_category;
+        $this->post_category = $blog_post_category;
         return $this;
     }
 
@@ -95,7 +95,7 @@ class BlogPostCategoryLocalization extends CoreEntity
      * @return          mixed           $this->category
      */
     public function getCategory() {
-        return $this->category;
+        return $this->post_category;
     }
 
     /**

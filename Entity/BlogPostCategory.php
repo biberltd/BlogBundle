@@ -67,10 +67,7 @@ class BlogPostCategory extends CoreLocalizableEntity
     private $children;
 
     /** 
-     * @ORM\OneToMany(
-     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategoryLocalization",
-     *     mappedBy="category"
-     * )
+     * 
      */
     protected $localizations;
 

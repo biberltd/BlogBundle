@@ -41,10 +41,7 @@ class FeaturedBlogPostLocalization extends CoreEntity
     private $language;
 
     /** 
-     * @ORM\ManyToOne(
-     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPost",
-     *     inversedBy="localizations"
-     * )
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPost")
      * @ORM\JoinColumn(name="post", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $featured_blog_post;

@@ -100,7 +100,8 @@ class BlogPostComment extends CoreEntity
     private $author;
 
     /**
-     * @ORM\OneToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost", inversedBy="comments")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost")
+     * @ORM\JoinColumn(name="post", referencedColumnName="id", onDelete="CASCADE")
      */
     private $post;
 
