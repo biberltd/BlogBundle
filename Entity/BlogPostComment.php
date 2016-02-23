@@ -6,7 +6,7 @@
  * @copyright   Biber Ltd. (http://www.biberltd.com) (C) 2015
  * @license     GPLv3
  *
- * @date        13.12.2015
+ * @date        23.02.2016
  */
 namespace BiberLtd\Bundle\BlogBundle\Entity;
 use Doctrine\ORM\Mapping AS ORM;
@@ -100,12 +100,13 @@ class BlogPostComment extends CoreEntity
 
     /**
      * 
-     * @var
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
      * @ORM\OneToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPost", inversedBy="comments") \BiberLtd\Bundle\BlogBundle\Entity\BlogPost
      */
     private $post;
 
     /**
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment
      * @ORM\OneToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment", inversedBy="parent")
      * @ORM\JoinColumn(name="parent", referencedColumnName="id", nullable=false, unique=true)
      */
@@ -317,4 +318,26 @@ class BlogPostComment extends CoreEntity
     public function getUrl() {
         return $this->url;
     }
+
+	/**
+	 * return      mixed
+	 */
+	public function getComment(){
+		return $this->comment;
+	}
+
+	/**
+	 * @param string $comment
+	 *
+	 * @return $this
+	 */
+	public function setComment(string $comment){
+		if(!$this->setModified('comment', $comment)->isModified()){
+			return $this;
+		}
+		$this->comment = $comment;
+
+		return $this;
+	}
+
 }
