@@ -1146,17 +1146,19 @@
       </orm-attributes>
     </association>
     <entity name="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategoryLocalization" local-name="BlogPostCategoryLocalization" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Stores localized values for each post category.&#10;&#10;Requires: MultiLanguageSupportBundle&#10;" uuid="51ec9be8-4890-4887-addd-6819fa8f6fb7">
-      <field name="post_category" description="Localized category" type="integer" size="10" uuid="51d27a9e-eb80-4092-a321-89ba8911fe6e"/>
+      <field name="post_category" description="Localized category" type="integer" size="10" required="true" primary="true" uuid="51d27a9e-eb80-4092-a321-89ba8911fe6e"/>
       <field name="language" description="Localization language." type="integer" size="5" required="true" primary="true" uuid="1f7acbb1-6096-49d9-8e05-6d32f0b1f464"/>
       <field name="name" description="Localized name of category." type="string" size="155" required="true" uuid="ab280678-7709-4021-ad35-88211ef9692e"/>
       <field name="url_key" description="Localized url key." type="string" size="255" required="true" uuid="fa2f8321-359b-4f7f-8801-d7327a64ba0c"/>
       <field name="description" description="Localization description." type="string" size="255" uuid="f328160d-06b0-47a0-8c2e-b7f177565160"/>
       <index name="idxUBlogPostLocalization" unique="true">
         <index-field name="language"/>
+        <index-field name="post_category"/>
       </index>
       <index name="idxUBlogPostUrlKey" unique="true">
         <index-field name="language"/>
         <index-field name="url_key"/>
+        <index-field name="post_category"/>
       </index>
       <orm-attributes>
         <attribute name="options">
@@ -1176,8 +1178,78 @@
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategoryLocalization" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory" caption="idxFLocalizedBlogPostCategory" owner-alias="localizations" inverse-alias="post_category" many-owner="true" many-inverse="false" uuid="c2c8c7de-1ec3-4525-a56d-d51fcc7005ec">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategoryLocalization" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory" caption="idxFLocalizedBlogPostCategory" owner-alias="localizations" inverse-alias="post_category" many-owner="true" many-inverse="false" parent-required="true" uuid="c2c8c7de-1ec3-4525-a56d-d51fcc7005ec">
       <association-field from="post_category" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+      </orm-attributes>
+    </association>
+    <entity name="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" local-name="BlogPostComment" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Holds a list of comments made to each blog post.&#10;&#10;Requires: MemberManagementBundle, [SiteManagementBundlle]" uuid="7a06efe4-87ce-4810-9039-1e1c8ffb811f">
+      <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="654db702-9016-4d29-93ca-793876c7e88b">
+        <orm-attributes>
+          <attribute name="generator">
+            <attribute name="strategy">AUTO</attribute>
+          </attribute>
+        </orm-attributes>
+      </field>
+      <field name="parent" description="If this is a comment-reply then the parent comment." type="integer" size="10" required="true" unique="true" uuid="569b9198-20ed-4e5b-b86c-f8c46eb4b59e"/>
+      <field name="author" description="Author of the comment if a registered member." type="integer" size="10" uuid="de6b5e4e-f89d-438f-8aee-3f7c8ed67fc4"/>
+      <field name="date_added" description="Date when the comment is added." type="datetime" required="true" uuid="5ec34359-860c-412b-abbb-d1e6789abe9a"/>
+      <field name="date_removed" description="Date when the comment is removed." type="datetime" uuid="df902d84-8131-4bf9-b967-e350f72f2205"/>
+      <field name="date_published" description="Date when the comment is published." type="datetime" required="true" uuid="84bbda21-96a4-40e6-ade3-2d22106aaa43"/>
+      <field name="name" description="Name of commentor." type="string" size="255" required="true" uuid="2c09f8b5-d2be-4984-a539-1579de5f0d79"/>
+      <field name="email" description="Email of commentor." type="string" size="255" required="true" uuid="c38697c1-ffec-4f10-9668-20cef1f5aed6"/>
+      <field name="url" description="URL of commentor." type="text" uuid="f9ebff80-e520-4d07-9576-fd1c5cce0dad"/>
+      <field name="count_likes" description="Number of likes that this comment gets." type="integer" size="10" default="0" required="true" uuid="11512975-aedc-4802-99f5-719ebdea5570">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="count_dislikes" description="Number of dislikes that this comment gets." type="integer" size="10" default="0" required="true" uuid="a51f3a7b-d831-4396-a82f-65016918fbd7">
+        <orm-attributes>
+          <attribute name="options"/>
+        </orm-attributes>
+      </field>
+      <field name="site" description="Site that blog post comment belongs to." type="integer" size="10" uuid="dcd4abb2-6e68-411f-a2fb-c8f09a8c5892"/>
+      <field name="post" type="integer" size="10" uuid="a71a6832-98d1-4b14-84bd-2232ad5e0556"/>
+      <index name="idxUBlogPostCommentId" unique="true">
+        <index-field name="id"/>
+      </index>
+      <orm-attributes>
+        <attribute name="options">
+          <attribute name="charset">utf8</attribute>
+          <attribute name="collate">utf8_turkish_ci</attribute>
+          <attribute name="engine">innodb</attribute>
+        </attribute>
+        <attribute name="table">blog_post_comment</attribute>
+        <attribute name="export-file-name">BlogPostComment.php</attribute>
+      </orm-attributes>
+    </entity>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxSiteOfBlogPostComment" owner-alias="" inverse-alias="site" many-owner="true" many-inverse="false" uuid="921b62e8-bc57-4e52-9003-5da8643f9d96">
+      <association-field from="site" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxAuthorOfBlogPostComment" owner-alias="" inverse-alias="author" many-owner="true" many-inverse="false" uuid="2c2dd436-3289-4060-9538-3c902237a755">
+      <association-field from="author" to="id"/>
+      <orm-attributes>
+        <attribute name="on-delete">SET NULL</attribute>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" caption="idxFParentBlogPostComment" owner-alias="parent" inverse-alias="comment" many-owner="false" many-inverse="false" parent-required="true" uuid="cbefcaa0-97cc-4c66-b65b-5d99804927f8">
+      <association-field from="parent" to="id"/>
+      <orm-attributes>
+        <attribute name="side-owning"/>
+        <attribute name="side-inverse"/>
+      </orm-attributes>
+    </association>
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFPostOfComment" inverse-alias="post" many-owner="true" many-inverse="false" uuid="b8693121-34cd-4cee-98d0-194b0383c1f4">
+      <association-field from="post" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
@@ -1757,86 +1829,6 @@
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <region namespace="\BiberLtd\Bundle\BlogBundle\Entity" caption="BlogPostModerationModule" uuid="17dd8f17-8eed-4535-bda3-bdcca80b4d95"/>
-    <region namespace="\BiberLtd\Bundle\BlogBundle\Entity" caption="BlogPostCommentModule" uuid="b0c195a4-e41b-4486-9231-7fe07d88781c"/>
-    <region namespace="\BiberLtd\Bundle\BlogBundle\Entity" caption="BlogPostActionTrackerModule" uuid="f7210e58-9166-4aba-8f79-e0e996a741d7"/>
-    <region namespace="\BiberLtd\Bundle\BlogBundle\Entity" caption="BlogPostCommentActionTrackerModule" uuid="f59a7b6b-4543-40a0-a981-f13549bf4f23"/>
-    <region namespace="\BiberLtd\Bundle\BlogBundle\Entity" caption="RelatedBlogPostsModule" uuid="8513c45d-b4e7-413f-b7c6-4d58b3c53d3b"/>
-    <region namespace="\BiberLtd\Bundle\BlogBundle\Entity" caption="FavoriteBlogPostsModule" uuid="a0a3337a-6806-4eb6-9695-0a1051ae2e7e"/>
-    <region namespace="\BiberLtd\Bundle\BlogBundle\Entity" caption="BlogPostCategoryManagementModule" uuid="40ef7a91-816f-4c6e-a580-0f01d93f36ee">
-      <entity name="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" local-name="BlogPostComment" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Holds a list of comments made to each blog post.&#10;&#10;Requires: MemberManagementBundle, [SiteManagementBundlle]" uuid="7a06efe4-87ce-4810-9039-1e1c8ffb811f">
-        <field name="id" description="System given id." type="integer" size="10" required="true" unique="true" primary="true" auto-increment="true" uuid="654db702-9016-4d29-93ca-793876c7e88b">
-          <orm-attributes>
-            <attribute name="generator">
-              <attribute name="strategy">AUTO</attribute>
-            </attribute>
-          </orm-attributes>
-        </field>
-        <field name="parent" description="If this is a comment-reply then the parent comment." type="integer" size="10" required="true" unique="true" uuid="569b9198-20ed-4e5b-b86c-f8c46eb4b59e"/>
-        <field name="author" description="Author of the comment if a registered member." type="integer" size="10" uuid="de6b5e4e-f89d-438f-8aee-3f7c8ed67fc4"/>
-        <field name="date_added" description="Date when the comment is added." type="datetime" required="true" uuid="5ec34359-860c-412b-abbb-d1e6789abe9a"/>
-        <field name="date_removed" description="Date when the comment is removed." type="datetime" uuid="df902d84-8131-4bf9-b967-e350f72f2205"/>
-        <field name="date_published" description="Date when the comment is published." type="datetime" required="true" uuid="84bbda21-96a4-40e6-ade3-2d22106aaa43"/>
-        <field name="name" description="Name of commentor." type="string" size="255" required="true" uuid="2c09f8b5-d2be-4984-a539-1579de5f0d79"/>
-        <field name="email" description="Email of commentor." type="string" size="255" required="true" uuid="c38697c1-ffec-4f10-9668-20cef1f5aed6"/>
-        <field name="url" description="URL of commentor." type="text" uuid="f9ebff80-e520-4d07-9576-fd1c5cce0dad"/>
-        <field name="count_likes" description="Number of likes that this comment gets." type="integer" size="10" default="0" required="true" uuid="11512975-aedc-4802-99f5-719ebdea5570">
-          <orm-attributes>
-            <attribute name="options"/>
-          </orm-attributes>
-        </field>
-        <field name="count_dislikes" description="Number of dislikes that this comment gets." type="integer" size="10" default="0" required="true" uuid="a51f3a7b-d831-4396-a82f-65016918fbd7">
-          <orm-attributes>
-            <attribute name="options"/>
-          </orm-attributes>
-        </field>
-        <field name="site" description="Site that blog post comment belongs to." type="integer" size="10" uuid="dcd4abb2-6e68-411f-a2fb-c8f09a8c5892"/>
-        <field name="post" type="integer" size="10" uuid="a71a6832-98d1-4b14-84bd-2232ad5e0556"/>
-        <index name="idxUBlogPostCommentId" unique="true">
-          <index-field name="id"/>
-        </index>
-        <orm-attributes>
-          <attribute name="options">
-            <attribute name="charset">utf8</attribute>
-            <attribute name="collate">utf8_turkish_ci</attribute>
-            <attribute name="engine">innodb</attribute>
-          </attribute>
-          <attribute name="table">blog_post_comment</attribute>
-          <attribute name="export-file-name">BlogPostComment.php</attribute>
-        </orm-attributes>
-      </entity>
-    </region>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxSiteOfBlogPostComment" owner-alias="" inverse-alias="site" many-owner="true" many-inverse="false" uuid="921b62e8-bc57-4e52-9003-5da8643f9d96">
-      <association-field from="site" to="id"/>
-      <orm-attributes>
-        <attribute name="on-delete">CASCADE</attribute>
-        <attribute name="side-owning"/>
-        <attribute name="side-inverse"/>
-      </orm-attributes>
-    </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxAuthorOfBlogPostComment" owner-alias="" inverse-alias="author" many-owner="true" many-inverse="false" uuid="2c2dd436-3289-4060-9538-3c902237a755">
-      <association-field from="author" to="id"/>
-      <orm-attributes>
-        <attribute name="on-delete">SET NULL</attribute>
-        <attribute name="side-owning"/>
-        <attribute name="side-inverse"/>
-      </orm-attributes>
-    </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" caption="idxFParentBlogPostComment" owner-alias="parent" inverse-alias="comment" many-owner="false" many-inverse="false" parent-required="true" uuid="cbefcaa0-97cc-4c66-b65b-5d99804927f8">
-      <association-field from="parent" to="id"/>
-      <orm-attributes>
-        <attribute name="side-owning"/>
-        <attribute name="side-inverse"/>
-      </orm-attributes>
-    </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFPostOfComment" inverse-alias="post" many-owner="true" many-inverse="false" uuid="b8693121-34cd-4cee-98d0-194b0383c1f4">
-      <association-field from="post" to="id"/>
-      <orm-attributes>
-        <attribute name="on-delete">CASCADE</attribute>
-      </orm-attributes>
-    </association>
-    <region namespace="\BiberLtd\Bundle\BlogBundle\Entity" caption="FeaturedBlogPostModule" uuid="440e5af7-ace6-4cec-b07e-2c516be0d5d1"/>
-    <region namespace="\BiberLtd\Bundle\BlogBundle\Entity" caption="BlogPostTaggingModule" uuid="3449791f-06a3-4081-a8c0-4ea5cf36f46e"/>
     <orm-attributes>
       <attribute name="namespace">BiberLtd\Core\Bundles\BlogBundle\Entity</attribute>
       <attribute name="file-suffix">without-suffix</attribute>
@@ -1921,7 +1913,7 @@
     <association uuid="03f34d17-af6d-4c06-994b-e4fa33b45051" color="#969696"/>
     <association uuid="058a6e13-e0ea-4b66-b1f8-6a7498fdf188" color="#969696"/>
     <association uuid="0aff81ea-4e3f-4bfd-bdf3-74245dfd259c" color="#969696"/>
-    <association uuid="13157d1d-3576-422b-8abb-7d6ac40e1ade" color="#969696"/>
+    <association uuid="13157d1d-3576-422b-8abb-7d6ac40e1ade" caption1-position-x="0" caption1-position-y="0" center-position-x="0" center-position-y="0" color="#969696"/>
     <association uuid="13acdf29-ae74-4ad2-a301-52bd877ef05b" color="#969696"/>
     <association uuid="1a2118bf-3f11-4495-8ac8-39eada533ab8" color="#969696"/>
     <association uuid="1bc49ece-cade-4d01-b739-aa1d5fe2d1e9" color="#969696"/>
@@ -1941,7 +1933,7 @@
     <association uuid="45c125cd-0ba3-4a9c-973e-92bbcfb91a59" color="#969696"/>
     <association uuid="4a21a97e-810e-4e2d-a330-69d23cf801c7" color="#969696"/>
     <association uuid="5102b31f-0132-4a6a-8d4b-527d68c2d2c1" color="#969696"/>
-    <association uuid="5acf3682-59f9-4105-8a6f-a21c1202c27a" color="#969696"/>
+    <association uuid="5acf3682-59f9-4105-8a6f-a21c1202c27a" caption1-position-x="0" caption1-position-y="0" center-position-x="0" center-position-y="4" color="#969696"/>
     <association uuid="5c053399-bdfe-4fd2-b79b-2eebb1c870ef" color="#969696"/>
     <association uuid="5d9fbbab-e6e7-446b-b35a-5a92b2665907" color="#969696"/>
     <association uuid="691cd89a-3534-4a4c-bf70-544fa15a4c35" color="#969696"/>
@@ -1961,7 +1953,7 @@
     <association uuid="996910a8-f52e-46c6-bef2-cb94b6da89d9" color="#969696"/>
     <association uuid="9aa319f9-0057-4338-9baa-01096d251a53" color="#969696"/>
     <association uuid="9c54d716-ed9a-48ab-9cd0-f38d14f7150e" color="#969696"/>
-    <association uuid="a044b579-9e18-4849-9740-dccb505935d9" color="#969696"/>
+    <association uuid="a044b579-9e18-4849-9740-dccb505935d9" caption1-position-x="0" caption1-position-y="0" center-position-x="0" center-position-y="4" color="#969696"/>
     <association uuid="a263e690-a22d-4910-8b24-76753282e836" color="#969696"/>
     <association uuid="a3e7097e-ba36-4fde-89e4-a9123343b7bc" color="#969696"/>
     <association uuid="a50bcd82-290b-4009-b270-6e47a63148cc" color="#969696"/>
@@ -1984,47 +1976,47 @@
     <association uuid="d120204e-3d7c-47ea-bfe6-c33110876e00" color="#969696"/>
     <association uuid="d3102fab-427e-46ae-9876-5e71e8807c77" color="#969696"/>
     <association uuid="dcbf1caf-6474-4dfe-90be-7b58aa71c5c7" color="#969696"/>
-    <association uuid="e12a81e2-734f-4e3f-b3a5-496cc581af51" color="#969696"/>
+    <association uuid="e12a81e2-734f-4e3f-b3a5-496cc581af51" caption1-position-x="0" caption1-position-y="0" center-position-x="0" center-position-y="1" color="#969696"/>
     <association uuid="e615dfba-7f2b-4dac-a61b-519c9538e9f0" color="#969696"/>
     <association uuid="e759f273-144f-4e29-817a-0fe9f39c4187" color="#969696"/>
     <association uuid="eda725ac-394a-4fce-9662-066e59803f03" color="#969696"/>
     <association uuid="eef48b82-733d-498b-acef-09421c9f4a1d" color="#969696"/>
-    <association uuid="fbc3082b-9294-4f73-82ca-1e446236f969" color="#969696"/>
+    <association uuid="fbc3082b-9294-4f73-82ca-1e446236f969" caption1-position-x="0" caption1-position-y="0" center-position-x="1" center-position-y="0" color="#969696"/>
     <association uuid="ffd383c2-e9de-458f-8324-3d04a22696cf" color="#969696"/>
-    <entity uuid="019e4713-ec7b-4600-b59d-3b7984060e19" bg-color="4294967295" hdr-color="4292006610" position-x="58" position-y="64" size-x="0" size-x2="137" size-y="0" size-y2="59"/>
+    <entity uuid="019e4713-ec7b-4600-b59d-3b7984060e19" bg-color="4294967295" hdr-color="4292006610" position-x="511" position-y="24" size-x="0" size-x2="137" size-y="0" size-y2="59"/>
     <entity uuid="04602777-d7d4-4b5f-9557-c3a1ba1f9dbb" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="350" position-y="100" size-x="0" size-x2="20" size-y="0" size-y2="20"/>
     <entity uuid="062dc364-3d01-474f-8a28-77bb8b1e21fd" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="550" position-y="1" size-x="0" size-x2="130" size-y="0" size-y2="87"/>
     <entity uuid="07eeeac7-da1a-48f5-96c1-665a12f5d84f" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="450" position-y="401" size-x="0" size-x2="125" size-y="0" size-y2="59"/>
-    <entity uuid="0935da16-1ed5-48ac-b4bc-16b04799f560" bg-color="4294967295" hdr-color="4292006610" position-x="208" position-y="214" size-x="0" size-x2="118" size-y="0" size-y2="73"/>
+    <entity uuid="0935da16-1ed5-48ac-b4bc-16b04799f560" bg-color="4294967295" hdr-color="4292006610" position-x="469" position-y="313" size-x="0" size-x2="118" size-y="0" size-y2="73"/>
     <entity uuid="124be203-cd78-4b96-bc03-210c1f0db117" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="-154" position-y="368" size-x="0" size-x2="149" size-y="0" size-y2="129"/>
     <entity uuid="1421f0f1-e591-42f7-b63c-2a522d14a937" bg-color="4294967295" hdr-color="4292006610" position-x="-126" position-y="1" size-x="0" size-x2="127" size-y="0" size-y2="115"/>
     <entity uuid="239c27b0-2883-46e8-bcbd-010fd9235aaf" bg-color="4294967295" hdr-color="4292006610" position-x="-126" position-y="186" size-x="0" size-x2="130" size-y="0" size-y2="115"/>
     <entity uuid="2d0a30b3-246d-47fa-b198-331e87d4a439" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="200" position-y="294" size-x="0" size-x2="121" size-y="0" size-y2="59"/>
     <entity uuid="3044c8f9-33a6-4aff-98ab-a4989389dde5" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="378" position-y="868" size-x="0" size-x2="118" size-y="0" size-y2="45"/>
-    <entity uuid="37003f2f-c374-4082-855d-b3cf8a3206a7" bg-color="4294967295" hdr-color="4292006610" position-x="58" position-y="64" size-x="0" size-x2="142" size-y="0" size-y2="129"/>
+    <entity uuid="37003f2f-c374-4082-855d-b3cf8a3206a7" bg-color="4294967295" hdr-color="4292006610" position-x="673" position-y="421" size-x="0" size-x2="142" size-y="0" size-y2="129"/>
     <entity uuid="37b9b75d-0543-4934-b984-79567684d865" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="33" position-y="181" size-x="0" size-x2="120" size-y="0" size-y2="101"/>
     <entity uuid="38d1693c-170e-457b-87d7-b0d358797df7" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="62" position-y="368" size-x="0" size-x2="149" size-y="0" size-y2="185"/>
     <entity uuid="41bcf7a2-e5e3-42a8-af5a-39de1f0e86ff" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="400" position-y="44" size-x="0" size-x2="130" size-y="0" size-y2="115"/>
     <entity uuid="45fa10e6-64bd-4726-82aa-61fd301b1b5f" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="50" position-y="50" size-x="0" size-x2="148" size-y="0" size-y2="157"/>
     <entity uuid="51ec9be8-4890-4887-addd-6819fa8f6fb7" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="-326" position-y="201" size-x="0" size-x2="147" size-y="0" size-y2="87"/>
-    <entity uuid="52633a6e-346a-4e12-b99e-0f492b048a4c" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="-304" position-y="68" size-x="0" size-x2="145" size-y="0" size-y2="255"/>
+    <entity uuid="52633a6e-346a-4e12-b99e-0f492b048a4c" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="240" position-y="456" size-x="0" size-x2="145" size-y="0" size-y2="255"/>
     <entity uuid="5caac17f-21c3-4d96-ad7e-e5c9c46f3072" bg-color="4294967295" hdr-color="4292006610" position-x="280" position-y="73" size-x="0" size-x2="121" size-y="0" size-y2="73"/>
-    <entity uuid="7a06efe4-87ce-4810-9039-1e1c8ffb811f" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="36" position-y="28" size-x="0" size-x2="137" size-y="0" size-y2="199"/>
+    <entity uuid="7a06efe4-87ce-4810-9039-1e1c8ffb811f" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="917" position-y="469" size-x="0" size-x2="137" size-y="0" size-y2="199"/>
     <entity uuid="7ce99bbb-4d97-4ee5-8703-dfe82e965514" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="100" position-y="94" size-x="0" size-x2="109" size-y="0" size-y2="115"/>
     <entity uuid="9109d3a6-7a5c-4ab9-8ff7-8b5da86662c6" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="50" position-y="401" size-x="0" size-x2="363" size-y="0" size-y2="87"/>
     <entity uuid="9df7cd56-6a97-410f-b0fe-2fd5538bd528" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="350" position-y="51" size-x="0" size-x2="112" size-y="0" size-y2="87"/>
     <entity uuid="a12d9552-e3b0-4189-870d-82bf4cd5b6ed" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="500" position-y="151" size-x="0" size-x2="130" size-y="0" size-y2="87"/>
     <entity uuid="a70427d3-c8e0-4829-93e3-de66bb9c9c61" bg-color="4294967295" hdr-color="4292006610" position-x="8" position-y="77" size-x="0" size-x2="118" size-y="0" size-y2="87"/>
-    <entity uuid="a89cf5c8-aa5d-42ec-bbba-163c5a014c3d" bg-color="4294967295" hdr-color="4292006610" position-x="80" position-y="73" size-x="0" size-x2="130" size-y="0" size-y2="129"/>
-    <entity uuid="a8ac4769-debb-43f7-a155-857b0534ef04" bg-color="4294967295" hdr-color="4292006610" position-x="-326" position-y="51" size-x="0" size-x2="120" size-y="0" size-y2="73"/>
+    <entity uuid="a89cf5c8-aa5d-42ec-bbba-163c5a014c3d" bg-color="4294967295" hdr-color="4292006610" position-x="783" position-y="51" size-x="0" size-x2="130" size-y="0" size-y2="129"/>
+    <entity uuid="a8ac4769-debb-43f7-a155-857b0534ef04" bg-color="4294967295" hdr-color="4292006610" position-x="-317" position-y="3" size-x="0" size-x2="120" size-y="0" size-y2="73"/>
     <entity uuid="afaa4cd5-a9f4-4fa8-a0f3-c68989c619fc" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="50" position-y="1" size-x="0" size-x2="159" size-y="0" size-y2="269"/>
     <entity uuid="c04c801c-5047-41eb-9209-dfd6732d5e31" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="445" position-y="30" size-x="0" size-x2="156" size-y="0" size-y2="213"/>
-    <entity uuid="c04d3548-e6b1-452c-b622-8f3986a8e693" bg-color="4294967295" hdr-color="4292006610" position-x="58" position-y="64" size-x="0" size-x2="129" size-y="0" size-y2="59"/>
+    <entity uuid="c04d3548-e6b1-452c-b622-8f3986a8e693" bg-color="4294967295" hdr-color="4292006610" position-x="313" position-y="12" size-x="0" size-x2="129" size-y="0" size-y2="59"/>
     <entity uuid="c221008d-3462-4c58-b3b3-b4d027b70afc" bg-color="4294967295" hdr-color="4292006610" position-x="-304" position-y="618" size-x="0" size-x2="130" size-y="0" size-y2="101"/>
-    <entity uuid="d01f6c43-64e1-452e-991f-036c673ac11c" bg-color="4294967295" hdr-color="4292006610" position-x="8" position-y="64" size-x="0" size-x2="130" size-y="0" size-y2="115"/>
-    <entity uuid="d33e0252-193b-4ad3-a4bd-535b22a4dd54" bg-color="4294967295" hdr-color="4292006610" position-x="37" position-y="64" size-x="0" size-x2="121" size-y="0" size-y2="101"/>
+    <entity uuid="d01f6c43-64e1-452e-991f-036c673ac11c" bg-color="4294967295" hdr-color="4292006610" position-x="-332" position-y="421" size-x="0" size-x2="130" size-y="0" size-y2="115"/>
+    <entity uuid="d33e0252-193b-4ad3-a4bd-535b22a4dd54" bg-color="4294967295" hdr-color="4292006610" position-x="600" position-y="129" size-x="0" size-x2="121" size-y="0" size-y2="101"/>
     <entity uuid="d731b316-305d-4125-8824-3385eb5120ea" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="300" position-y="251" size-x="0" size-x2="130" size-y="0" size-y2="129"/>
-    <entity uuid="d8535833-d214-46a5-a12e-bd11539eb18b" bg-color="4294967295" hdr-color="4292006610" position-x="280" position-y="223" size-x="0" size-x2="118" size-y="0" size-y2="59"/>
+    <entity uuid="d8535833-d214-46a5-a12e-bd11539eb18b" bg-color="4294967295" hdr-color="4292006610" position-x="327" position-y="216" size-x="0" size-x2="118" size-y="0" size-y2="59"/>
     <entity uuid="da681bce-bf94-4ba9-8453-773d07e7782e" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="20" position-y="40" size-x="0" size-x2="146" size-y="0" size-y2="59"/>
     <entity uuid="e19f9517-5f61-4eeb-ba10-cbc7ba6448e0" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="41" position-y="145" size-x="0" size-x2="20" size-y="0" size-y2="20"/>
     <entity uuid="edc820a6-e14d-41ad-a986-7cabb15fd53a" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="197" position-y="99" size-x="0" size-x2="130" size-y="0" size-y2="269"/>
@@ -2040,14 +2032,5 @@
     <module uuid="cacfab56-f311-4bcd-adc5-92de9ee8cf47" bg-color="#E7F5FD" position-x="3315" position-y="50" size-x="0" size-x2="100" size-y="0" size-y2="100"/>
     <module uuid="d40aa0eb-3691-4818-880c-0a9ad1dd9833" bg-color="#C70000" position-x="2129" position-y="99" size-x="0" size-x2="800" size-y="49" size-y2="559"/>
     <project uuid="608045b6-71ab-4037-87fb-0c6ba4ca5408" size-x="92" size-x2="3573" size-y="0" size-y2="1700"/>
-    <region uuid="17dd8f17-8eed-4535-bda3-bdcca80b4d95" bg-color="4292728527" position-x="1280" position-y="81" size-x="384" size-x2="66" size-y="13" size-y2="337"/>
-    <region uuid="3449791f-06a3-4081-a8c0-4ea5cf36f46e" bg-color="4292728527" position-x="274" position-y="409" size-x="-22" size-x2="422" size-y="-9" size-y2="309"/>
-    <region uuid="40ef7a91-816f-4c6e-a580-0f01d93f36ee" bg-color="4292728527" position-x="446" position-y="68" size-x="0" size-x2="350" size-y="0" size-y2="300"/>
-    <region uuid="440e5af7-ace6-4cec-b07e-2c516be0d5d1" bg-color="4292728527" position-x="-304" position-y="768" size-x="0" size-x2="250" size-y="0" size-y2="250"/>
-    <region uuid="8513c45d-b4e7-413f-b7c6-4d58b3c53d3b" bg-color="4292728527" position-x="46" position-y="754" size-x="0" size-x2="209" size-y="-14" size-y2="200"/>
-    <region uuid="a0a3337a-6806-4eb6-9695-0a1051ae2e7e" bg-color="4292728527" position-x="46" position-y="68" size-x="0" size-x2="250" size-y="0" size-y2="150"/>
-    <region uuid="b0c195a4-e41b-4486-9231-7fe07d88781c" bg-color="4292728527" position-x="813" position-y="530" size-x="17" size-x2="283" size-y="62" size-y2="202"/>
-    <region uuid="f59a7b6b-4543-40a0-a981-f13549bf4f23" bg-color="4292728527" position-x="1146" position-y="468" size-x="0" size-x2="202" size-y="0" size-y2="250"/>
-    <region uuid="f7210e58-9166-4aba-8f79-e0e996a741d7" bg-color="4292728527" position-x="1146" position-y="768" size-x="0" size-x2="150" size-y="0" size-y2="250"/>
   </visual-data>
 </skipper>

@@ -25,8 +25,8 @@ use BiberLtd\Bundle\CoreBundle\CoreEntity;
  *     name="blog_post_category_localization",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
  *     uniqueConstraints={
- *         @ORM\UniqueConstraint(name="idxUBlogPostLocalization", columns={"language"}),
- *         @ORM\UniqueConstraint(name="idxUBlogPostUrlKey", columns={"language","url_key"})
+ *         @ORM\UniqueConstraint(name="idxUBlogPostLocalization", columns={"language","post_category"}),
+ *         @ORM\UniqueConstraint(name="idxUBlogPostUrlKey", columns={"language","url_key","post_category"})
  *     }
  * )
  */
@@ -55,8 +55,9 @@ class BlogPostCategoryLocalization extends CoreEntity
     private $language;
 
     /**
+     * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory", inversedBy="localizations")
-     * @ORM\JoinColumn(name="post_category", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="post_category", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $post_category;
 
