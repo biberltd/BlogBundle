@@ -17,8 +17,7 @@ use BiberLtd\Bundle\FileManagementBundle\Entity as FileEntity;
 use BiberLtd\Bundle\SiteManagementBundle\Services as SMMService;
 use BiberLtd\Bundle\CoreBundle\Services as CoreServices;
 
-class BlogModel extends CoreModel
-{
+class BlogModel extends CoreModel{
     /**
      * BlogModel constructor.
      *
