@@ -18,8 +18,8 @@ use BiberLtd\Bundle\CoreBundle\CoreEntity;
  *     name="blog_post_category_localization",
  *     options={"charset":"utf8","collate":"utf8_turkish_ci","engine":"innodb"},
  *     uniqueConstraints={
- *         @ORM\UniqueConstraint(name="idxUBlogPostLocalization", columns={"category","language"}),
- *         @ORM\UniqueConstraint(name="idxUBlogPostUrlKey", columns={"language","url_key"})
+ *         @ORM\UniqueConstraint(name="idxUBlogPostLocalization", columns={"language","post_category"}),
+ *         @ORM\UniqueConstraint(name="idxUBlogPostUrlKey", columns={"language","url_key","post_category"})
  *     }
  * )
  */
@@ -54,21 +54,31 @@ class BlogPostCategoryLocalization extends CoreEntity
     /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory", inversedBy="localizations")
+<<<<<<< HEAD
      * @ORM\JoinColumn(name="category", referencedColumnName="id", nullable=false)
      * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory
+=======
+     * @ORM\JoinColumn(name="post_category", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+>>>>>>> c16988b65157239621309d5468e2493309930d0a
      */
-    private $category;
+    private $post_category;
+
 
     /**
      * @param \BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory $blog_post_category
      *
      * @return $this
      */
+<<<<<<< HEAD
     public function setCategory(\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory $blog_post_category) {
         if(!$this->setModified('category', $blog_post_category)->isModified()) {
+=======
+    public function setCategory($blog_post_category) {
+        if(!$this->setModified('post_category', $blog_post_category)->isModified()) {
+>>>>>>> c16988b65157239621309d5468e2493309930d0a
             return $this;
         }
-        $this->category = $blog_post_category;
+        $this->post_category = $blog_post_category;
         return $this;
     }
 
@@ -76,7 +86,7 @@ class BlogPostCategoryLocalization extends CoreEntity
      * @return \BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory
      */
     public function getCategory() {
-        return $this->category;
+        return $this->post_category;
     }
 
     /**

@@ -1401,7 +1401,7 @@ class BlogModel extends CoreModel{
 
         $qStr = 'SELECT '.$this->entity['bpc']['alias'].', '.$this->entity['bpcl']['alias']
             .' FROM '.$this->entity['bpcl']['name'].' '.$this->entity['bpcl']['alias']
-            .' JOIN '.$this->entity['bpcl']['alias'].'.category '.$this->entity['bpc']['alias'];
+            .' JOIN '.$this->entity['bpcl']['alias'].'.post_category '.$this->entity['bpc']['alias'];
 
         if(!is_null($sortOrder)){
             foreach($sortOrder as $column => $direction){
@@ -2056,6 +2056,132 @@ class BlogModel extends CoreModel{
         return $response;
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * @param      $site
+     * @param null $filter
+     * @param null $sortOrder
+     * @param null $limit
+     *
+     * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     */
+    public function listPostRevisionsOfSite($site, $filter = null, $sortOrder = null, $limit = null){
+        $timeStamp = time();
+        $sModel = new SMMService\SiteManagementModel($this->kernel, $this->dbConnection, $this->orm);
+        $response = $sModel->getSite($site);
+        if($response->error->exist){
+            return $response;
+        }
+        $site = $response->result->set;
+
+        $filter[] = array(
+            'glue' => 'and',
+            'condition' => array(
+                array(
+                    'glue' => 'and',
+                    'condition' => array('column' => $this->entity['bp']['alias'].'.site', 'comparison' => '=', 'value' => $site->getId()),
+                )
+            )
+        );
+        $response = $this->listBlogPosts($filter, $sortOrder, $limit);
+        unset($filter);
+        if($response->error->exist){
+            return $response;
+        }
+        $entries = $response->result->set;
+        $postIds = array();
+        foreach($entries as $entry){
+            $postIds[] = $entry->getId();
+        }
+
+        $filter[] = array(
+            'glue' => 'and',
+            'condition' => array(
+                array(
+                    'glue' => 'and',
+                    'condition' => array('column' => $this->entity['bpr']['alias'].'.id', 'comparison' => 'IN', 'value' => $postIds),
+                )
+            )
+        );
+        $response = $this->listBlogPostRevisions($filter, $sortOrder, $limit);
+        if($response->error->exist){
+            return $response;
+        }
+        $response->stats->execution->start = $timeStamp;
+        return $response;
+    }
+
+    /**
+     * @param           $site
+     * @param \DateTime $dateStart
+     * @param \DateTime $dateEnd
+     * @param bool      $inclusive
+     * @param null      $sortOrder
+     * @param null      $limit
+     *
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     */
+    public function listPostRevisionsOfSiteUpdatedBetween($site, \DateTime $dateStart, \DateTime $dateEnd, $inclusive = true, $sortOrder = null, $limit = null){
+        $timeStamp = time();
+        $sModel = new SMMService\SiteManagementModel($this->kernel, $this->dbConnection, $this->orm);
+        $response = $sModel->getSite($site);
+        if($response->error->exist){
+            return $response;
+        }
+        $site = $response->result->set;
+        $lt = '<';
+        $gt = '>';
+        if($inclusive){
+            $lt = $lt.'=';
+            $gt = $gt.'=';
+        }
+
+        $filter[] = array(
+            'glue' => 'and',
+            'condition' => array(
+                array(
+                    'glue' => 'and',
+                    'condition' => array('column' => $this->entity['bp']['alias'].'.site', 'comparison' => '=', 'value' => $site->getId()),
+                )
+            )
+        );
+        $response = $this->listBlogPosts($filter, $sortOrder, $limit);
+        unset($filter);
+        if($response->error->exist){
+            return $response;
+        }
+        $entries = $response->result->set;
+        $postIds = array();
+        foreach($entries as $entry){
+            $postIds[] = $entry->getId();
+        }
+
+        $filter[] = array(
+            'glue' => 'and',
+            'condition' => array(
+                array(
+                    'glue' => 'and',
+                    'condition' => array('column' => $this->entity['bpr']['alias'].'.post', 'comparison' => 'in', 'value' => $postIds),
+                ),
+                array(
+                    'glue' => 'and',
+                    'condition' => array('column' => $this->entity['bpr']['alias'].'.date_updated', 'comparison' => $gt, 'value' => $dateStart->format('Y-m-d H:i:s')),
+                ),
+                array(
+                    'glue' => 'and',
+                    'condition' => array('column' => $this->entity['bpr']['alias'].'.date_updated', 'comparison' => $lt, 'value' => $dateEnd->format('Y-m-d H:i:s')),
+                )
+            )
+        );
+        $response = $this->listBlogPostRevisions($filter, $sortOrder, $limit);
+        if($response->error->exist){
+            return $response;
+        }
+        $response->stats->execution->start = $timeStamp;
+        return $response;
+    }
+>>>>>>> c16988b65157239621309d5468e2493309930d0a
     /**
      * @param mixed      $blog
      * @param mixed      $category

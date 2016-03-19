@@ -14,8 +14,8 @@ use BiberLtd\Bundle\CoreBundle\CoreEntity;
 /** 
  * @ORM\Entity
  * @ORM\Table(
- *     name="files_of_blog_post", 
- *     indexes={@ORM\Index(name="idx_n_files_of_blog_post_date_added", columns={"date_added"})}, 
+ *     name="files_of_blog_post",
+ *     indexes={@ORM\Index(name="idx_n_files_of_blog_post_date_added", columns={"date_added"})},
  *     uniqueConstraints={@ORM\UniqueConstraint(name="idx_u_files_of_blog_post", columns={"file","post"})}
  * )
  */

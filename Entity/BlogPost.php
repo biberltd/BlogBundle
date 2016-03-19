@@ -64,7 +64,10 @@ class BlogPost extends CoreLocalizableEntity
 
     /** 
      * @ORM\Column(type="datetime", nullable=false)
+<<<<<<< HEAD
      * @var \DateTime
+=======
+>>>>>>> c16988b65157239621309d5468e2493309930d0a
      */
     private $date_published;
 
@@ -110,6 +113,11 @@ class BlogPost extends CoreLocalizableEntity
      */
 	public $date_removed;
 
+	/**
+	 * 
+	 */
+	private $active_locales;
+
     /**
      * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostModeration", mappedBy="post")
      * @var array
@@ -118,14 +126,20 @@ class BlogPost extends CoreLocalizableEntity
 
     /**
      * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostLocalization", mappedBy="blog_post")
+<<<<<<< HEAD
      * @var array
+=======
+>>>>>>> c16988b65157239621309d5468e2493309930d0a
      */
     protected $localizations;
 
     /**
      * 
+<<<<<<< HEAD
      * @var
      * @ORM\OneToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment", mappedBy="post")  array
+=======
+>>>>>>> c16988b65157239621309d5468e2493309930d0a
      */
     private $comments;
 
@@ -530,4 +544,101 @@ class BlogPost extends CoreLocalizableEntity
 		return $this;
 	}
 
+<<<<<<< HEAD
 }
+=======
+	/**
+	 * @name        getActiveLocales ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.0
+	 * @version     1.0.0
+	 *
+	 * @return      mixed
+	 */
+	public function getActiveLocales(){
+		return $this->active_locales;
+	}
+
+	/**
+	 * @name              setActiveLocales ()
+	 *
+	 * @author      Can Berkol
+	 *
+	 * @since       1.0.0
+	 * @version     1.0.0
+	 *
+	 * @param       mixed $active_locales
+	 *
+	 * @return      $this
+	 */
+	public function setActiveLocales($active_locales){
+		if(!$this->setModified('active_locales', $active_locales)->isModified()){
+			return $this;
+		}
+		$this->active_locales = $active_locales;
+
+		return $this;
+	}
+
+}
+/**
+ * Change Log:
+ * **************************************
+ * v1.0.2                      25.04.2015
+ * TW #3568845
+ * Can Berkol
+ * **************************************
+ * Major changes !!
+ *
+ * **************************************
+ * v1.0.0                      Murat Ünal
+ * 13.09.2013
+ * **************************************
+ * A getBlog()
+ * A getBlogPostActions()
+ * A getBlogPostComments()
+ * A getBlogPostFieldContents()
+ * A getBlogPostModerations()
+ * A get_posts()
+ * A getCountComment()
+ * A getCountDislike()
+ * A getCountLike()
+ * A getCountView()
+ * A getDateAdded()
+ * A getDateApproved()
+ * A getDatePublished()
+ * A getDateUnpublished()
+ * A getFile()
+ * A getLocalizations()
+ * A getId()
+ * A getMember()
+ * A getSite()
+ * A getStatus()
+ * A getType()
+ *
+ * A setBlog()
+ * A setBlogPostActions()
+ * A setBlogPostComments()
+ * A setBlogPostFieldContents()
+ * A setBlogPostModerations()
+ * A set_posts()
+ * A setCountComment()
+ * A setCountDislike()
+ * A setCountLike()
+ * A setCountView()
+ * A setDateAdded()
+ * A setDateApproved()
+ * A setDatePublished()
+ * A setDateUnpublished()
+ * A setFile()
+ * A setLocalizations()
+ * A setMember()
+ * A setSite()
+ * A setStatus()
+ * A setType()
+
+ *
+ */
+>>>>>>> c16988b65157239621309d5468e2493309930d0a
