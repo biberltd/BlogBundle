@@ -44,6 +44,16 @@ class BlogPostCategoryLocalization extends CoreEntity
     private $description;
 
     /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $meta_keywords;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $meta_description;
+
+    /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language")
      * @ORM\JoinColumn(name="language", referencedColumnName="id", nullable=false, onDelete="CASCADE")
@@ -163,5 +173,45 @@ class BlogPostCategoryLocalization extends CoreEntity
      */
     public function getUrlKey() {
         return $this->url_key;
+    }
+
+    /**
+     * @param string $desc
+     *
+     * @return $this
+     */
+    public function setMetaDescription(string $desc) {
+        if(!$this->setModified('meta_description', $desc)->isModified()) {
+            return $this;
+        }
+        $this->meta_description = $desc;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMetaDescription() {
+        return $this->meta_description;
+    }
+
+    /**
+     * @param string $keywords
+     *
+     * @return $this
+     */
+    public function setMetaKeywords(string $keywords) {
+        if(!$this->setModified('meta_keywords', $keywords)->isModified()) {
+            return $this;
+        }
+        $this->meta_keywords = $desc;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMetaKeywords() {
+        return $this->meta_keywords;
     }
 }
