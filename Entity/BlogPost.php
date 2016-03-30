@@ -115,14 +115,13 @@ class BlogPost extends CoreLocalizableEntity
 	public $moderations;
 
     /**
-     * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostLocalization", mappedBy="blog_post")
+     * @ORM\OneToMany(
+     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostLocalization",
+     *     mappedBy="blog_post",
+     *     cascade={"persist"}
+     * )
      */
     protected $localizations;
-
-    /**
-     * 
-     */
-    private $comments;
 
     /**
      * @ORM\OneToMany(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostAction", mappedBy="post")

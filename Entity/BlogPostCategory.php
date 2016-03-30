@@ -69,7 +69,8 @@ class BlogPostCategory extends CoreLocalizableEntity
     /** 
      * @ORM\OneToMany(
      *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategoryLocalization",
-     *     mappedBy="post_category"
+     *     mappedBy="post_category",
+     *     cascade={"persist"}
      * )
      * 
      */

@@ -56,7 +56,11 @@ class BlogPostCategoryLocalization extends CoreEntity
 
     /**
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory", inversedBy="localizations")
+     * @ORM\ManyToOne(
+     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory",
+     *     inversedBy="localizations",
+     *     cascade={"persist"}
+     * )
      * @ORM\JoinColumn(name="post_category", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $post_category;

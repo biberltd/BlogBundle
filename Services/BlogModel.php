@@ -3845,6 +3845,233 @@ class BlogModel extends CoreModel
         $response->stats->execution->end = time();
         return $response;
     }
+    /**
+     * @name            listCategoriesOfPostByPost()
+     *
+     * @since           1.0.0
+     * @version         1.0.0
+     * @author          S.S.Aylak
+     * @use             $this->listCategoriesOfPostItem()
+     *
+     * @param           mixed 			$post
+     * @param           array 			$filter
+     * @param           array 			$sortOrder
+     * @param           array 			$limit
+     *
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     */
+    public function listCategoriesOfPostByPost($post, $filter = null, $sortOrder = null, $limit = null){
+        $timeStamp = time();
+        $response = $this->getBlogPost($post);
+        if($response->error->exist){
+            return $response;
+        }
+        $post = $response->result->set;
+        
+        $column = $this->entity['cobp']['alias'] . '.post';
+        $condition = array('column' => $column, 'comparison' => '=', 'value' => $post->getId());
+        $filter[] = array(
+            'glue' => 'and',
+            'condition' => array(
+                array(
+                    'glue' => 'and',
+                    'condition' => $condition,
+                )
+            )
+        );
+        $response = $this->listCategoriesOfPostItem($filter, $sortOrder, $limit);
+        
+        $response->stats->execution->start = $timeStamp;
+        
+        return $response;
+    }
+    
+    /**
+     * @name            listCategoriesOfPostByCategory()
+     *
+     * @since           1.0.0
+     * @version         1.0.0
+     * @author          S.S.Aylak
+     * @use             $this->listCategoriesOfPostItem()
+     *
+     * @param           mixed 			$category
+     * @param           array 			$filter
+     * @param           array 			$sortOrder
+     * @param           array 			$limit
+     *
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     */
+    public function listCategoriesOfPostByCategory($category, $filter = null, $sortOrder = null, $limit = null){
+        $timeStamp = time();
+        $response = $this->getBlogPostCategory($category);
+        if($response->error->exist){
+            return $response;
+        }
+        $category = $response->result->set;
+        
+        $column = $this->entity['cobp']['alias'] . '.category';
+        $condition = array('column' => $column, 'comparison' => '=', 'value' => $category->getId());
+        $filter[] = array(
+            'glue' => 'and',
+            'condition' => array(
+                array(
+                    'glue' => 'and',
+                    'condition' => $condition,
+                )
+            )
+        );
+        $response = $this->listCategoriesOfPostItem($filter, $sortOrder, $limit);
+        
+        $response->stats->execution->start = $timeStamp;
+        
+        return $response;
+    }
+    
+    /**
+     * @name 			listCategoriesOfPostItem()
+     *
+     * @since			1.0.0
+     * @version         1.0.0
+     * @author          S.S.Aylak
+     *
+     * @param           array 			$filter
+     * @param           array 			$sortOrder
+     * @param           array 			$limit
+     *
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     */
+    public function listCategoriesOfPostItem($filter = null, $sortOrder = null, $limit = null) {
+        $timeStamp = time();
+        if(!is_array($sortOrder) && !is_null($sortOrder)){
+            return $this->createException('InvalidSortOrderException', '$sortOrder must be an array with key => value pairs where value can only be "asc" or "desc".', 'E:S:002');
+        }
+        $oStr = $wStr = $gStr = $fStr = '';
+        $qStr = 'SELECT '.$this->entity['cobp']['alias']
+            .' FROM '.$this->entity['cobp']['name'].' '.$this->entity['cobp']['alias'];
+        
+        if(!is_null($sortOrder)){
+            foreach($sortOrder as $column => $direction){
+                switch($column){
+                    case 'post':
+                    case 'category':
+                    case 'blog':
+                    case 'date_added':
+                    case 'is_primary':
+                    case 'sort_order':
+                }
+                $oStr .= ' '.$column.' '.strtoupper($direction).', ';
+            }
+            $oStr = rtrim($oStr, ', ');
+            $oStr = ' ORDER BY '.$this->entity['cobp']['alias'].'.'.$oStr.' ';
+        }
+        
+        if(!is_null($filter)){
+            $fStr = $this->prepareWhere($filter);
+            $wStr .= ' WHERE '.$fStr;
+        }
+        
+        $qStr .= $wStr.$gStr.$oStr;
+        $q = $this->em->createQuery($qStr);
+        $q = $this->addLimit($q, $limit);
+        $result = $q->getResult();
+        $entities = array();
+        foreach($result as $entry){
+            $entities[] = $entry;
+        }
+        $totalRows = count($entities);
+        if ($totalRows < 1) {
+            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+        }
+        return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+    }
+    
+    /**
+     * @name            updateCategoriesOfPost()
+     *
+     * @since           1.0.0
+     * @version         1.0.0
+     * @author          S.S.Aylak
+     *
+     * @use             $this->createException()
+     *
+     * @param           array 			$categories
+     * @param           mixed           $postEntry
+     *
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     */
+    public function updateCategoriesOfPost(array $categories, $postEntry) {
+        $timeStamp = time();
+        $countUpdates = 0;
+        $updatedItems = array();
+        $response = $this->getBlogPost($postEntry);
+        if($response->error->exist){
+            return $response;
+        }
+        $post = $response->result->set;
+        /** Categories must be an array */
+        if(!is_array($categories)){
+            return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+        }
+        if (count($categories) < 1) {
+            return $this->createException('InvalidParameterValueException', 'Invalid parameter value. $categories parameter must be an array collection', 'E:S:001');
+        }
+        foreach($categories as $data){
+            if ($data instanceof BundleEntity\CategoriesOfBlogPost) {
+                $entity = $data;
+                $this->em->persist($entity);
+                $updatedItems[] = $entity;
+                $countUpdates++;
+            } else if (is_object($data)) {
+                if(!property_exists($data, 'post') || !is_numeric($data->post->getId())){
+                    return $this->createException('InvalidParameterException', 'Parameter must be an object with the "id" property and id property ​must have an integer value.', 'E:S:003');
+                }
+                if (property_exists($data, 'date_added')) {
+                    unset($data->date_added);
+                }
+                $response = $this->getBlogPost($data->post->getId());
+                if ($response->error->exist) {
+                    return $this->createException('EntityDoesNotExist', 'Page with id / code '.$data->post->getId().' does not exist in database.', 'E:D:002');
+                }
+                $oldEntity = $response->result->set;
+                foreach ($data as $column => $value) {
+                    $set = 'set' . $this->translateColumnName($column);
+                    switch ($column) {
+                        case 'post':
+                            $response = $this->getBlog($value, 'id');
+                            if (!$response->error) {
+                                $oldEntity->$set($response->result->set);
+                            } else {
+                                return $this->createException('EntityDoesNotExist', 'Blog with id / url_key '.$value.' does not exist in database.', 'E:D:002');
+                            }
+                            unset($response, $sModel);
+                            break;
+                        case 'category':
+                            $response = $this->getBlogPostCategory($value);
+                            if (!$response->error->exist) {
+                                $oldEntity->$set($response->result->set);
+                            } else {
+                                return $this->createException('EntityDoesNotExist', 'Blog Post Category with id / url_key '.$value.' does not exist in database.', 'E:D:002');
+                            }
+                            unset($response, $sModel);
+                            break;
+                        default:
+                            $oldEntity->$set($value);
+                            break;
+                    }
+                    if ($oldEntity->isModified()) {
+                        $this->em->persist($oldEntity);
+                        $countUpdates++;
+                        $updatedItems[] = $oldEntity;
+                    }
+                }
+            }
+        }
+        if($countUpdates > 0){
+            $this->em->flush();
+            return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, time());
+        }
+        return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
+    }
 }
 
 /**
