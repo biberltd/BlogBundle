@@ -53,13 +53,14 @@ class BlogPostCategoryLocalization extends CoreEntity
 
     /**
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory", inversedBy="localizations")
-<<<<<<< HEAD
-     * @ORM\JoinColumn(name="category", referencedColumnName="id", nullable=false)
-     * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory
-=======
+     * @ORM\ManyToOne(
+     *     targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory",
+     *     inversedBy="localizations",
+     *     cascade={"persist"}
+     * )
      * @ORM\JoinColumn(name="post_category", referencedColumnName="id", nullable=false, onDelete="CASCADE")
->>>>>>> c16988b65157239621309d5468e2493309930d0a
+     * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory
+     *
      */
     private $post_category;
 
@@ -69,13 +70,8 @@ class BlogPostCategoryLocalization extends CoreEntity
      *
      * @return $this
      */
-<<<<<<< HEAD
     public function setCategory(\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory $blog_post_category) {
         if(!$this->setModified('category', $blog_post_category)->isModified()) {
-=======
-    public function setCategory($blog_post_category) {
-        if(!$this->setModified('post_category', $blog_post_category)->isModified()) {
->>>>>>> c16988b65157239621309d5468e2493309930d0a
             return $this;
         }
         $this->post_category = $blog_post_category;

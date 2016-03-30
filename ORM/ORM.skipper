@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<skipper version="3.2.5.1283" mvc="Symfony2" orm="Doctrine2" name="BiberLtdBlogBundle" uuid="608045b6-71ab-4037-87fb-0c6ba4ca5408">
+<skipper version="3.2.6.1309" mvc="Symfony2" orm="Doctrine2" name="BiberLtdBlogBundle" uuid="608045b6-71ab-4037-87fb-0c6ba4ca5408">
   <module name="\SiteManagementBundle" local-name="SiteManagementBundle" namespace="\BiberLtd\Bundle\SiteManagementBundle\Entity" local-namespace="BiberLtd\Bundle\SiteManagementBundle\Entity" export-format="Doctrine2Php" export-path="../../site-management-bundle/Entity" uuid="860bb986-ef71-4cef-9da2-f560e58c2569">
     <entity name="\BiberLtd\Bundle\SiteManagementBundle\Entity\DomainAliases" local-name="DomainAliases" namespace="\BiberLtd\Bundle\SiteManagementBundle\Entity" description="Holds a list of alternative domains that the site will be served in." uuid="04602777-d7d4-4b5f-9557-c3a1ba1f9dbb">
       <field name="domain" description="Alias - domain. i.e. biberltd.com" type="text" required="true" unique="true" primary="true" uuid="766b4e3f-328f-4708-a9ff-d82d177d7e5c"/>
@@ -1182,6 +1182,16 @@
       <association-field from="post_category" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
+        <attribute name="side-inverse">
+          <attribute name="cascade">
+            <attribute name="cascade-persist">true</attribute>
+          </attribute>
+        </attribute>
+        <attribute name="side-owning">
+          <attribute name="cascade">
+            <attribute name="cascade-persist">true</attribute>
+          </attribute>
+        </attribute>
       </orm-attributes>
     </association>
     <entity name="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" local-name="BlogPostComment" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Holds a list of comments made to each blog post.&#10;&#10;Requires: MemberManagementBundle, [SiteManagementBundlle]" uuid="7a06efe4-87ce-4810-9039-1e1c8ffb811f">
@@ -1353,7 +1363,11 @@
             <attribute name="cascade-persist">true</attribute>
           </attribute>
         </attribute>
-        <attribute name="side-inverse"/>
+        <attribute name="side-inverse">
+          <attribute name="cascade">
+            <attribute name="cascade-persist">true</attribute>
+          </attribute>
+        </attribute>
       </orm-attributes>
     </association>
     <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFBlogPostLocalizationLanguage" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="840e2a15-aa53-476a-9c39-9820b3b18031">
@@ -1632,6 +1646,7 @@
           <attribute name="options"/>
         </orm-attributes>
       </field>
+      <field name="sort_order" description="Custom sort order." type="integer" default="1" required="true" unsigned="true" uuid="7435b7d0-e9da-4a3e-a7ff-4ee03d5a40fd"/>
       <index name="idxUCategoriesOfBlogPost" unique="true">
         <index-field name="post"/>
         <index-field name="category"/>
@@ -1829,17 +1844,6 @@
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <orm-attributes>
-      <attribute name="namespace">BiberLtd\Core\Bundles\BlogBundle\Entity</attribute>
-      <attribute name="file-suffix">without-suffix</attribute>
-      <attribute name="filename-format">entity-name-only</attribute>
-    </orm-attributes>
-  </module>
-  <module name="\../../site-management-bundle/Entity" local-name="../../site-management-bundle/Entity" namespace="\BiberLtd\Bundle\SiteManagementBundle\Entity" local-namespace="\BiberLtd\Bundle\SiteManagementBundle\Entity" export-format="Doctrine2Php" export-path="../../site-management-bundle/Entity" uuid="cacfab56-f311-4bcd-adc5-92de9ee8cf47"/>
-  <module name="\../../multilanguage-support-bundle/Entity" local-name="../../multilanguage-support-bundle/Entity" namespace="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity" local-namespace="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity" export-format="Doctrine2Php" export-path="../../multilanguage-support-bundle/Entity" uuid="b1378292-ca83-4897-bd0e-35cb3ca13d6a"/>
-  <module name="\../../file-management-bundle/Entity" local-name="../../file-management-bundle/Entity" namespace="\BiberLtd\Bundle\FileManagementBundle\Entity" local-namespace="\BiberLtd\Bundle\FileManagementBundle\Entity" export-format="Doctrine2Php" export-path="../../file-management-bundle/Entity" uuid="64a9bf6e-758c-494d-b0e2-54bba7dbc178"/>
-  <module name="\../../member-management-bundle/Entity" local-name="../../member-management-bundle/Entity" namespace="\BiberLtd\Bundle\MemberManagementBundle\Entity" local-namespace="\BiberLtd\Bundle\MemberManagementBundle\Entity" export-format="Doctrine2Php" export-path="../../member-management-bundle/Entity" uuid="8f1548e9-bd4c-448b-b9e6-023ac2c6d0ac"/>
-  <module name="\../Entity" local-name="../Entity" namespace="\BiberLtd\Bundle\BlogBundle\Entity" local-namespace="\BiberLtd\Bundle\BlogBundle\Entity" export-format="Doctrine2Php" export-path="../Entity" uuid="8c7a32b0-fdf8-4a82-bf3b-168c11d77a59">
     <entity name="\BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPostLocalization" local-name="FeaturedBlogPostLocalization" namespace="\BiberLtd\Bundle\BlogBundle\Entity" uuid="da681bce-bf94-4ba9-8453-773d07e7782e">
       <field name="language" required="true" primary="true" uuid="1dc3dbe1-98ed-4464-8993-ae97f791af24"/>
       <field name="content" type="text" required="true" uuid="317b519b-8294-408d-8b27-5675c26f9d7a"/>
@@ -1906,6 +1910,11 @@
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
+    <orm-attributes>
+      <attribute name="namespace">BiberLtd\Core\Bundles\BlogBundle\Entity</attribute>
+      <attribute name="file-suffix">without-suffix</attribute>
+      <attribute name="filename-format">entity-name-only</attribute>
+    </orm-attributes>
   </module>
   <visual-data>
     <association uuid="0132b5a4-c206-4f06-bcf7-08bf61d249f3" color="#969696"/>
@@ -1987,14 +1996,14 @@
     <entity uuid="04602777-d7d4-4b5f-9557-c3a1ba1f9dbb" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="350" position-y="100" size-x="0" size-x2="20" size-y="0" size-y2="20"/>
     <entity uuid="062dc364-3d01-474f-8a28-77bb8b1e21fd" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="550" position-y="1" size-x="0" size-x2="130" size-y="0" size-y2="87"/>
     <entity uuid="07eeeac7-da1a-48f5-96c1-665a12f5d84f" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="450" position-y="401" size-x="0" size-x2="125" size-y="0" size-y2="59"/>
-    <entity uuid="0935da16-1ed5-48ac-b4bc-16b04799f560" bg-color="4294967295" hdr-color="4292006610" position-x="469" position-y="313" size-x="0" size-x2="118" size-y="0" size-y2="73"/>
+    <entity uuid="0935da16-1ed5-48ac-b4bc-16b04799f560" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="469" position-y="313" size-x="0" size-x2="118" size-y="0" size-y2="73"/>
     <entity uuid="124be203-cd78-4b96-bc03-210c1f0db117" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="-154" position-y="368" size-x="0" size-x2="149" size-y="0" size-y2="129"/>
     <entity uuid="1421f0f1-e591-42f7-b63c-2a522d14a937" bg-color="4294967295" hdr-color="4292006610" position-x="-126" position-y="1" size-x="0" size-x2="127" size-y="0" size-y2="115"/>
     <entity uuid="239c27b0-2883-46e8-bcbd-010fd9235aaf" bg-color="4294967295" hdr-color="4292006610" position-x="-126" position-y="186" size-x="0" size-x2="130" size-y="0" size-y2="115"/>
     <entity uuid="2d0a30b3-246d-47fa-b198-331e87d4a439" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="200" position-y="294" size-x="0" size-x2="121" size-y="0" size-y2="59"/>
     <entity uuid="3044c8f9-33a6-4aff-98ab-a4989389dde5" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="378" position-y="868" size-x="0" size-x2="118" size-y="0" size-y2="45"/>
     <entity uuid="37003f2f-c374-4082-855d-b3cf8a3206a7" bg-color="4294967295" hdr-color="4292006610" position-x="673" position-y="421" size-x="0" size-x2="142" size-y="0" size-y2="129"/>
-    <entity uuid="37b9b75d-0543-4934-b984-79567684d865" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="33" position-y="181" size-x="0" size-x2="120" size-y="0" size-y2="101"/>
+    <entity uuid="37b9b75d-0543-4934-b984-79567684d865" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="1231" position-y="206" size-x="0" size-x2="120" size-y="0" size-y2="101"/>
     <entity uuid="38d1693c-170e-457b-87d7-b0d358797df7" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="62" position-y="368" size-x="0" size-x2="149" size-y="0" size-y2="185"/>
     <entity uuid="41bcf7a2-e5e3-42a8-af5a-39de1f0e86ff" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="400" position-y="44" size-x="0" size-x2="130" size-y="0" size-y2="115"/>
     <entity uuid="45fa10e6-64bd-4726-82aa-61fd301b1b5f" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="50" position-y="50" size-x="0" size-x2="148" size-y="0" size-y2="157"/>
@@ -2017,19 +2026,14 @@
     <entity uuid="d33e0252-193b-4ad3-a4bd-535b22a4dd54" bg-color="4294967295" hdr-color="4292006610" position-x="600" position-y="129" size-x="0" size-x2="121" size-y="0" size-y2="101"/>
     <entity uuid="d731b316-305d-4125-8824-3385eb5120ea" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="300" position-y="251" size-x="0" size-x2="130" size-y="0" size-y2="129"/>
     <entity uuid="d8535833-d214-46a5-a12e-bd11539eb18b" bg-color="4294967295" hdr-color="4292006610" position-x="327" position-y="216" size-x="0" size-x2="118" size-y="0" size-y2="59"/>
-    <entity uuid="da681bce-bf94-4ba9-8453-773d07e7782e" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="20" position-y="40" size-x="0" size-x2="146" size-y="0" size-y2="59"/>
+    <entity uuid="da681bce-bf94-4ba9-8453-773d07e7782e" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="1091" position-y="110" size-x="0" size-x2="146" size-y="0" size-y2="59"/>
     <entity uuid="e19f9517-5f61-4eeb-ba10-cbc7ba6448e0" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="41" position-y="145" size-x="0" size-x2="20" size-y="0" size-y2="20"/>
     <entity uuid="edc820a6-e14d-41ad-a986-7cabb15fd53a" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="197" position-y="99" size-x="0" size-x2="130" size-y="0" size-y2="269"/>
     <entity uuid="f6d679d7-c495-4963-9006-98a851a54798" bg-color="4294967295" hdr-color="4292006610" position-x="-104" position-y="618" size-x="0" size-x2="149" size-y="0" size-y2="115"/>
-    <module uuid="1b76a8f1-70bf-4d0d-9efe-09cd274f555f" bg-color="#A2C700" position-x="604" position-y="582" size-x="354" size-x2="1396" size-y="-18" size-y2="1068"/>
+    <module uuid="1b76a8f1-70bf-4d0d-9efe-09cd274f555f" bg-color="#A2C700" position-x="604" position-y="582" size-x="354" size-x2="1396" size-y="17" size-y2="1068"/>
     <module uuid="264804cf-5ddd-4089-aaa2-d7c0f129a5ed" bg-color="#FDF5F3" position-x="508" position-y="106" size-x="0" size-x2="700" size-y="56" size-y2="417"/>
-    <module uuid="64a9bf6e-758c-494d-b0e2-54bba7dbc178" bg-color="#FEFCE8" position-x="3315" position-y="450" size-x="0" size-x2="100" size-y="0" size-y2="100"/>
     <module uuid="860bb986-ef71-4cef-9da2-f560e58c2569" bg-color="#7E7975" position-x="-42" position-y="50" size-x="0" size-x2="490" size-y="0" size-y2="327"/>
-    <module uuid="8c7a32b0-fdf8-4a82-bf3b-168c11d77a59" bg-color="#FDEBEF" position-x="3029" position-y="50" size-x="0" size-x2="186" size-y="0" size-y2="302"/>
-    <module uuid="8f1548e9-bd4c-448b-b9e6-023ac2c6d0ac" bg-color="#FEEFE3" position-x="3515" position-y="450" size-x="0" size-x2="100" size-y="0" size-y2="100"/>
     <module uuid="9d574194-22af-4673-a2ee-bb67ec7d212e" bg-color="#C70000" position-x="1334" position-y="51" size-x="26" size-x2="695" size-y="1" size-y2="487"/>
-    <module uuid="b1378292-ca83-4897-bd0e-35cb3ca13d6a" bg-color="#E7F3E7" position-x="3315" position-y="250" size-x="0" size-x2="100" size-y="0" size-y2="100"/>
-    <module uuid="cacfab56-f311-4bcd-adc5-92de9ee8cf47" bg-color="#E7F5FD" position-x="3315" position-y="50" size-x="0" size-x2="100" size-y="0" size-y2="100"/>
     <module uuid="d40aa0eb-3691-4818-880c-0a9ad1dd9833" bg-color="#C70000" position-x="2129" position-y="99" size-x="0" size-x2="800" size-y="49" size-y2="559"/>
     <project uuid="608045b6-71ab-4037-87fb-0c6ba4ca5408" size-x="92" size-x2="3573" size-y="0" size-y2="1700"/>
   </visual-data>

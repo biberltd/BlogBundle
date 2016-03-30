@@ -356,6 +356,7 @@ CREATE TABLE `categories_of_blog_post` (
   `category` int(10) unsigned NOT NULL COMMENT 'Category of blog post.',
   `date_added` datetime NOT NULL COMMENT 'Date when the member has been added.',
   `is_primary` char(1) COLLATE utf8_turkish_ci NOT NULL DEFAULT 'n' COMMENT 'Indicator whether the category is primary.',
+  `sort_order` int(10) NOT NULL DEFAULT 1 COMMENT 'Custom sort order.',
   PRIMARY KEY (`post`,`category`),
   UNIQUE KEY `idxUCategoriesOfBlogPost` (`post`,`category`) USING BTREE,
   KEY `idxFBlogPostOfCategory` (`post`) USING BTREE,

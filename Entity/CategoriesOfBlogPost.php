@@ -34,6 +34,11 @@ class CategoriesOfBlogPost extends CoreEntity
      */
     private $is_primary;
 
+    /**
+     * @ORM\Column(type="integer", nullable=false, options={"default":1,"unsigned":true})
+     */
+    private $sort_order;
+
     /** 
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory")
@@ -108,5 +113,24 @@ class CategoriesOfBlogPost extends CoreEntity
      */
     public function getIsPrimary() {
         return $this->is_primary;
+    }
+    /**
+     * @param int $sortOrder
+     *
+     * @return $this
+     */
+    public function setSortOrder(int $sortOrder) {
+        if(!$this->setModified('sort_order', $sortOrder)->isModified()) {
+            return $this;
+        }
+		$this->sort_order = $sortOrder;
+		return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSortOrder() {
+        return $this->sort_order;
     }
 }
