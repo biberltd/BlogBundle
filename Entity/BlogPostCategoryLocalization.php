@@ -204,7 +204,7 @@ class BlogPostCategoryLocalization extends CoreEntity
         if(!$this->setModified('meta_keywords', $keywords)->isModified()) {
             return $this;
         }
-        $this->meta_keywords = $desc;
+        $this->meta_keywords = $keywords;
         return $this;
     }
 
