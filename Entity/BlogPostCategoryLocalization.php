@@ -48,6 +48,16 @@ class BlogPostCategoryLocalization extends CoreEntity
     private $description;
 
     /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $meta_keywords;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $meta_description;
+
+    /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language")
      * @ORM\JoinColumn(name="language", referencedColumnName="id", nullable=false, onDelete="CASCADE")
@@ -247,6 +257,76 @@ class BlogPostCategoryLocalization extends CoreEntity
      */
     public function getUrlKey() {
         return $this->url_key;
+    }
+    /**
+     * @name            setUrlKey ()
+     *
+     * @author          Can Berkol
+     *
+     * @since           1.0.0
+     * @version         1.0.0
+     *
+     * @use             $this->setModified()
+     *
+     * @param           mixed $desc
+     *
+     * @return          object                $this
+     */
+    public function setMetaDescription($desc) {
+        if(!$this->setModified('meta_description', $desc)->isModified()) {
+            return $this;
+        }
+        $this->meta_description = $desc;
+        return $this;
+    }
+
+    /**
+     * @name            getUrlKey ()
+     *
+     * @author          Can Berkol
+     *
+     * @since           1.0.0
+     * @version         1.0.0
+     *
+     * @return          mixed           $this->url_key
+     */
+    public function getMetaDescription() {
+        return $this->meta_description;
+    }
+    /**
+     * @name            setUrlKey ()
+     *
+     * @author          Can Berkol
+     *
+     * @since           1.0.0
+     * @version         1.0.0
+     *
+     * @use             $this->setModified()
+     *
+     * @param           mixed $url_key
+     *
+     * @return          object                $this
+     */
+    public function setMetaKeywords($keywords) {
+        if(!$this->setModified('meta_keywords', $keywords)->isModified()) {
+            return $this;
+        }
+        $this->meta_keywords = $keywords;
+        return $this;
+    }
+
+    /**
+     * @name            getUrlKey ()
+     *
+     * @author          Can Berkol
+     *
+     * @since           1.0.0
+     * @version         1.0.0
+     *
+     * @return          mixed           $this->url_key
+     */
+    public function getMetaKeywords() {
+        return $this->meta_keywords;
     }
 }
 /**

@@ -1151,6 +1151,8 @@
       <field name="name" description="Localized name of category." type="string" size="155" required="true" uuid="ab280678-7709-4021-ad35-88211ef9692e"/>
       <field name="url_key" description="Localized url key." type="string" size="255" required="true" uuid="fa2f8321-359b-4f7f-8801-d7327a64ba0c"/>
       <field name="description" description="Localization description." type="string" size="255" uuid="f328160d-06b0-47a0-8c2e-b7f177565160"/>
+      <field name="meta_keywords" description="Meta keywords. Comma seperated." type="text" uuid="625f0f56-9106-48aa-b1ff-9b4b6e2f6d2c"/>
+      <field name="meta_description" description="Meta description." type="text" uuid="56f7fb31-6b11-44fc-9805-2ab33b3e9820"/>
       <index name="idxUBlogPostLocalization" unique="true">
         <index-field name="language"/>
         <index-field name="post_category"/>

@@ -165,6 +165,8 @@ CREATE TABLE `blog_post_category_localization` (
   `name` varchar(155) COLLATE utf8_turkish_ci DEFAULT NULL COMMENT 'Localied name.',
   `url_key` varchar(255) COLLATE utf8_turkish_ci DEFAULT NULL COMMENT 'Localized url key.',
   `description` varchar(255) COLLATE utf8_turkish_ci DEFAULT NULL COMMENT 'Localized description of category.',
+  `meta_keywords` LONGTEXT COLLATE utf8_turkish_ci DEFAULT NULL COMMENT 'Localized comma seperated keywords.',
+  `meta_description` LONGTEXT COLLATE utf8_turkish_ci DEFAULT NULL COMMENT 'Localized meta description of category.',
   PRIMARY KEY (`post_category`,`language`),
   UNIQUE KEY `idxUBlogPostLocalization` (`language`,`post_category`) USING BTREE,
   UNIQUE KEY `idxUBlogPostUrlKey` (`language`,`url_key`) USING BTREE,
