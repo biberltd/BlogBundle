@@ -2315,4 +2315,40 @@ class BlogModel extends CoreModel{
         }
         return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
     }
+
+    /**
+     * @param  mixed $blogPost
+     *
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     */
+    public function listActiveLocalesOfBlogPost($blogPost){
+        $timeStamp = microtime(true);
+        $response = $this->getBlogPost($blogPost);
+        if($response->error->exist){
+            return $response;
+        }
+        $blogPost = $response->result->set;
+        unset($response);
+        $qStr = 'SELECT ' . $this->entity['abpl']['alias']
+            . ' FROM ' . $this->entity['abpl']['name'] . ' ' . $this->entity['abpl']['alias']
+            . ' WHERE ' . $this->entity['abpl']['alias'] . '.blog_post = ' . $blogPost->getId();
+        $query = $this->em->createQuery($qStr);
+
+        $result = $query->getResult();
+        $locales = array();
+        $unique = array();
+        foreach ($result as $entry) {
+            $id = $entry->getLanguage()->getId();
+            if (!isset($unique[$id])) {
+                $locales[] = $entry->getLanguage();
+                $unique[$id] = $entry->getLanguage();
+            }
+        }
+        unset($unique);
+        $totalRows = count($locales);
+        if ($totalRows < 1) {
+            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime(true));
+        }
+        return new ModelResponse($locales, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
+    }
 }
