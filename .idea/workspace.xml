@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c8f0e14b-de01-4ad9-a486-397383ad1de0" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Entity/ActiveBlogPostLocale.php" afterPath="$PROJECT_DIR$/Entity/ActiveBlogPostLocale.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Entity/BlogPost.php" afterPath="$PROJECT_DIR$/Entity/BlogPost.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Entity/BlogPostCategory.php" afterPath="$PROJECT_DIR$/Entity/BlogPostCategory.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Entity/BlogPostCategoryLocalization.php" afterPath="$PROJECT_DIR$/Entity/BlogPostCategoryLocalization.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Entity/CategoriesOfBlogPost.php" afterPath="$PROJECT_DIR$/Entity/CategoriesOfBlogPost.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Entity/FilesOfBlogPost.php" afterPath="$PROJECT_DIR$/Entity/FilesOfBlogPost.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Services/BlogModel.php" afterPath="$PROJECT_DIR$/Services/BlogModel.php" />
-    </list>
+    <list default="true" id="c8f0e14b-de01-4ad9-a486-397383ad1de0" name="Default" comment="" />
     <ignored path="BlogBundle.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path=".idea/dataSources.local.xml" />
@@ -33,8 +25,8 @@
       <file leaf-file-name="BlogModel.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Services/BlogModel.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3921">
-              <caret line="4495" column="0" selection-start-line="4495" selection-start-column="0" selection-end-line="4495" selection-end-column="0" />
+            <state relative-caret-position="336">
+              <caret line="4256" column="47" selection-start-line="4256" selection-start-column="47" selection-end-line="4256" selection-end-column="47" />
               <folding>
                 <marker date="1459953842000" expanded="true" signature="118706:118928" placeholder="DELETE FROM " />
                 <marker date="1459953842000" expanded="true" signature="120603:120834" placeholder="DELETE FROM " />
@@ -169,12 +161,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1459952747316</updated>
-      <workItem from="1459952748454" duration="1031000" />
+      <workItem from="1459952748454" duration="1175000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1031000" />
+    <option name="totallyTimeSpent" value="1175000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1680" y="0" width="1680" height="1050" extended-state="0" />
@@ -217,8 +209,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Services/BlogModel.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3921">
-          <caret line="4495" column="0" selection-start-line="4495" selection-start-column="0" selection-end-line="4495" selection-end-column="0" />
+        <state relative-caret-position="336">
+          <caret line="4256" column="47" selection-start-line="4256" selection-start-column="47" selection-end-line="4256" selection-end-column="47" />
           <folding>
             <marker date="1459953842000" expanded="true" signature="118706:118928" placeholder="DELETE FROM " />
             <marker date="1459953842000" expanded="true" signature="120603:120834" placeholder="DELETE FROM " />
