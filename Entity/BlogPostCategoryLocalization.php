@@ -81,7 +81,7 @@ class BlogPostCategoryLocalization extends CoreEntity
      *
      * @use             $this->setModified()
      *
-     * @param           mixed $blog_post_category
+     * @param           mixed $category
      *
      * @return          object                $this
      */
