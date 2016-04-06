@@ -48,6 +48,7 @@ class BlogModel extends CoreModel
         parent::__construct($kernel, $dbConnection, $orm);
 
         $this->entity = array(
+            'abpl' 		=> array('name' => 'BlogBundle:ActiveBlogPostLocale', 'alias' => 'abpl'),
             'b' 		=> array('name' => 'BlogBundle:Blog', 'alias' => 'b'),
             'bl'		=> array('name' => 'BlogBundle:BlogLocalization', 'alias' => 'bl'),
             'bm' 		=> array('name' => 'BlogBundle:BlogModerator', 'alias' => 'bm'),
@@ -103,7 +104,7 @@ class BlogModel extends CoreModel
      *
      * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function addCategoriesToPost(array $categories, $post, $isPrimary = 'n'){
+    public function addCategoriesToPost(array $categories, $post, $isPrimary = 'n', $sortOrder = 1){
         $timeStamp = time();
         $response = $this->getBlogPost($post);
         if($response->error->exist){
@@ -133,7 +134,7 @@ class BlogModel extends CoreModel
             /** prepare object */
             $assoc = new BundleEntity\CategoriesOfBlogPost();
             $assoc->setPost($post)->setCategory($category)->setDateAdded($now);
-            $assoc->setIsPrimary($isPrimary);
+            $assoc->setIsPrimary($isPrimary);$assoc->setSortOrder($sortOrder);
             /** persist entry */
             $this->em->persist($assoc);
             $collection[] = $assoc;
@@ -255,6 +256,58 @@ class BlogModel extends CoreModel
         if ($count > 0) {
             $this->em->flush();
             return new ModelResponse($collection, $count, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
+        }
+        return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
+    }
+
+    /**
+     * @name            addLocalesToBlogPost()
+     *
+     * @since           1.1.3
+     * @version         1.1.4
+     * @author          Can Berkol
+     *
+     * @use             $this->isLocaleAssociatedWithBlogPost()
+     * @use             $this->validateAndGetBlogPost()
+     * @use             $this->validateAndGetLocale()
+     *
+     * @param           array       $locales
+     * @param           mixed       $blogPost
+     *
+     * @return          array       $response
+     */
+    public function addLocalesToBlogPost($locales, $blogPost){
+        $timeStamp = time();
+        $response = $this->getBlogPost($blogPost);
+
+        if($response->error->exist){
+            return $response;
+        }
+        $blogPost = $response->result->set;
+        unset($response);
+        $abplCollection = array();
+        $count = 0;
+        $mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+        foreach ($locales as $locale) {
+            $response = $mlsModel->getLanguage($locale);
+            if($response->error->exist){
+                return $response;
+            }
+            $locale = $response->result->set;
+            unset($response);
+            /** If no entity s provided as file we need to check if it does exist */
+            /** Check if association exists */
+            if(!$this->isLocaleAssociatedWithBlogPost($locale, $blogPost, true)) {
+                $abpl = new BundleEntity\ActiveBlogPostLocale();
+                $abpl->setLanguage($locale)->setBlogPost($blogPost);
+                $this->em->persist($abpl);
+                $abplCollection[] = $abpl;
+                $count++;
+            }
+        }
+        if($count > 0){
+            $this->em->flush();
+            return new ModelResponse($abplCollection, $count, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
         }
         return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
     }
@@ -684,6 +737,7 @@ class BlogModel extends CoreModel
 
         return new ModelResponse($result, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
+    
     /**
      * @name            getBlogPostByMetaTitle ()
      *
@@ -1620,6 +1674,55 @@ class BlogModel extends CoreModel
     }
 
     /**
+     * @name            isLocaleAssociatedWithBlogPost()
+     *
+     * @since           1.1.3
+     * @version         1.2.0
+     *
+     * @author          S.S.Aylak
+     *
+     * @user            $this->createException
+     *
+     * @param           mixed 	$locale
+     * @param           mixed 	$blogPost
+     * @param           bool 	$bypass
+     *
+     * @return          mixed
+     */
+    public function isLocaleAssociatedWithBlogPost($locale, $blogPost, $bypass = false){
+        $timeStamp = time();
+        $response = $this->getBlogPost($blogPost);
+        if($response->error->exist){
+            return $response;
+        }
+        $blogPost = $response->result->set;
+        $mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+        $response = $mlsModel->getLanguage($locale);
+        if($response->error->exist){
+            return $response;
+        }
+        $locale = $response->result->set;
+        unset($response);
+        $found = false;
+
+        $qStr = 'SELECT COUNT(' . $this->entity['abpl']['alias'] . '.blog_post)'
+            . ' FROM ' . $this->entity['abpl']['name'] . ' ' . $this->entity['abpl']['alias']
+            . ' WHERE ' . $this->entity['abpl']['alias'] . '.language = ' . $locale->getId()
+            . ' AND ' . $this->entity['abpl']['alias'] . '.blog_post = ' . $blogPost->getId();
+        $q = $this->em->createQuery($qStr);
+
+        $result = $q->getSingleScalarResult();
+
+        if ($result > 0) {
+            $found = true;
+        }
+        if ($bypass) {
+            return $found;
+        }
+        return new ModelResponse($found, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+    }
+
+    /**
      * @name            isPostAssociatedWithCategory()
      *
      * @since           1.0.4
@@ -1732,9 +1835,9 @@ class BlogModel extends CoreModel
 
         $entities = array();
         foreach($result as $entry){
-            $id = $entry->getCategory()->getId();
+            $id = $entry->getPostCategory()->getId();
             if(!isset($unique[$id])){
-                $entities[] = $entry->getCategory();
+                $entities[] = $entry->getPostCategory();
                 $unique[$id] = '';
             }
         }
@@ -2013,6 +2116,7 @@ class BlogModel extends CoreModel
         );
         return $this->listBlogPostCategories($filter, $sortOrder, $limit);
     }
+    
     /**
      * @name            listMediaOfBlogPost()
      *                  Lists one ore more random media from gallery
@@ -2148,7 +2252,7 @@ class BlogModel extends CoreModel
      * @param           array 			$sortOrder
      * @param           array 			$limit
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listPostsInCategory($category, $filter = null, $sortOrder = null, $limit = null){
         $timeStamp = time();
@@ -2581,6 +2685,7 @@ class BlogModel extends CoreModel
         $response->stats->execution->start = $timeStamp;
         return $response;
     }
+    
     /**
      * @name            listPostsOfBlogInCategoryWithStatuses()
      *
@@ -2610,6 +2715,7 @@ class BlogModel extends CoreModel
         );
         return $this->listPostsOfBlogInCategory($blog, $category, $filter, $sortOrder, $limit);
     }
+    
     /**
      * @name            listPostsOfBlogInSiteWithStatuses()
      *
@@ -2815,6 +2921,7 @@ class BlogModel extends CoreModel
         $response->stats->execution->start = $timeStamp;
         return $response;
     }
+
     /**
      * @name            markPostsAsDeleted()
      *
@@ -2927,6 +3034,55 @@ class BlogModel extends CoreModel
         $qStr = 'DELETE FROM '.$this->entity['cobp']['name'].' '.$this->entity['cobp']['alias']
             .' WHERE '.$this->entity['cobp']['alias'].'.post = '.$post->getId()
             .' AND '.$this->entity['cobp']['alias'].'.category '.$in;
+
+        $q = $this->em->createQuery($qStr);
+        $result = $q->getResult();
+
+        $deleted = true;
+        if (!$result) {
+            $deleted = false;
+        }
+        if ($deleted) {
+            return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+        }
+        return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
+    }
+
+    /**
+     * @name            removeLocalesFromBlogPost()
+     *
+     * @since           1.1.3
+     * @version         1.1.4
+     * @author          Can Berkol
+     *
+     * @use             $this->doesBlogPostExist()
+     * @use             $this->isLocaleAssociatedWithBlogPost()
+     *
+     * @param           array 		$locales
+     * @param           mixed 		$blogPost
+     *
+     * @return          array           $response
+     */
+    public function removeLocalesFromBlogPost($locales, $blogPost){
+        $timeStamp = time();
+        $response = $this->getBlogPost($blogPost);
+        if($response->error->exist){
+            return $response;
+        }
+        $blogPost = $response->result->set;
+        $idsToRemove = array();
+        $mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+        foreach ($locales as $locale) {
+            $response = $mlsModel->getLanguage($locale);
+            if($response->error->exist){
+                continue;
+            }
+            $idsToRemove[] = $response->result->set->getId();
+        }
+        $in = ' IN (' . implode(',', $idsToRemove) . ')';
+        $qStr = 'DELETE FROM '.$this->entity['abpl']['name'].' '.$this->entity['abpl']['alias']
+            .' WHERE '.$this->entity['abpl']['alias'].'.blog_post = '.$blogPost->getId()
+            .' AND '.$this->entity['abpl']['alias'].'.language '.$in;
 
         $q = $this->em->createQuery($qStr);
         $result = $q->getResult();
@@ -3472,7 +3628,7 @@ class BlogModel extends CoreModel
      *
      * @param           array 			$collection
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function updateBlogPostRevisions($collection) {
         $timeStamp = time();
@@ -3563,7 +3719,7 @@ class BlogModel extends CoreModel
      * @param           array 	$filter
      * @param           array 	$limit
      *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return          \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
     public function listPostsInCategoryByPublishDate($category, $order = 'asc', $filter = null, $limit = null){
         $column = $this->entity['bp']['alias'] . '.date_published';
@@ -3845,6 +4001,7 @@ class BlogModel extends CoreModel
         $response->stats->execution->end = time();
         return $response;
     }
+
     /**
      * @name            listCategoriesOfPostByPost()
      *
@@ -3867,7 +4024,7 @@ class BlogModel extends CoreModel
             return $response;
         }
         $post = $response->result->set;
-        
+
         $column = $this->entity['cobp']['alias'] . '.post';
         $condition = array('column' => $column, 'comparison' => '=', 'value' => $post->getId());
         $filter[] = array(
@@ -3880,12 +4037,12 @@ class BlogModel extends CoreModel
             )
         );
         $response = $this->listCategoriesOfPostItem($filter, $sortOrder, $limit);
-        
+
         $response->stats->execution->start = $timeStamp;
-        
+
         return $response;
     }
-    
+
     /**
      * @name            listCategoriesOfPostByCategory()
      *
@@ -3908,7 +4065,7 @@ class BlogModel extends CoreModel
             return $response;
         }
         $category = $response->result->set;
-        
+
         $column = $this->entity['cobp']['alias'] . '.category';
         $condition = array('column' => $column, 'comparison' => '=', 'value' => $category->getId());
         $filter[] = array(
@@ -3921,9 +4078,9 @@ class BlogModel extends CoreModel
             )
         );
         $response = $this->listCategoriesOfPostItem($filter, $sortOrder, $limit);
-        
+
         $response->stats->execution->start = $timeStamp;
-        
+
         return $response;
     }
     
@@ -3948,7 +4105,7 @@ class BlogModel extends CoreModel
         $oStr = $wStr = $gStr = $fStr = '';
         $qStr = 'SELECT '.$this->entity['cobp']['alias']
             .' FROM '.$this->entity['cobp']['name'].' '.$this->entity['cobp']['alias'];
-        
+
         if(!is_null($sortOrder)){
             foreach($sortOrder as $column => $direction){
                 switch($column){
@@ -3964,12 +4121,12 @@ class BlogModel extends CoreModel
             $oStr = rtrim($oStr, ', ');
             $oStr = ' ORDER BY '.$this->entity['cobp']['alias'].'.'.$oStr.' ';
         }
-        
+
         if(!is_null($filter)){
             $fStr = $this->prepareWhere($filter);
             $wStr .= ' WHERE '.$fStr;
         }
-        
+
         $qStr .= $wStr.$gStr.$oStr;
         $q = $this->em->createQuery($qStr);
         $q = $this->addLimit($q, $limit);
@@ -3984,7 +4141,7 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
-    
+
     /**
      * @name            updateCategoriesOfPost()
      *
@@ -4120,6 +4277,14 @@ class BlogModel extends CoreModel
 
 /**
  * Change Log
+ * **************************************
+ * v1.2.2                      30.03.2016
+ * S.S.Aylak
+ * **************************************
+ * FR :: listCategoriesOfPostByPost() method implemented.
+ * FR :: listCategoriesOfPostByCategory() method implemented.
+ * FR :: listCategoriesOfPostItem() method implemented.
+ * FR :: updateCategoriesOfPost() method implemented.
  * **************************************
  * v1.2.1                      10.08.2015
  * Said İmamoğlu

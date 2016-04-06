@@ -48,14 +48,9 @@ class BlogPostCategoryLocalization extends CoreEntity
     private $description;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $meta_keywords;
-
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $meta_description;
 
     /**
      * @ORM\Id
@@ -90,26 +85,26 @@ class BlogPostCategoryLocalization extends CoreEntity
      *
      * @return          object                $this
      */
-    public function setCategory($blog_post_category) {
-        if(!$this->setModified('post_category', $blog_post_category)->isModified()) {
+    public function setPostCategory($category) {
+        if(!$this->setModified('post_category', $category)->isModified()) {
             return $this;
         }
-        $this->post_category = $blog_post_category;
+        $this->post_category = $category;
         return $this;
     }
 
     /**
      * @name            getCategory()
-     *                  Returns the value of blog_post_category property.
+     *                  Returns the value of category property.
      *
      * @author          Can Berkol
      *
      * @since           1.0.1
      * @version         1.0.1
      *
-     * @return          mixed           $this->category
+     * @return          mixed           $this->post_category
      */
-    public function getCategory() {
+    public function getPostCategory() {
         return $this->post_category;
     }
 
@@ -303,27 +298,28 @@ class BlogPostCategoryLocalization extends CoreEntity
      *
      * @use             $this->setModified()
      *
-     * @param           mixed $url_key
+     * @param           mixed $meta_keywords
      *
      * @return          object                $this
      */
-    public function setMetaKeywords($keywords) {
-        if(!$this->setModified('meta_keywords', $keywords)->isModified()) {
+    public function setMetaKeywords($meta_keywords) {
+        if(!$this->setModified('meta_keywords', $meta_keywords)->isModified()) {
             return $this;
         }
-        $this->meta_keywords = $keywords;
+        $this->meta_keywords = $meta_keywords;
         return $this;
     }
 
     /**
-     * @name            getUrlKey ()
+     * @name            getMetaKeywords ()
+     *                                  Returns the value of meta_keywords property.
      *
      * @author          Can Berkol
      *
      * @since           1.0.0
      * @version         1.0.0
      *
-     * @return          mixed           $this->url_key
+     * @return          mixed           $this->meta_keywords
      */
     public function getMetaKeywords() {
         return $this->meta_keywords;

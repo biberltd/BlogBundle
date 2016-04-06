@@ -30,6 +30,10 @@ use BiberLtd\Bundle\CoreBundle\CoreEntity;
 class CategoriesOfBlogPost extends CoreEntity
 {
     /**
+     * @ORM\Column(type="integer", length=10, nullable=false)
+     */
+    private $sort_order;
+    /**
      * @ORM\Column(type="datetime", nullable=false)
      */
     public $date_added;
@@ -177,20 +181,39 @@ class CategoriesOfBlogPost extends CoreEntity
     }
 
     /**
-     * @param $order
+     * @name                  setSortOrder ()
+     *                                     Sets the sort_order property.
+     *                                     Updates the data only if stored value and value to be set are different.
      *
-     * @return $this
+     * @author          S.S.Aylak
+     *
+     * @since           1.0.0
+     * @version         1.0.1
+     *
+     * @use             $this->setModified()
+     *
+     * @param           mixed $sort_order
+     *
+     * @return          object                $this
      */
-    public function setSortOrder($order) {
-        if(!$this->setModified('sort_order', $order)->isModified()) {
+    public function setSortOrder($sort_order) {
+        if(!$this->setModified('sort_order', $sort_order)->isModified()) {
             return $this;
         }
-		$this->sort_order = $order;
-		return $this;
+        $this->sort_order = $sort_order;
+        return $this;
     }
 
     /**
-     * @return mixed
+     * @name            getSortOrder ()
+     *                               Returns the value of sort_order property.
+     *
+     * @author          S.S.Aylak
+     *
+     * @since           1.0.0
+     * @version         1.0.1
+     *
+     * @return          mixed           $this->sort_order
      */
     public function getSortOrder() {
         return $this->sort_order;
@@ -203,8 +226,15 @@ class CategoriesOfBlogPost extends CoreEntity
 }
 /**
  * Change Log:
+ * ***************************************
+ * v1.0.01                     S.S.Aylak
+ * 21.03.2016
  * **************************************
- * v1.0.01                     Murat Ünal
+ * A getSortOrder()
+ *
+ * A setSortOrder()
+ * **************************************
+ * v1.0.00                     Murat Ünal
  * 10.10.2013
  * **************************************
  * A getBlogPosts()

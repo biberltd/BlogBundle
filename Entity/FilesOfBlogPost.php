@@ -72,7 +72,7 @@ class FilesOfBlogPost extends CoreEntity
      *
      * @use             $this->setModified()
      *
-     * @param           mixed $blog_post
+     * @param           mixed $post
      *
      * @return          object                $this
      */
