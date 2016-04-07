@@ -42,12 +42,7 @@ class CategoriesOfBlogPost extends CoreEntity
      * @ORM\Column(type="string", length=1, nullable=false, options={"default":"y"})
      */
     private $is_primary;
-
-    /**
-     * @ORM\Column(type="integer", nullable=false, options={"default":1,"unsigned":true})
-     */
-    private $sort_order;
-
+    
     /** 
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory")
