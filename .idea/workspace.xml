@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c8f0e14b-de01-4ad9-a486-397383ad1de0" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Entity/CategoriesOfBlogPost.php" afterPath="$PROJECT_DIR$/Entity/CategoriesOfBlogPost.php" />
-    </list>
+    <list default="true" id="c8f0e14b-de01-4ad9-a486-397383ad1de0" name="Default" comment="" />
     <ignored path="BlogBundle.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path=".idea/dataSources.local.xml" />
@@ -175,12 +173,12 @@
       <option name="presentableId" value="Default" />
       <updated>1459952747316</updated>
       <workItem from="1459952748454" duration="1230000" />
-      <workItem from="1460017979643" duration="38000" />
+      <workItem from="1460017979643" duration="206000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1268000" />
+    <option name="totallyTimeSpent" value="1436000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1680" y="0" width="1680" height="1050" extended-state="0" />
