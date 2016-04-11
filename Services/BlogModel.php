@@ -168,15 +168,16 @@ class BlogModel extends CoreModel{
      *
      * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function addPostsToCategory(array $posts, $category, string $isPrimary = 'n'){
+    public function addPostsToCategory(array $posts, $category, string $isPrimary = 'n')
+    {
         $timeStamp = microtime(true);
         $response = $this->getBlogPostCategory($category);
-        if($response->error->exist){
+        if ($response->error->exist) {
             return $response;
         }
         $category = $response->result->set;
         /** issue an error only if there is no valid file entries */
-        if(count($posts) < 1){
+        if (count($posts) < 1) {
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. $posts parameter must be an array collection', 'E:S:001');
         }
         unset($count);
@@ -184,15 +185,15 @@ class BlogModel extends CoreModel{
         $count = 0;
         /** Start persisting files */
         $now = new \DateTime('now', new \DateTimezone($this->kernel->getContainer()->getParameter('app_timezone')));
-        foreach($posts as $post){
+        foreach ($posts as $post) {
             $response = $this->getBlogPost($post);
-            if($response->error->exist){
+            if ($response->error->exist) {
                 break;
             }
             $post = $response->result->set;
 
             /** Check if association exists */
-            if($this->isPostAssociatedWithCategory($post, $category, true)){
+            if ($this->isPostAssociatedWithCategory($post, $category, true)) {
                 break;
             }
             /** prepare object */
@@ -202,15 +203,54 @@ class BlogModel extends CoreModel{
             /** persist entry */
             $this->em->persist($assoc);
             $collection[] = $assoc;
-            $count ++;
+            $count++;
         }
         /** flush all into database */
-        if($count > 0){
+        if ($count > 0) {
             $this->em->flush();
 
             return new ModelResponse($collection, $count, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime(true));
         }
+    }
 
+    /**
+     * @param array $locales
+     * @param $blogPost
+     * @return ModelResponse
+     */
+    public function addLocalesToBlogPost(array $locales, $blogPost){
+        $timeStamp = microtime(true);
+        $response = $this->getBlogPost($blogPost);
+
+        if($response->error->exist){
+            return $response;
+        }
+        $blogPost = $response->result->set;
+        unset($response);
+        $abplCollection = array();
+        $count = 0;
+        $mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+        foreach ($locales as $locale) {
+            $response = $mlsModel->getLanguage($locale);
+            if($response->error->exist){
+                return $response;
+            }
+            $locale = $response->result->set;
+            unset($response);
+            /** If no entity s provided as file we need to check if it does exist */
+            /** Check if association exists */
+            if(!$this->isLocaleAssociatedWithBlogPost($locale, $blogPost, true)) {
+                $abpl = new BundleEntity\ActiveBlogPostLocale();
+                $abpl->setLanguage($locale)->setBlogPost($blogPost);
+                $this->em->persist($abpl);
+                $abplCollection[] = $abpl;
+                $count++;
+            }
+        }
+        if($count > 0){
+            $this->em->flush();
+            return new ModelResponse($abplCollection, $count, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, microtime(true));
+        }
         return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, microtime(true));
     }
 
@@ -1386,6 +1426,46 @@ class BlogModel extends CoreModel{
     }
 
     /**
+     * @param $locale
+     * @param $blogPost
+     * @param bool|null $bypass
+     * @return ModelResponse|bool
+     */
+    public function isLocaleAssociatedWithBlogPost($locale, $blogPost, bool $bypass = null){
+        $timeStamp = microtime(true);
+        $bypass = $bypass ?? false;
+        $response = $this->getBlogPost($blogPost);
+        if($response->error->exist){
+            return $response;
+        }
+        $blogPost = $response->result->set;
+        $mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+        $response = $mlsModel->getLanguage($locale);
+        if($response->error->exist){
+            return $response;
+        }
+        $locale = $response->result->set;
+        unset($response);
+        $found = false;
+
+        $qStr = 'SELECT COUNT(' . $this->entity['abpl']['alias'] . '.blog_post)'
+            . ' FROM ' . $this->entity['abpl']['name'] . ' ' . $this->entity['abpl']['alias']
+            . ' WHERE ' . $this->entity['abpl']['alias'] . '.language = ' . $locale->getId()
+            . ' AND ' . $this->entity['abpl']['alias'] . '.blog_post = ' . $blogPost->getId();
+        $q = $this->em->createQuery($qStr);
+
+        $result = $q->getSingleScalarResult();
+
+        if ($result > 0) {
+            $found = true;
+        }
+        if ($bypass) {
+            return $found;
+        }
+        return new ModelResponse($found, 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, microtime(true));
+    }
+
+    /**
      * @param mixed $post
      * @param mixed $category
      * @param bool  $bypass
@@ -2083,9 +2163,7 @@ class BlogModel extends CoreModel{
      *
      * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function listPostsOfBlogInSite($blog, $site, array $filter = null, array $sortOrder = null,
-                                          array $limit = null
-    ){
+    public function listPostsOfBlogInSite($blog, $site, array $filter = null, array $sortOrder = null, array $limit = null){
         $timeStamp = microtime(true);
         $response = $this->getBlog($blog);
         if($response->error->exist){
@@ -2114,6 +2192,853 @@ class BlogModel extends CoreModel{
         $response->stats->execution->start = $timeStamp;
 
         return $response;
+    }
+
+    /**
+     * @param $site
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
+     * @return ModelResponse
+     */
+    public function listPostRevisionsOfSite($site, array $filter = null, array $sortOrder = null, array $limit = null){
+        $timeStamp = microtime(true);
+        $sModel = new SMMService\SiteManagementModel($this->kernel, $this->dbConnection, $this->orm);
+        $response = $sModel->getSite($site);
+        if($response->error->exist){
+            return $response;
+        }
+        $site = $response->result->set;
+
+        $filter[] = array(
+            'glue' => 'and',
+            'condition' => array(
+                array(
+                    'glue' => 'and',
+                    'condition' => array('column' => $this->entity['bp']['alias'].'.site', 'comparison' => '=', 'value' => $site->getId()),
+                )
+            )
+        );
+        $response = $this->listBlogPosts($filter, $sortOrder, $limit);
+        unset($filter);
+        if($response->error->exist){
+            return $response;
+        }
+        $entries = $response->result->set;
+        $postIds = array();
+        foreach($entries as $entry){
+            $postIds[] = $entry->getId();
+        }
+
+        $filter[] = array(
+            'glue' => 'and',
+            'condition' => array(
+                array(
+                    'glue' => 'and',
+                    'condition' => array('column' => $this->entity['bpr']['alias'].'.id', 'comparison' => 'IN', 'value' => $postIds),
+                )
+            )
+        );
+        $response = $this->listBlogPostRevisions($filter, $sortOrder, $limit);
+        if($response->error->exist){
+            return $response;
+        }
+        $response->stats->execution->start = $timeStamp;
+        return $response;
+    }
+
+    /**
+     * @param $site
+     * @param \DateTime $dateStart
+     * @param \DateTime $dateEnd
+     * @param bool|null $inclusive
+     * @param array|null $sortOrder
+     * @param array|null $limit
+     * @return ModelResponse
+     */
+    public function listPostRevisionsOfSiteUpdatedBetween($site, \DateTime $dateStart, \DateTime $dateEnd, bool $inclusive = null, array $sortOrder = null, array $limit = null){
+        $timeStamp = microtime(true);
+        $inclusive = $inclusive ?? true;
+        $sModel = new SMMService\SiteManagementModel($this->kernel, $this->dbConnection, $this->orm);
+        $response = $sModel->getSite($site);
+        if($response->error->exist){
+            return $response;
+        }
+        $site = $response->result->set;
+        $lt = '<';
+        $gt = '>';
+        if($inclusive){
+            $lt = $lt.'=';
+            $gt = $gt.'=';
+        }
+
+        $filter[] = array(
+            'glue' => 'and',
+            'condition' => array(
+                array(
+                    'glue' => 'and',
+                    'condition' => array('column' => $this->entity['bp']['alias'].'.site', 'comparison' => '=', 'value' => $site->getId()),
+                )
+            )
+        );
+        $response = $this->listBlogPosts($filter, $sortOrder, $limit);
+        unset($filter);
+        if($response->error->exist){
+            return $response;
+        }
+        $entries = $response->result->set;
+        $postIds = array();
+        foreach($entries as $entry){
+            $postIds[] = $entry->getId();
+        }
+
+        $filter[] = array(
+            'glue' => 'and',
+            'condition' => array(
+                array(
+                    'glue' => 'and',
+                    'condition' => array('column' => $this->entity['bpr']['alias'].'.post', 'comparison' => 'in', 'value' => $postIds),
+                ),
+                array(
+                    'glue' => 'and',
+                    'condition' => array('column' => $this->entity['bpr']['alias'].'.date_updated', 'comparison' => $gt, 'value' => $dateStart->format('Y-m-d H:i:s')),
+                ),
+                array(
+                    'glue' => 'and',
+                    'condition' => array('column' => $this->entity['bpr']['alias'].'.date_updated', 'comparison' => $lt, 'value' => $dateEnd->format('Y-m-d H:i:s')),
+                )
+            )
+        );
+        $response = $this->listBlogPostRevisions($filter, $sortOrder, $limit);
+        if($response->error->exist){
+            return $response;
+        }
+        $response->stats->execution->start = $timeStamp;
+        return $response;
+    }
+
+    /**
+     * @param $blog
+     * @param $category
+     * @param array $statuses
+     * @param array|null $sortOrder
+     * @param array|null $limit
+     * @return ModelResponse
+     */
+    public function listPostsOfBlogInCategoryWithStatuses($blog, $category, array $statuses, array $sortOrder = null, array $limit = null){
+        $filter[] = array(
+            'glue' => 'and',
+            'condition' => array(
+                array(
+                    'glue' => 'and',
+                    'condition' => array('column' => $this->entity['bp']['alias'].'.status', 'comparison' => 'in', 'value' => $statuses),
+                )
+            )
+        );
+        return $this->listPostsOfBlogInCategory($blog, $category, $filter, $sortOrder, $limit);
+    }
+
+    /**
+     * @param $blog
+     * @param $site
+     * @param array $statuses
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
+     * @return ModelResponse
+     */
+    public function listPostsOfBlogInSiteWithStatuses($blog, $site, array $statuses, array $filter = null, array $sortOrder = null, array $limit = null){
+        $timeStamp = microtime(true);
+        $response = $this->getBlog($blog);
+        if($response->error->exist){
+            return $response;
+        }
+        $blog = $response->result->set;
+        unset($response);
+        $sModel = new SMMService\SiteManagementModel($this->kernel, $this->dbConnection, $this->orm);
+        $response = $sModel->getSite($site);
+        if($response->error->exist){
+            return $response;
+        }
+        $site = $response->result->set;
+
+        $filter[] = array(
+            'glue' => 'and',
+            'condition' => array(
+                array(
+                    'glue' => 'and',
+                    'condition' => array('column' => $this->entity['bp']['alias'].'.site', 'comparison' => '=', 'value' => $site->getId()),
+                ),
+                array(
+                    'glue' => 'and',
+                    'condition' => array('column' => $this->entity['bp']['alias'].'.status', 'comparison' => 'in', 'value' => $statuses),
+                )
+            )
+        );
+        $response = $this->listPostsOfBlog($blog, $filter, $sortOrder, $limit);
+
+        $response->stats->execution->start = $timeStamp;
+
+        return $response;
+    }
+
+    /**
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
+     * @return ModelResponse
+     */
+    public function listPublishedPosts(array $filter = null, array $sortOrder = null, array $limit = null){
+        $timeStamp = microtime(true);
+        $now = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
+        $columnDA = $this->entity['bp']['alias'] . '.date_published';
+        $conditionDA = array('column' => $columnDA, 'comparison' => '<=', 'value' => $now->format('Y-m-d h:i:s'));
+
+        $columnDU = $this->entity['bp']['alias'] . '.date_unpublished';
+        $conditionDU = array('column' => $columnDU, 'comparison' => 'isnull', 'value' => '');
+        $filter[] = array(
+            'glue' => 'and',
+            'condition' => array(
+                array(
+                    'glue' => 'and',
+                    'condition' => $conditionDA,
+                ),
+                array(
+                    'glue' => 'and',
+                    'condition' => $conditionDU,
+                )
+            )
+        );
+        $response = $this->listBlogPosts($filter, $sortOrder, $limit);
+        $response->stats->execution->start = $timeStamp;
+
+        return $response;
+    }
+
+    /**
+     * @param $blog
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
+     * @return ModelResponse
+     */
+    public function listPublishedPostsOfBlog($blog, array $filter = null, array $sortOrder = null, array $limit = null){
+        $timeStamp = microtime(true);
+        $response = $this->getBlog($blog);
+        if($response->error->exist){
+            return $response;
+        }
+        $blog = $response->result->set;
+        $columnDA = $this->entity['bp']['alias'] . '.blog';
+        $conditionDA = array('column' => $columnDA, 'comparison' => '<=', 'value' => $blog->getId());
+        $filter[] = array(
+            'glue' => 'and',
+            'condition' => array(
+                array(
+                    'glue' => 'and',
+                    'condition' => $conditionDA,
+                )
+            )
+        );
+        $response = $this->listPublishedPosts($blog, $filter, $sortOrder, $limit);
+        $response->stats->execution->start = $timeStamp;
+        return $response;
+    }
+
+
+    /**
+     * @param $blog
+     * @param $category
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
+     * @return ModelResponse
+     */
+    public function listPublishedPostsOfBlogInCategory($blog, $category, array $filter = null, array $sortOrder = null, array $limit = null){
+        $timeStamp = microtime(true);
+        $response = $this->getBlog($blog);
+        if($response->error->exist){
+            return $response;
+        }
+        $blog = $response->result->set;
+        $response = $this->getBlogPostCategory($category);
+        if($response->error->exist){
+            return $response;
+        }
+        $category = $response->result->set;
+        /** First identify posts associated with given category */
+        $qStr = 'SELECT ' . $this->entity['cobp']['alias']
+            . ' FROM ' . $this->entity['cobp']['name'] . ' ' . $this->entity['cobp']['alias']
+            . ' WHERE ' . $this->entity['cobp']['alias'] . '.category = ' . $category->getId();
+        $query = $this->em->createQuery($qStr);
+        $result = $query->getResult();
+
+        $postsInCat = array();
+        if (count($result) > 0) {
+            foreach ($result as $cobp) {
+                $postsInCat[] = $cobp->getPost()->getId();
+            }
+        }
+        $selectedIds = implode(',', $postsInCat);
+        /**
+         * Prepare $filter
+         */
+        $columnI = $this->entity['bp']['alias'] . '.id';
+        $conditionI = array('column' => $columnI, 'comparison' => '=', 'in' => $selectedIds);
+        $filter[] = array(
+            'glue' => 'and',
+            'condition' => array(
+                array(
+                    'glue' => 'and',
+                    'condition' => $conditionI,
+                ),
+            )
+        );
+        $response = $this->listPublishedPostsOfBlog($blog, $filter, $sortOrder, $limit);
+        $response->stats->execution->start = $timeStamp;
+        return $response;
+    }
+
+    /**
+     * @param array $collection
+     * @return ModelResponse
+     */
+    public function markPostsAsDeleted(array $collection){
+        $timeStamp = microtime(true);
+        if (!is_array($collection)) {
+            return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+        }
+        $now = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
+        $toUpdate = array();
+        foreach ($collection as $post) {
+            if(!$post instanceof BundleEntity\BlogPost){
+                $response = $this->getBlogPost($post);
+                if($response->error->exist){
+                    return $response;
+                }
+                $post = $response->result->set;
+                unset($response);
+            }
+            $post->setStatus('d');
+            $post->setDateRemoved($now);
+            $toUpdate[] = $post;
+        }
+        $response = $this->updateBlogPosts($toUpdate);
+        $response->stats->execution->start = $timeStamp;
+        $response->stats->execution->end = microtime(true);
+
+        return $response;
+    }
+
+    /**
+     * @param array $collection
+     * @return ModelResponse
+     */
+    public function publishBlogPosts(array $collection){
+        $timeStamp = microtime(true);
+        if (!is_array($collection)) {
+            return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+        }
+        $now = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
+        $toUpdate = array();
+        foreach ($collection as $post) {
+            if(!$post instanceof BundleEntity\BlogPost){
+                $response = $this->getBlogPost($post);
+                if($response->error->exist){
+                    return $response;
+                }
+                $post = $response->result->set;
+                unset($response);
+            }
+            $post->setStatus('p');
+            $post->setDatePublished($now);
+            $post->setDateUnpublished(null);
+            $toUpdate[] = $post;
+        }
+        $response = $this->updateBlogPosts($toUpdate);
+        $response->stats->execution->start = $timeStamp;
+        $response->stats->execution->end = microtime(true);
+
+        return $response;
+    }
+
+    /**
+     * @param array $categories
+     * @param $post
+     * @return ModelResponse
+     */
+    public function removeCategoriesFromPost(array $categories, $post){
+        $timeStamp = microtime(true);
+        $response = $this->getBlogPost($post);
+        if($response->error->exist){
+            return $response;
+        }
+        $post = $response->result->set;
+        $idsToRemove = array();
+        foreach ($categories as $category) {
+            $response = $this->getBlogPostCategory($category);
+            if($response->error->exist){
+                return $response;
+            }
+            $idsToRemove[] = $response->result->set->getId();
+        }
+        $in = ' IN (' . implode(',', $idsToRemove) . ')';
+        $qStr = 'DELETE FROM '.$this->entity['cobp']['name'].' '.$this->entity['cobp']['alias']
+            .' WHERE '.$this->entity['cobp']['alias'].'.post = '.$post->getId()
+            .' AND '.$this->entity['cobp']['alias'].'.category '.$in;
+
+        $q = $this->em->createQuery($qStr);
+        $result = $q->getResult();
+
+        $deleted = true;
+        if (!$result) {
+            $deleted = false;
+        }
+        if ($deleted) {
+            return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, microtime(true));
+        }
+        return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, microtime(true));
+    }
+
+    /**
+     * @param array $locales
+     * @param $blogPost
+     * @return ModelResponse
+     */
+    public function removeLocalesFromBlogPost(array $locales, $blogPost){
+        $timeStamp = microtime(true);
+        $response = $this->getBlogPost($blogPost);
+        if($response->error->exist){
+            return $response;
+        }
+        $blogPost = $response->result->set;
+        $idsToRemove = array();
+        $mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+        foreach ($locales as $locale) {
+            $response = $mlsModel->getLanguage($locale);
+            if($response->error->exist){
+                continue;
+            }
+            $idsToRemove[] = $response->result->set->getId();
+        }
+        $in = ' IN (' . implode(',', $idsToRemove) . ')';
+        $qStr = 'DELETE FROM '.$this->entity['abpl']['name'].' '.$this->entity['abpl']['alias']
+            .' WHERE '.$this->entity['abpl']['alias'].'.blog_post = '.$blogPost->getId()
+            .' AND '.$this->entity['abpl']['alias'].'.language '.$in;
+
+        $q = $this->em->createQuery($qStr);
+        $result = $q->getResult();
+
+        $deleted = true;
+        if (!$result) {
+            $deleted = false;
+        }
+        if ($deleted) {
+            return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, microtime(true));
+        }
+        return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, microtime(true));
+    }
+
+    /**
+     * @param array $posts
+     * @param $category
+     * @return ModelResponse
+     */
+    public function removePostsFromCategory(array $posts, $category){
+        $timeStamp = microtime(true);
+        $response = $this->getBlogPostCategory($category);
+        if($response->error->exist){
+            return $response;
+        }
+        $category = $response->result->set;
+        $idsToRemove = array();
+        foreach ($posts as $post) {
+            $response = $this->getBlogPost($post);
+            if($response->error->exist){
+                return $response;
+            }
+            $idsToRemove[] = $response->result->set->getId();
+        }
+        $in = ' IN (' . implode(',', $idsToRemove) . ')';
+        $qStr = 'DELETE FROM '.$this->entity['cobp']['name'].' '.$this->entity['cobp']['alias']
+            .' WHERE '.$this->entity['cobp']['alias'].'.category = '.$category->getId()
+            .' AND '.$this->entity['cobp']['alias'].'.post '.$in;
+
+        $q = $this->em->createQuery($qStr);
+        $result = $q->getResult();
+
+        $deleted = true;
+        if (!$result) {
+            $deleted = false;
+        }
+        if ($deleted) {
+            return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, microtime(true));
+        }
+        return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, microtime(true));
+    }
+
+    /**
+     * @param array $collection
+     * @return ModelResponse
+     */
+    public function unpublishBlogPosts(array $collection){
+        $timeStamp = microtime(true);
+        if (!is_array($collection)) {
+            return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+        }
+        $now = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
+        $toUpdate = array();
+        foreach ($collection as $post) {
+            if(!$post instanceof BundleEntity\BlogPost){
+                $response = $this->getBlogPost($post);
+                if($response->error->exist){
+                    return $response;
+                }
+                $post = $response->result->set;
+                unset($response);
+            }
+            $post->setStatus('u');
+            $post->setDateUnpublished($now);
+            $toUpdate[] = $post;
+        }
+        $response = $this->updateBlogPosts($toUpdate);
+        $response->stats->execution->start = $timeStamp;
+        $response->stats->execution->end = microtime(true);
+
+        return $response;
+    }
+
+    /**
+     * @param array $collection
+     * @return ModelResponse
+     */
+    public function updateBlogPosts(array $collection){
+        $timeStamp = microtime(true);
+        if (!is_array($collection)) {
+            return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+        }
+        $countUpdates = 0;
+        $updatedItems = array();
+        foreach ($collection as $data) {
+            if ($data instanceof BundleEntity\BlogPost) {
+                $entity = $data;
+                $this->em->persist($entity);
+                $updatedItems[] = $entity;
+                $countUpdates++;
+            } else if (is_object($data)) {
+                if(!property_exists($data, 'id') || !is_numeric($data->id)){
+                    return $this->createException('InvalidParameterException', 'Parameter must be an object with the "id" property and id property ‚Äãmust have an integer value.', 'E:S:003');
+                }
+                if (property_exists($data, 'date_added')) {
+                    unset($data->date_added);
+                }
+                $response = $this->getBlogPost($data->id);
+                if ($response->error->exist) {
+                    return $this->createException('EntityDoesNotExist', 'Page with id / code '.$data->id.' does not exist in database.', 'E:D:002');
+                }
+                $oldEntity = $response->result->set;
+                foreach ($data as $column => $value) {
+                    $set = 'set' . $this->translateColumnName($column);
+                    switch ($column) {
+                        case 'local':
+                            $localizations = array();
+                            foreach ($value as $langCode => $translation) {
+                                $localization = $oldEntity->getLocalization($langCode, true);
+                                $newLocalization = false;
+                                if (!$localization) {
+                                    $newLocalization = true;
+                                    $localization = new BundleEntity\BlogPostLocalization();
+                                    $mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+                                    $response = $mlsModel->getLanguage($langCode);
+                                    $localization->setLanguage($response->result->set);
+                                    $localization->setBlogPost($oldEntity);
+                                }
+                                foreach ($translation as $transCol => $transVal) {
+                                    $transSet = 'set' . $this->translateColumnName($transCol);
+                                    $localization->$transSet($transVal);
+                                }
+                                if ($newLocalization) {
+                                    $this->em->persist($localization);
+                                }
+                                $localizations[] = $localization;
+                            }
+                            $oldEntity->setLocalizations($localizations);
+                            break;
+                        case 'blog':
+                            if ($value instanceof BundleEntity\Blog) {
+                                $oldEntity->$set($value);
+                            }else{
+                                $response = $this->getBlog($value);
+                                if (!$response->error->exist) {
+                                    $oldEntity->$set($response->result->set);
+                                } else {
+                                    return $this->createException('EntityDoesNotExist', 'The blog with the id / url_key  "' . $value . '" does not exist in database.', 'E:D:002');
+                                }
+                                unset($response);
+                            }
+                            break;
+                        case 'author':
+                            $mModel = $this->kernel->getContainer()->get('membermanagement.model');
+                            $response = $mModel->getMember($value);
+                            if (!$response->error->exist) {
+                                $oldEntity->$set($response->result->set);
+                            } else {
+                                return $this->createException('EntityDoesNotExist', 'Member with id / username / e-mail '.$value.' does not exist in database.', 'E:D:002');
+                            }
+                            unset($response, $sModel);
+                            break;
+                        case 'file':
+                        case 'preview_image':
+                        case 'previewImage':
+                            $fModel = $this->kernel->getContainer()->get('filemanagement.model');
+                            $response = $fModel->getFile($value);
+                            if (!$response->error->exist) {
+                                $oldEntity->$set($response->result->set);
+                            } else {
+                                return $this->createException('EntityDoesNotExist', 'File with id / url_key '.$value.' does not exist in database.', 'E:D:002');
+                            }
+                            unset($response, $sModel);
+                            break;
+                        case 'site':
+                            $sModel = $this->kernel->getContainer()->get('sitemanagement.model');
+                            $response = $sModel->getSite($value, 'id');
+                            if (!$response->error) {
+                                $oldEntity->$set($response->result->set);
+                            } else {
+                                return $this->createException('EntityDoesNotExist', 'Site with id / url_key '.$value.' does not exist in database.', 'E:D:002');
+                            }
+                            unset($response, $sModel);
+                            break;
+                        case 'id':
+                            break;
+                        default:
+                            $oldEntity->$set($value);
+                            break;
+                    }
+                    if ($oldEntity->isModified()) {
+                        $this->em->persist($oldEntity);
+                        $countUpdates++;
+                        $updatedItems[] = $oldEntity;
+                    }
+                }
+            }
+        }
+        if($countUpdates > 0){
+            $this->em->flush();
+            return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, microtime(true));
+        }
+        return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, microtime(true));
+    }
+
+    /**
+     * @param $category
+     * @return ModelResponse
+     */
+    public function updateBlogPostCategory($category){
+        return $this->updateBlogPostCategories(array($category));
+    }
+
+    /**
+     * @param array $collection
+     * @return ModelResponse
+     */
+    public function updateBlogPostCategories(array $collection){
+        $timeStamp = microtime(true);
+        if (!is_array($collection)) {
+            return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+        }
+        $countUpdates = 0;
+        $updatedItems = array();
+        foreach ($collection as $data) {
+            if ($data instanceof BundleEntity\BlogPostCategory) {
+                $entity = $data;
+                $this->em->persist($entity);
+                $updatedItems[] = $entity;
+                $countUpdates++;
+            } else if (is_object($data)) {
+                if(!property_exists($data, 'id') || !is_numeric($data->id)){
+                    return $this->createException('InvalidParameterException', 'Parameter must be an object with the "id" property and id property ‚Äãmust have an integer value.', 'E:S:003');
+                }
+                if (property_exists($data, 'date_added')) {
+                    unset($data->date_added);
+                }
+                $response = $this->getBlogPost($data->id);
+                if ($response->error->exist) {
+                    return $this->createException('EntityDoesNotExist', 'Page with id / code '.$data->id.' does not exist in database.', 'E:D:002');
+                }
+                $oldEntity = $response->result->set;
+                foreach ($data as $column => $value) {
+                    $set = 'set' . $this->translateColumnName($column);
+                    switch ($column) {
+                        case 'local':
+                            $localizations = array();
+                            foreach ($value as $langCode => $translation) {
+                                $localization = $oldEntity->getLocalization($langCode, true);
+                                $newLocalization = false;
+                                if (!$localization) {
+                                    $newLocalization = true;
+                                    $localization = new BundleEntity\BlogPostCategoryLocalization();
+                                    $mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+                                    $response = $mlsModel->getLanguage($langCode);
+                                    $localization->setLanguage($response->result->set);
+                                    $localization->setBlogPostCategory($oldEntity);
+                                }
+                                foreach ($translation as $transCol => $transVal) {
+                                    $transSet = 'set' . $this->translateColumnName($transCol);
+                                    $localization->$transSet($transVal);
+                                }
+                                if ($newLocalization) {
+                                    $this->em->persist($localization);
+                                }
+                                $localizations[] = $localization;
+                            }
+                            $oldEntity->setLocalizations($localizations);
+                            break;
+                        case 'blog':
+                            $response = $this->getBlog($value, 'id');
+                            if (!$response->error) {
+                                $oldEntity->$set($response->result->set);
+                            } else {
+                                return $this->createException('EntityDoesNotExist', 'Blog with id / url_key '.$value.' does not exist in database.', 'E:D:002');
+                            }
+                            unset($response, $sModel);
+                            break;
+                        case 'parent':
+                            $response = $this->getBlogPostCategory($value);
+                            if (!$response->error->exist) {
+                                $oldEntity->$set($response->result->set);
+                            } else {
+                                return $this->createException('EntityDoesNotExist', 'Blog Post Category with id / url_key '.$value.' does not exist in database.', 'E:D:002');
+                            }
+                            unset($response, $sModel);
+                            break;
+                        case 'site':
+                            $sModel = $this->kernel->getContainer()->get('sitemanagement.model');
+                            $response = $sModel->getSite($value);
+                            if (!$response->error->exist) {
+                                $oldEntity->$set($response->result->set);
+                            } else {
+                                return $this->createException('EntityDoesNotExist', 'Site with id / url_key '.$value.' does not exist in database.', 'E:D:002');
+                            }
+                            unset($response, $sModel);
+                            break;
+                        case 'id':
+                            break;
+                        default:
+                            $oldEntity->$set($value);
+                            break;
+                    }
+                    if ($oldEntity->isModified()) {
+                        $this->em->persist($oldEntity);
+                        $countUpdates++;
+                        $updatedItems[] = $oldEntity;
+                    }
+                }
+            }
+        }
+        if($countUpdates > 0){
+            $this->em->flush();
+            return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, microtime(true));
+        }
+        return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, microtime(true));
+    }
+
+    /**
+     * @param $revision
+     * @return ModelResponse
+     */
+    public function updateBlogPostRevision($revision){
+        return $this->updateBlogPostRevisions(array($revision));
+    }
+
+    /**
+     * @param array $collection
+     * @return ModelResponse
+     */
+    public function updateBlogPostRevisions(array $collection) {
+        $timeStamp = microtime(true);
+        /** Parameter must be an array */
+        if (!is_array($collection)) {
+            return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+        }
+        $countUpdates = 0;
+        $updatedItems = array();
+        foreach ($collection as $data) {
+            if ($data instanceof BundleEntity\BlogPostRevision) {
+                $entity = $data;
+                $this->em->persist($entity);
+                $updatedItems[] = $entity;
+                $countUpdates++;
+            }
+            else if (is_object($data)) {
+                if (!property_exists($data, 'date_updated')) {
+                    $data->date_updated = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
+                }
+                if (property_exists($data, 'date_added')) {
+                    unset($data->date_added);
+                }
+                $response = $this->getBlogPostRevision($data->post, $data->language, $data->revision_number);
+                if ($response->error->exist) {
+                    return $this->createException('EntityDoesNotExist', 'BlogPostRevision revision cannot be found in database.', 'E:D:002');
+                }
+                $oldEntity = $response->result->set;
+
+                foreach ($data as $column => $value) {
+                    $set = 'set' . $this->translateColumnName($column);
+                    switch ($column) {
+                        case 'post':
+                            $response = $this->getBlogPost($value);
+                            if (!$response->error->exist) {
+                                $oldEntity->$set($response->result->set);
+                            }
+                            else {
+                                return $this->createException('EntityDoesNotExist', 'Blog post with id / url_key '.$value.' does not exist in database.', 'E:D:002');
+                            }
+                            unset($response);
+                            break;
+                        case 'language':
+                            $lModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+                            $response = $lModel->getLanguage($value, 'id');
+                            if (!$response->error->exist) {
+                                $oldEntity->$set($response->result->set);
+                            }
+                            else {
+                                return $this->createException('EntityDoesNotExist', 'Language with id / url_key / iso_code '.$data->id.' does not exist in database.', 'E:D:002');
+                            }
+                            unset($response, $lModel);
+                            break;
+                        default:
+                            $oldEntity->$set($value);
+                            break;
+                    }
+                    if ($oldEntity->isModified()) {
+                        $this->em->persist($oldEntity);
+                        $countUpdates++;
+                        $updatedItems[] = $oldEntity;
+                    }
+                }
+            }
+        }
+        if($countUpdates > 0){
+            $this->em->flush();
+            return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, microtime(true));
+        }
+        return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, microtime(true));
+    }
+
+    /**
+     * @param $blog
+     * @param $site
+     * @return ModelResponse
+     */
+    public function unPublishPostsOfBlogInSite($blog,$site)
+    {
+
+        $response = $this->listPostsOfBlogInSite($blog, $site);
+        if ($response->error->exist) {
+            return $response;
+        }
+        return $this->unpublishBlogPosts($response->result->set);
     }
 
     /**
@@ -2235,6 +3160,115 @@ class BlogModel extends CoreModel{
         }
         return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
+    /**
+     * @name            updateBlog ()
+     *
+     * @since           1.0.2
+     * @version         1.0.9
+     *
+     * @author          Can Berkol
+     *
+     * @use             $this->updateBlogs()
+     *
+     * @param           mixed $blog
+     *
+     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     */
+    public function updateBlog($blog){
+        return $this->updateBlogs(array($blog));
+    }
+
+    /**
+     * @param array $collection
+     * @return ModelResponse
+     */
+    public function updateBlogs(array $collection){
+        $timeStamp = microtime(true);
+        if (!is_array($collection)) {
+            return $this->createException('InvalidParameterValueException', 'Invalid parameter value. Parameter must be an array collection', 'E:S:001');
+        }
+        $countUpdates = 0;
+        $updatedItems = array();
+        foreach ($collection as $data) {
+            if ($data instanceof BundleEntity\Blog) {
+                $entity = $data;
+                $this->em->persist($entity);
+                $updatedItems[] = $entity;
+                $countUpdates++;
+            }
+            else if (is_object($data)) {
+                if(!property_exists($data, 'id') || !is_numeric($data->id)){
+                    return $this->createException('InvalidParameterException', 'Parameter must be an object with the "id" property and id property ‚Äãmust have an integer value.', 'E:S:003');
+                }
+                if (property_exists($data, 'date_created')) {
+                    unset($data->date_created);
+                }
+                if (!property_exists($data, 'date_updated')) {
+                    $data->date_updated = new \DateTime('now', new \DateTimeZone($this->kernel->getContainer()->getParameter('app_timezone')));
+                }
+                $response = $this->getBlog($data->id);
+                if ($response->error->exist) {
+                    return $response;
+                }
+                $oldEntity = $response->resul>set;
+                foreach ($data as $column => $value) {
+                    $set = 'set' . $this->translateColumnName($column);
+                    switch ($column) {
+                        case 'local':
+                            $localizations = array();
+                            foreach ($value as $langCode => $translation) {
+                                $localization = $oldEntity->getLocalization($langCode, true);
+                                $newLocalization = false;
+                                if (!$localization) {
+                                    $newLocalization = true;
+                                    $localization = new BundleEntity\BlogLocalization();
+                                    $mlsModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+                                    $response = $mlsModel->getLanguage($langCode);
+                                    $localization->setLanguage($response->result->set);
+                                    $localization->setBlog($oldEntity);
+                                }
+                                foreach ($translation as $transCol => $transVal) {
+                                    $transSet = 'set' . $this->translateColumnName($transCol);
+                                    $localization->$transSet($transVal);
+                                }
+                                if ($newLocalization) {
+                                    $this->em->persist($localization);
+                                }
+                                $localizations[] = $localization;
+                            }
+                            $oldEntity->setLocalizations($localizations);
+                            break;
+                        case 'site':
+                            $sModel = $this->kernel->getContainer()->get('sitemanagement.model');
+                            $response = $sModel->getSite($value);
+                            if (!$response->error->exist) {
+                                $oldEntity->$set($response->result->set);
+                            }
+                            else {
+                                return $this->createException('EntityDoesNotExist', 'Site with id / url_key '.$value.' does not exist in database.', 'E:D:002');
+                            }
+                            unset($response, $sModel);
+                            break;
+                        case 'id':
+                            break;
+                        default:
+                            $oldEntity->$set($value);
+                            break;
+                    }
+                    if ($oldEntity->isModified()) {
+                        $this->em->persist($oldEntity);
+                        $countUpdates++;
+                        $updatedItems[] = $oldEntity;
+                    }
+                }
+            }
+        }
+        if($countUpdates > 0){
+            $this->em->flush();
+            return new ModelResponse($updatedItems, $countUpdates, 0, null, false, 'S:D:004', 'Selected entries have been successfully updated within database.', $timeStamp, microtime(true));
+        }
+        return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, microtime(true));
+    }
     
     /**
      * @param array $categories
@@ -2315,6 +3349,7 @@ class BlogModel extends CoreModel{
         }
         return new ModelResponse(null, 0, 0, null, true, 'E:D:004', 'One or more entities cannot be updated within database.', $timeStamp, time());
     }
+
 
     /**
      * @param  mixed $blogPost

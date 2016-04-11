@@ -41,7 +41,7 @@ class CategoriesOfBlogPost extends CoreEntity
 
     /** 
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory")
+     * @ORM\ManyToOne(targetEntity="BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory",cascade = {"persist"})
      * @ORM\JoinColumn(name="category", referencedColumnName="id", nullable=false)
      * @var \BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory
      */
