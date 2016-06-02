@@ -153,11 +153,11 @@ class BlogPostTag extends  CoreEntity
     }
 
     /**
-     * @param \BiberLtd\Bundle\SiteManagementBundle\Site $site
+     * @param \BiberLtd\Bundle\SiteManagementBundle\Entity\Site $site
      *
      * @return $this
      */
-    public function setSite(\BiberLtd\Bundle\SiteManagementBundle\Site $site) {
+    public function setSite(\BiberLtd\Bundle\SiteManagementBundle\Entity\Site $site) {
         if(!$this->setModified('site', $site)->isModified()) {
             return $this;
         }
