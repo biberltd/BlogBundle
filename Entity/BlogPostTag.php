@@ -117,7 +117,7 @@ class BlogPostTag extends  CoreEntity
      *
      * @return $this
      */
-    public function setCountPosts(\int $count_posts) {
+    public function setCountPosts(int $count_posts) {
         if(!$this->setModified('count_posts', $count_posts)->isModified()) {
             return $this;
         }
