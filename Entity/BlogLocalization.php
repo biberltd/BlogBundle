@@ -147,7 +147,7 @@ class BlogLocalization extends CoreEntity
      *
      * @return $this
      */
-    public function setMetaKeywords(\ßtring $metaKeywords) {
+    public function setMetaKeywords(string $metaKeywords) {
         if(!$this->setModified('meta_keywords', $metaKeywords)->isModified()) {
             return $this;
         }
