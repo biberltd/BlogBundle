@@ -92,7 +92,7 @@ class BlogPostLocalization extends CoreEntity
      *
      * @return $this
      */
-    public function setBlogPost0(\BiberLtd\Bundle\BlogBundle\Entity\BlogPost $blog_post) {
+    public function setBlogPost(\BiberLtd\Bundle\BlogBundle\Entity\BlogPost $blog_post) {
         if(!$this->setModified('blog_post', $blog_post)->isModified()) {
             return $this;
         }
