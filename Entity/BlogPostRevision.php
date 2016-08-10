@@ -75,9 +75,10 @@ class BlogPostRevision extends CoreEntity{
      */
 	public $date_removed;
 
-    /**
-     * @ORM\Column(type="integer", length=10, nullable=false)
-     */
+	/**
+	 * @ORM\Id
+	 * @ORM\Column(type="integer", length=10, nullable=false)
+	 */
     private $revision_number;
 
     /**
