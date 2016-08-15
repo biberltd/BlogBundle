@@ -436,3 +436,50 @@ CREATE TABLE `tags_of_blog_post` (
   CONSTRAINT `idxFTaggedBlogPost` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `idxFTagOfBlogPost` FOREIGN KEY (`tag`) REFERENCES `blog_post_tag` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+--  Table structure for `active_blog_post_locale`
+-- ----------------------------
+DROP TABLE IF EXISTS `active_blog_post_locale`;
+CREATE TABLE `active_blog_post_locale` (
+  `blog_post` int(10) unsigned DEFAULT NULL,
+  `language` int(5) unsigned DEFAULT NULL,
+  KEY `blog_post` (`blog_post`),
+  KEY `language` (`language`),
+  CONSTRAINT `idxFActiveBlogPostOfLanguage` FOREIGN KEY (`blog_post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `idxFActiveLanguageOfBlogPost` FOREIGN KEY (`language`) REFERENCES `language` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+--  Table structure for `featured_blog_post_localization`
+-- ----------------------------
+DROP TABLE IF EXISTS `featured_blog_post_localization`;
+CREATE TABLE `featured_blog_post_localization` (
+  `language` int(5) unsigned DEFAULT NULL,
+  `content` text,
+  `post` int(10) unsigned DEFAULT NULL,
+  KEY `language` (`language`),
+  KEY `post` (`post`),
+  CONSTRAINT `idxFLanguageOfFeaturedBlogPostLocalization` FOREIGN KEY (`language`) REFERENCES `language` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `idxFPostOfFeaturedBlogPostLocalization` FOREIGN KEY (`post`) REFERENCES `featured_blog_post` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------
+--  Table structure for `files_of_blog_post`
+-- ----------------------------
+DROP TABLE IF EXISTS `files_of_blog_post`;
+CREATE TABLE `files_of_blog_post` (
+  `post` int(5) unsigned DEFAULT NULL,
+  `file` int(10) unsigned DEFAULT NULL,
+  `date_added` datetime DEFAULT NULL,
+  `sort_order` int(10) DEFAULT NULL,
+  `type` char(1) DEFAULT NULL,
+  `count_view` int(11) DEFAULT NULL,
+  KEY `file` (`file`),
+  KEY `post` (`post`),
+  CONSTRAINT `idxFFileOfFilesOfBlogPost` FOREIGN KEY (`file`) REFERENCES `file` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `idxFPostOfFilesOfBlogPost` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+SET FOREIGN_KEY_CHECKS=1;
