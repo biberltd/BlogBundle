@@ -769,6 +769,12 @@
     <entity name="\BiberLtd\Bundle\BlogBundle\Entity\ActiveBlogPostLocale" local-name="ActiveBlogPostLocale" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Associates languages in which the post will be visible." uuid="3044c8f9-33a6-4aff-98ab-a4989389dde5">
       <field name="blog_post" type="integer" size="10" required="true" primary="true" uuid="8c95e90d-8a0a-4ddd-acf7-9665d2fdcecf"/>
       <field name="language" type="integer" size="5" required="true" primary="true" uuid="2bf39544-1324-460b-ace7-a2f601fe9735"/>
+      <index name="idxNActiveBlogPostLocaleBlogPost">
+        <index-field name="blog_post"/>
+      </index>
+      <index name="idxNActiveBlogPostLocaleLanguage">
+        <index-field name="language"/>
+      </index>
       <orm-attributes>
         <attribute name="export-file-name">ActiveBlogPostLocale.php</attribute>
         <attribute name="table">active_blog_post_locale</attribute>
@@ -778,14 +784,15 @@
         </attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\ActiveBlogPostLocale" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFActiveBlogPostOfLanguage" owner-alias="" inverse-alias="blogPost" many-owner="true" many-inverse="false" parent-required="true" uuid="451f960e-5778-4aee-b2cf-d0073a3c16ec">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\ActiveBlogPostLocale" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFBlogPostOfActiveBlogPostLocale" owner-alias="" inverse-alias="blog_post" many-owner="true" many-inverse="false" parent-required="true" uuid="451f960e-5778-4aee-b2cf-d0073a3c16ec">
       <association-field from="blog_post" to="id"/>
       <orm-attributes>
         <attribute name="side-owning"/>
         <attribute name="side-inverse"/>
+        <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\ActiveBlogPostLocale" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFActiveLanguageOfBlogPost" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="996910a8-f52e-46c6-bef2-cb94b6da89d9">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\ActiveBlogPostLocale" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFLanguageOfActiveBlogPostLocale" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="996910a8-f52e-46c6-bef2-cb94b6da89d9">
       <association-field from="language" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -819,7 +826,9 @@
       <index name="idxNBlogDateUpdated">
         <index-field name="date_updated"/>
       </index>
-      <index name="idxNBlogDateRemoved"/>
+      <index name="idxNBlogDateRemoved">
+        <index-field name="date_removed"/>
+      </index>
       <orm-attributes>
         <attribute name="options">
           <attribute name="charset">utf8</attribute>
@@ -846,11 +855,11 @@
       <field name="description" description="Localized description of blog." type="string" size="255" uuid="049f00b8-a0be-4370-b96d-57f743b1e72c"/>
       <field name="meta_description" description="Localized meta description of blog." type="string" size="255" uuid="bd294a14-68ba-4e0c-8396-3fa2ffe2da8f"/>
       <field name="meta_keywords" description="Localized keywords of blog." type="string" size="155" uuid="0e95e5cc-71f2-4297-aa8b-2ba9458cbb12"/>
-      <index name="idxUBlogLocalization" unique="true">
+      <index name="idxUBlogLocalizationBlogLanguage" unique="true">
         <index-field name="blog"/>
         <index-field name="language"/>
       </index>
-      <index name="idxUBlogUrlKey">
+      <index name="idxUBlogLocalizationLanguageUrlKey" unique="true">
         <index-field name="language"/>
         <index-field name="url_key"/>
       </index>
@@ -864,7 +873,7 @@
         <attribute name="export-file-name">BlogLocalization.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFBlogLocalizationLanguage" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="a263e690-a22d-4910-8b24-76753282e836">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFLanguageOfBlogLocalization" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="a263e690-a22d-4910-8b24-76753282e836">
       <association-field from="language" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -872,7 +881,7 @@
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogLocalization" to="\BiberLtd\Bundle\BlogBundle\Entity\Blog" caption="idxFLocalizedBlog" owner-alias="localizations" inverse-alias="blog" many-owner="true" many-inverse="false" parent-required="true" uuid="3ce7245a-507f-41c8-8012-764b5b34c637">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogLocalization" to="\BiberLtd\Bundle\BlogBundle\Entity\Blog" caption="idxFBlogOfBlogLocalization" owner-alias="" inverse-alias="blog" many-owner="true" many-inverse="false" parent-required="true" uuid="3ce7245a-507f-41c8-8012-764b5b34c637">
       <association-field from="blog" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -903,7 +912,7 @@
         <attribute name="export-file-name">BlogModerator.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogModerator" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idx_f_blog_moderator_moderator" owner-alias="" inverse-alias="member" many-owner="true" many-inverse="false" parent-required="true" uuid="13acdf29-ae74-4ad2-a301-52bd877ef05b">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogModerator" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFMemberOfBlogModerator" owner-alias="" inverse-alias="moderator" many-owner="true" many-inverse="false" parent-required="true" uuid="13acdf29-ae74-4ad2-a301-52bd877ef05b">
       <association-field from="moderator" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -911,14 +920,15 @@
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogModerator" to="\BiberLtd\Bundle\BlogBundle\Entity\Blog" caption="idxFBlogOfModerator" owner-alias="moderators" inverse-alias="blog" many-owner="true" many-inverse="false" parent-required="true" uuid="af763499-aa02-411d-b4f3-ea3adc3879c7">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogModerator" to="\BiberLtd\Bundle\BlogBundle\Entity\Blog" caption="idxFBlogOfBlogModerator" owner-alias="" inverse-alias="blog" description="" many-owner="true" many-inverse="false" parent-required="true" uuid="af763499-aa02-411d-b4f3-ea3adc3879c7">
       <association-field from="blog" to="id"/>
       <orm-attributes>
         <attribute name="side-owning"/>
         <attribute name="side-inverse"/>
+        <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogModerator" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory" caption="idxFBlogPostCategoryToModerate" owner-alias="moderators" inverse-alias="category" many-owner="true" many-inverse="false" parent-required="true" uuid="ffd383c2-e9de-458f-8324-3d04a22696cf">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogModerator" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory" caption="idxFCategoryOfBlogModerator" owner-alias="" inverse-alias="category" many-owner="true" many-inverse="false" parent-required="true" uuid="ffd383c2-e9de-458f-8324-3d04a22696cf">
       <association-field from="category" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1013,7 +1023,7 @@
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\Blog" caption="idxFBlogOfBlogPost" owner-alias="posts" inverse-alias="blog" many-owner="true" many-inverse="false" parent-required="true" uuid="3207bf25-161b-495c-823b-e56fd0643399">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\Blog" caption="idxFBlogOfBlogPost" owner-alias="" inverse-alias="blog" many-owner="true" many-inverse="false" parent-required="true" uuid="3207bf25-161b-495c-823b-e56fd0643399">
       <association-field from="blog" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1053,10 +1063,10 @@
         </orm-attributes>
       </field>
       <field name="date_added" description="Date when the action is occured." type="datetime" required="true" uuid="8a9b8f38-fb77-4f38-a124-51cf64754673"/>
-      <index name="idxUBlogPostActionID">
+      <index name="idxUIdOfBlogPostAction">
         <index-field name="id"/>
       </index>
-      <index name="idxNBlogPostActionDateAdded">
+      <index name="idxNDateAddedOfBlogPostAction">
         <index-field name="date_added"/>
       </index>
       <orm-attributes>
@@ -1069,7 +1079,7 @@
         <attribute name="export-file-name">BlogPostAction.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostAction" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFBlogPostOfAction" owner-alias="actions" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="e12a81e2-734f-4e3f-b3a5-496cc581af51">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostAction" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFPostOfBlogPostOfAction" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="e12a81e2-734f-4e3f-b3a5-496cc581af51">
       <association-field from="post" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1077,7 +1087,7 @@
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostAction" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFOwnerOfBlogPostAction" owner-alias="" inverse-alias="member" many-owner="true" many-inverse="false" parent-required="true" uuid="26f58696-02d0-4c67-9a61-cfd78d4e18ec">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostAction" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFMemberOfBlogPostAction" owner-alias="" inverse-alias="member" many-owner="true" many-inverse="false" parent-required="true" uuid="26f58696-02d0-4c67-9a61-cfd78d4e18ec">
       <association-field from="member" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1099,16 +1109,16 @@
       <field name="site" description="Site that blog post category belongs to." type="integer" size="10" uuid="6cb5bb58-b9d9-4bec-8e9c-0aaadbb1fb38"/>
       <field name="date_updated" description="Date when the entry is last updated." type="datetime" required="true" uuid="f97a4c9a-df8e-4622-8e64-4b1f6ff8079f"/>
       <field name="date_removed" description="Date when the entry is last removed." type="datetime" uuid="2dc946b5-943e-487c-9711-495190c9e953"/>
-      <index name="idxUBlogPostCategoryId" unique="true">
+      <index name="idxUIdOfBlogPostCategory" unique="true">
         <index-field name="id"/>
       </index>
-      <index name="idxNBlogPostCategoryDateAdded">
+      <index name="idxNDateAddedOfBlogPostCategory">
         <index-field name="date_added"/>
       </index>
-      <index name="idxNBlogPostCategoryDateUpdated">
+      <index name="idxNDateUpdatedOfBlogPostCategory">
         <index-field name="date_updated"/>
       </index>
-      <index name="idxNBlogPostCategoryDateRemoved">
+      <index name="idxNDateRemovedOfBlogPostCategory">
         <index-field name="date_removed"/>
       </index>
       <orm-attributes>
@@ -1137,7 +1147,7 @@
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory" caption="idxFParentOfBlogPostCategory" owner-alias="children" inverse-alias="parents" many-owner="true" many-inverse="false" parent-required="true" uuid="39b83ac5-5c1b-4e05-8a3d-4c2789956f07">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory" caption="idxFParentOfBlogPostCategory" owner-alias="" inverse-alias="parents" many-owner="true" many-inverse="false" parent-required="true" uuid="39b83ac5-5c1b-4e05-8a3d-4c2789956f07">
       <association-field from="parent" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1153,11 +1163,11 @@
       <field name="description" description="Localization description." type="string" size="255" uuid="f328160d-06b0-47a0-8c2e-b7f177565160"/>
       <field name="meta_keywords" description="Meta keywords. Comma seperated." type="text" uuid="625f0f56-9106-48aa-b1ff-9b4b6e2f6d2c"/>
       <field name="meta_description" description="Meta description." type="text" uuid="56f7fb31-6b11-44fc-9805-2ab33b3e9820"/>
-      <index name="idxUBlogPostLocalization" unique="true">
+      <index name="idxULanguageOfBlogPostCategoryLocalization" unique="true">
         <index-field name="language"/>
         <index-field name="post_category"/>
       </index>
-      <index name="idxUBlogPostUrlKey" unique="true">
+      <index name="idxUUrlKeyOfBlogPostCategoryLocalization" unique="true">
         <index-field name="language"/>
         <index-field name="url_key"/>
         <index-field name="post_category"/>
@@ -1172,7 +1182,7 @@
         <attribute name="export-file-name">BlogPostCategoryLocalization.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategoryLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFBlogPostCategoryLocalizationLanguage" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="25f9e3da-4b68-4712-9643-34d5b86aee96">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategoryLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFLanguageOfBlogPostCategoryLocalization" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="25f9e3da-4b68-4712-9643-34d5b86aee96">
       <association-field from="language" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1180,7 +1190,7 @@
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategoryLocalization" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory" caption="idxFLocalizedBlogPostCategory" owner-alias="localizations" inverse-alias="post_category" many-owner="true" many-inverse="false" parent-required="true" uuid="c2c8c7de-1ec3-4525-a56d-d51fcc7005ec">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategoryLocalization" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory" caption="idxFPostCategoryOfBlogPostCategoryLocalization" owner-alias="" inverse-alias="post_category" many-owner="true" many-inverse="false" parent-required="true" uuid="c2c8c7de-1ec3-4525-a56d-d51fcc7005ec">
       <association-field from="post_category" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1224,7 +1234,7 @@
       </field>
       <field name="site" description="Site that blog post comment belongs to." type="integer" size="10" uuid="dcd4abb2-6e68-411f-a2fb-c8f09a8c5892"/>
       <field name="post" type="integer" size="10" uuid="a71a6832-98d1-4b14-84bd-2232ad5e0556"/>
-      <index name="idxUBlogPostCommentId" unique="true">
+      <index name="idxUIdOfBlogPostComment" unique="true">
         <index-field name="id"/>
       </index>
       <orm-attributes>
@@ -1237,7 +1247,7 @@
         <attribute name="export-file-name">BlogPostComment.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxSiteOfBlogPostComment" owner-alias="" inverse-alias="site" many-owner="true" many-inverse="false" uuid="921b62e8-bc57-4e52-9003-5da8643f9d96">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxFSiteOfBlogPostComment" owner-alias="" inverse-alias="site" many-owner="true" many-inverse="false" uuid="921b62e8-bc57-4e52-9003-5da8643f9d96">
       <association-field from="site" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1245,22 +1255,22 @@
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxAuthorOfBlogPostComment" owner-alias="" inverse-alias="author" many-owner="true" many-inverse="false" uuid="2c2dd436-3289-4060-9538-3c902237a755">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFAuthorOfBlogPostComment" owner-alias="" inverse-alias="author" many-owner="true" many-inverse="false" uuid="2c2dd436-3289-4060-9538-3c902237a755">
       <association-field from="author" to="id"/>
       <orm-attributes>
-        <attribute name="on-delete">SET NULL</attribute>
+        <attribute name="on-delete">CASCADE</attribute>
         <attribute name="side-owning"/>
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" caption="idxFParentBlogPostComment" owner-alias="parent" inverse-alias="comment" many-owner="false" many-inverse="false" parent-required="true" uuid="cbefcaa0-97cc-4c66-b65b-5d99804927f8">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" caption="idxFParentOfBlogPostComment" owner-alias="" inverse-alias="parent" description="" many-owner="false" many-inverse="false" parent-required="true" uuid="cbefcaa0-97cc-4c66-b65b-5d99804927f8">
       <association-field from="parent" to="id"/>
       <orm-attributes>
         <attribute name="side-owning"/>
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFPostOfComment" inverse-alias="post" many-owner="true" many-inverse="false" uuid="b8693121-34cd-4cee-98d0-194b0383c1f4">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFPostOfBlogPostComment" inverse-alias="post" many-owner="true" many-inverse="false" uuid="b8693121-34cd-4cee-98d0-194b0383c1f4">
       <association-field from="post" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1283,15 +1293,15 @@
         </orm-attributes>
       </field>
       <field name="date_added" description="Date when the action has been added." type="datetime" required="true" uuid="f8d501b1-fd23-46e8-a290-9bbcbf132e32"/>
-      <index name="idxUBlogPostCommentActionId" unique="true">
+      <index name="idxUIdOfBlogPostCommentAction" unique="true">
         <index-field name="id"/>
       </index>
-      <index name="idxUBlogPostCommentAction" unique="true">
+      <index name="idxUPostOfBlogPostCommentAction" unique="true">
         <index-field name="comment"/>
         <index-field name="member"/>
         <index-field name="post"/>
       </index>
-      <index name="idxNBlogPostCommentActionDateAdded">
+      <index name="idxNDateAddedOfBlogPostCommentAction">
         <index-field name="date_added"/>
       </index>
       <orm-attributes>
@@ -1304,7 +1314,7 @@
         <attribute name="export-file-name">BlogPostCommentAction.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCommentAction" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFOwnerOfBlogPostCommentAction" owner-alias="" inverse-alias="member" many-owner="true" many-inverse="false" parent-required="true" uuid="826be9b9-4fd5-4da9-a8e6-62810155668c">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCommentAction" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFMemberOfBlogPostCommentAction" owner-alias="" inverse-alias="member" many-owner="true" many-inverse="false" parent-required="true" uuid="826be9b9-4fd5-4da9-a8e6-62810155668c">
       <association-field from="member" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1312,7 +1322,7 @@
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCommentAction" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" caption="idxFActedCommentOfBlogPost" owner-alias="" inverse-alias="blog_post_comment" many-owner="true" many-inverse="false" parent-required="true" uuid="9c54d716-ed9a-48ab-9cd0-f38d14f7150e">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCommentAction" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostComment" caption="idxFCommentOBlogPostCommentAction" owner-alias="" inverse-alias="comment" many-owner="true" many-inverse="false" parent-required="true" uuid="9c54d716-ed9a-48ab-9cd0-f38d14f7150e">
       <association-field from="comment" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1320,7 +1330,7 @@
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCommentAction" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFBlogPostOfActedComment" owner-alias="" inverse-alias="blog_post" many-owner="true" many-inverse="false" parent-required="true" uuid="13157d1d-3576-422b-8abb-7d6ac40e1ade">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCommentAction" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFPostOfBlogPostCommentAction" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="13157d1d-3576-422b-8abb-7d6ac40e1ade">
       <association-field from="post" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1338,11 +1348,11 @@
       <field name="meta_keywords" description="Localized meta keywords of blog posts." type="string" size="255" uuid="f670b061-f602-4f4a-a31e-53c4c55b01e9"/>
       <field name="content" description="Blog post content - usually a json encoded string." type="text" uuid="56f3df3b-2cb1-4ef4-8ba7-8b109f0ee8f3"/>
       <field name="meta_title" description="Meta title of blog post." type="string" size="155" uuid="ed39ca7c-8969-4aca-90b5-9d4499b85b4c"/>
-      <index name="idxUBlogPostLocalization" unique="true">
+      <index name="idxULanguageOfBlogPostLocalization" unique="true">
         <index-field name="post"/>
         <index-field name="language"/>
       </index>
-      <index name="idxUBlogPostUrlKey" unique="true">
+      <index name="idxUUrlKeyOfBlogPostLocalization" unique="true">
         <index-field name="language"/>
         <index-field name="url_key"/>
       </index>
@@ -1356,7 +1366,7 @@
         <attribute name="export-file-name">BlogPostLocalization.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostLocalization" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFLocalizedBlogPost" owner-alias="localizations" inverse-alias="blog_post" many-owner="true" many-inverse="false" parent-required="true" uuid="432c0176-0a29-4845-87ee-88070753d665">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostLocalization" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFPostOfBlogPostLocalization" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="432c0176-0a29-4845-87ee-88070753d665">
       <association-field from="post" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1372,7 +1382,7 @@
         </attribute>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFBlogPostLocalizationLanguage" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="840e2a15-aa53-476a-9c39-9820b3b18031">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFLanguageOfBlogPostLocalization" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="840e2a15-aa53-476a-9c39-9820b3b18031">
       <association-field from="language" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1398,13 +1408,13 @@
       </field>
       <field name="date_reviewed" description="Date of first review." type="datetime" uuid="dafc60d2-2e22-4674-9e45-459bf0f3134d"/>
       <field name="date_updated" description="Date when the review is updated." type="datetime" uuid="b458fddf-1f86-482c-b3a8-6b31dc141110"/>
-      <index name="idxUBlogPostModerationId" unique="true">
+      <index name="idxUIdOfBlogPostModeration" unique="true">
         <index-field name="id"/>
       </index>
-      <index name="idxNBlogPostModerationDateReviewed">
+      <index name="idxNDateReviewedOfBlogPostModeration">
         <index-field name="date_reviewed"/>
       </index>
-      <index name="idxNBlogPostModerationDateUpdated">
+      <index name="idxNDateUpdatedOfBlogPostModeration">
         <index-field name="date_updated"/>
       </index>
       <orm-attributes>
@@ -1417,15 +1427,15 @@
         <attribute name="export-file-name">BlogPostModeration.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostModeration" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFModeratorOfBlogPost" owner-alias="" inverse-alias="moderator" many-owner="true" many-inverse="false" parent-required="true" uuid="302e9a0d-c92f-47d9-bae9-4e4b20c56c65">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostModeration" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFModeratorOfBlogPostModeration" owner-alias="" inverse-alias="moderator" many-owner="true" many-inverse="false" parent-required="true" uuid="302e9a0d-c92f-47d9-bae9-4e4b20c56c65">
       <association-field from="moderator" to="id"/>
       <orm-attributes>
-        <attribute name="on-delete">RESTRICT</attribute>
+        <attribute name="on-delete">CASCADE</attribute>
         <attribute name="side-owning"/>
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostModeration" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFModeratedBlogPost" owner-alias="moderations" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="fbc3082b-9294-4f73-82ca-1e446236f969">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostModeration" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFPostOfBlogPostModeration" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="fbc3082b-9294-4f73-82ca-1e446236f969">
       <association-field from="post" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1455,10 +1465,10 @@
           <attribute name="options"/>
         </orm-attributes>
       </field>
-      <index name="idxUBlogPostModerationReplyId" unique="true">
+      <index name="idxUIdOfBlogPostModerationReply" unique="true">
         <index-field name="id"/>
       </index>
-      <index name="idxNBlogPostModerationDateReplied">
+      <index name="idxNDateRepliedOfBlogPostModerationReply">
         <index-field name="date_replied"/>
       </index>
       <orm-attributes>
@@ -1471,14 +1481,15 @@
         <attribute name="table">blog_post_moderation_reply</attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostModerationReply" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostModeration" caption="idxFModerationOfBlogPostReply" owner-alias="replies" inverse-alias="moderation" many-owner="true" many-inverse="false" parent-required="true" uuid="ae6b2362-f162-4445-9648-30c5d7d44c30">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostModerationReply" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostModeration" caption="idxFModerationOfBlogPostModerationReply" owner-alias="" inverse-alias="moderation" many-owner="true" many-inverse="false" parent-required="true" uuid="ae6b2362-f162-4445-9648-30c5d7d44c30">
       <association-field from="moderation" to="id"/>
       <orm-attributes>
         <attribute name="side-owning"/>
         <attribute name="side-inverse"/>
+        <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostModerationReply" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFMemberOfBlogPostReply" owner-alias="" inverse-alias="member" many-owner="true" many-inverse="false" parent-required="true" uuid="88830c55-2904-48c0-b947-e6d84eb6532a">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostModerationReply" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFAuthorOfBlogPostModerationReply" owner-alias="" inverse-alias="author" many-owner="true" many-inverse="false" parent-required="true" uuid="88830c55-2904-48c0-b947-e6d84eb6532a">
       <association-field from="author" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1505,7 +1516,7 @@
           <attribute name="options"/>
         </orm-attributes>
       </field>
-      <index name="idxUBlogPostRevision" unique="true">
+      <index name="idxULanguageOfBlogPostRevision" unique="true">
         <index-field name="language"/>
         <index-field name="post"/>
       </index>
@@ -1519,7 +1530,7 @@
         </attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostRevision" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFLanguageOfBlogPostReview" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="cd1318f1-243b-4985-833d-9f24f4279801">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostRevision" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFLanguageOfBlogPostRevision" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="cd1318f1-243b-4985-833d-9f24f4279801">
       <association-field from="language" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1527,7 +1538,7 @@
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostRevision" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFBlogPostOfRevision" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="03f34d17-af6d-4c06-994b-e4fa33b45051">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostRevision" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFPostOfBlogPostRevision" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="03f34d17-af6d-4c06-994b-e4fa33b45051">
       <association-field from="post" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1554,16 +1565,16 @@
       <field name="site" description="Site that this tag belongs to." type="integer" size="10" uuid="cc05006d-6e0e-4390-b57c-2dbebac04da2"/>
       <field name="date_updated" description="Date when the entry is updated." type="datetime" required="true" uuid="26be20d0-281e-4902-a054-3fc83c153c0b"/>
       <field name="date_removed" description="Date when the entry is marked as removed." type="datetime" uuid="96d36947-4323-4118-a75f-1c243f618422"/>
-      <index name="idxUBlogPostTagId" unique="true">
+      <index name="idxUIdOfBlogPostTag" unique="true">
         <index-field name="id"/>
       </index>
-      <index name="idxNBlogPostTagAdded">
+      <index name="idxNDateAddedOfBlogPostTag">
         <index-field name="date_added"/>
       </index>
-      <index name="idxNBlogPostTagUpdated">
+      <index name="idxNDateUpdatedOfBlogPostTag">
         <index-field name="date_updated"/>
       </index>
-      <index name="idxNBlogPostTagRemoved">
+      <index name="idxNDateRemovedOfBlogPostTag">
         <index-field name="date_removed"/>
       </index>
       <orm-attributes>
@@ -1576,7 +1587,7 @@
         <attribute name="export-file-name">BlogPostTag.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxSiteOfBlogPostTag" owner-alias="" inverse-alias="site" many-owner="true" many-inverse="false" uuid="b9515313-83a8-41cd-8b13-4e1cf6280dec">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag" to="\BiberLtd\Bundle\SiteManagementBundle\Entity\Site" caption="idxFSiteOfBlogPostTag" owner-alias="" inverse-alias="site" description="" many-owner="true" many-inverse="false" uuid="b9515313-83a8-41cd-8b13-4e1cf6280dec">
       <association-field from="site" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1584,7 +1595,7 @@
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag" to="\BiberLtd\Bundle\BlogBundle\Entity\Blog" caption="idxFBlogOfTag" owner-alias="" inverse-alias="blog" many-owner="true" many-inverse="false" parent-required="true" uuid="d3102fab-427e-46ae-9876-5e71e8807c77">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag" to="\BiberLtd\Bundle\BlogBundle\Entity\Blog" caption="idxFBlogOfBlogPostTag" owner-alias="" inverse-alias="blog" many-owner="true" many-inverse="false" parent-required="true" uuid="d3102fab-427e-46ae-9876-5e71e8807c77">
       <association-field from="blog" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1592,7 +1603,7 @@
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFMemberOfBlogPost" owner-alias="" inverse-alias="member" many-owner="true" many-inverse="false" parent-required="true" uuid="3873a818-fd4b-4b92-8ce6-2964e6e8b44a">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFMemberOfBlogPostTag" owner-alias="" inverse-alias="member" many-owner="true" many-inverse="false" parent-required="true" uuid="3873a818-fd4b-4b92-8ce6-2964e6e8b44a">
       <association-field from="member" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1605,11 +1616,11 @@
       <field name="language" description="Localization language." type="integer" size="5" required="true" unique="true" primary="true" uuid="334b0faa-83bd-485d-8e26-2f402ddedde5"/>
       <field name="name" description="Localized tag name." type="string" size="155" required="true" uuid="924a4ebb-7091-4d18-a35b-28b406116709"/>
       <field name="url_key" description="Localized url key of tag." type="string" size="255" required="true" uuid="f3560ad5-2746-48b2-9986-4548603b5390"/>
-      <index name="idxUBlogPostTagLocalization" unique="true">
+      <index name="idxUTagOfBlogPostTagLocalization" unique="true">
         <index-field name="tag"/>
         <index-field name="language"/>
       </index>
-      <index name="idxUBlogPostTagUrlKey" unique="true">
+      <index name="idxUUrlKeyOfBlogPostTagLocalization" unique="true">
         <index-field name="language"/>
         <index-field name="url_key"/>
       </index>
@@ -1623,7 +1634,7 @@
         <attribute name="export-file-name">BlogPostTagLocalization.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTagLocalization" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag" caption="idxFLocalizedBlogPostTag" owner-alias="localizations" inverse-alias="tag" many-owner="true" many-inverse="false" parent-required="true" uuid="0aff81ea-4e3f-4bfd-bdf3-74245dfd259c">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTagLocalization" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag" caption="idxFTagOfBlogPostTagLocalization" owner-alias="" inverse-alias="tag" many-owner="true" many-inverse="false" parent-required="true" uuid="0aff81ea-4e3f-4bfd-bdf3-74245dfd259c">
       <association-field from="tag" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1631,7 +1642,7 @@
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTagLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFBlogPostTagLocalizationLanguage" owner-alias="" inverse-alias="language" many-owner="false" many-inverse="false" parent-required="true" uuid="796757ac-35eb-4155-bc3e-659b2d78666a">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTagLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFLanguageOfBlogPostTagLocalization" owner-alias="" inverse-alias="language" many-owner="false" many-inverse="false" parent-required="true" uuid="796757ac-35eb-4155-bc3e-659b2d78666a">
       <association-field from="language" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1649,11 +1660,11 @@
         </orm-attributes>
       </field>
       <field name="sort_order" description="Custom sort order." type="integer" default="1" required="true" unsigned="true" uuid="7435b7d0-e9da-4a3e-a7ff-4ee03d5a40fd"/>
-      <index name="idxUCategoriesOfBlogPost" unique="true">
+      <index name="idxUCategoryOfCategoriesOfBlogPost" unique="true">
         <index-field name="post"/>
         <index-field name="category"/>
       </index>
-      <index name="idxNCategoriesOfBlogPostDateAdded">
+      <index name="idxNDateAddedOfCategoriesOfBlogPost">
         <index-field name="date_added"/>
       </index>
       <orm-attributes>
@@ -1666,29 +1677,31 @@
         <attribute name="export-file-name">CategoriesOfBlogPost.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\CategoriesOfBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFBlogPostOfCategory" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="a044b579-9e18-4849-9740-dccb505935d9">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\CategoriesOfBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFPostOfCategoriesOfBlogPost" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="a044b579-9e18-4849-9740-dccb505935d9">
       <association-field from="post" to="id"/>
       <orm-attributes>
         <attribute name="side-owning"/>
         <attribute name="side-inverse"/>
+        <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\CategoriesOfBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory" caption="idxFCategoryOfBlogPost" owner-alias="" inverse-alias="category" many-owner="true" many-inverse="false" parent-required="true" uuid="1a2118bf-3f11-4495-8ac8-39eada533ab8">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\CategoriesOfBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostCategory" caption="idxFCategoryOfCategoriesOfBlogPost" owner-alias="" inverse-alias="category" many-owner="true" many-inverse="false" parent-required="true" uuid="1a2118bf-3f11-4495-8ac8-39eada533ab8">
       <association-field from="category" to="id"/>
       <orm-attributes>
         <attribute name="side-owning"/>
         <attribute name="side-inverse"/>
+        <attribute name="on-delete">CASCADE</attribute>
       </orm-attributes>
     </association>
     <entity name="\BiberLtd\Bundle\BlogBundle\Entity\FavoriteBlogPostsOfMember" local-name="FavoriteBlogPostsOfMember" namespace="\BiberLtd\Bundle\BlogBundle\Entity" description="Keeps track of each user's favorite blog posts.&#10;&#10;Requires: MemberManagementBundle-" uuid="019e4713-ec7b-4600-b59d-3b7984060e19">
       <field name="member" description="Associated member." type="integer" size="10" required="true" primary="true" uuid="8652aa06-8f8b-43f0-b9fb-78f712297041"/>
       <field name="post" description="Associated blog post." type="integer" size="10" required="true" primary="true" uuid="36d1f295-ac12-42b7-b5c3-122ef072be38"/>
       <field name="date_added" description="Date when the member favorited the blog post." type="datetime" required="true" uuid="3c506365-2724-4232-a6cf-aeea15b29547"/>
-      <index name="idxUFavoriteBlogPostOfMember" unique="true">
+      <index name="idxUMemberPostOfFavoriteBlogPostOfMember" unique="true">
         <index-field name="member"/>
         <index-field name="post"/>
       </index>
-      <index name="idxNFavoriteBlogPostOfMemberDateAdded">
+      <index name="idxNDateAddedOfFavoriteBlogPostOfMember">
         <index-field name="date_added"/>
       </index>
       <orm-attributes>
@@ -1701,7 +1714,7 @@
         <attribute name="export-file-name">FavoriteBlogPostsOfMember.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\FavoriteBlogPostsOfMember" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFOwnerOfFavoriteBlogPost" owner-alias="" inverse-alias="member" many-owner="true" many-inverse="false" parent-required="true" uuid="eda725ac-394a-4fce-9662-066e59803f03">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\FavoriteBlogPostsOfMember" to="\BiberLtd\Bundle\MemberManagementBundle\Entity\Member" caption="idxFMemberOfFavoriteBlogPostOfMember" owner-alias="" inverse-alias="member" many-owner="true" many-inverse="false" parent-required="true" uuid="eda725ac-394a-4fce-9662-066e59803f03">
       <association-field from="member" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1709,7 +1722,7 @@
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\FavoriteBlogPostsOfMember" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFFavoritedBlogPost" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="058a6e13-e0ea-4b66-b1f8-6a7498fdf188">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\FavoriteBlogPostsOfMember" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFPostOfFavoriteBlogPostOfMember" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="058a6e13-e0ea-4b66-b1f8-6a7498fdf188">
       <association-field from="post" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1736,22 +1749,22 @@
       </field>
       <field name="date_updated" description="Date when the entry is last updated." type="datetime" required="true" uuid="39365c24-b69d-4a1a-ad55-8b11c48c9830"/>
       <field name="date_removed" description="Date when the entry is marked as removed." type="datetime" uuid="0b25eede-2e60-4ed9-8163-e4727c90036b"/>
-      <index name="idxUFeaturedBlogPostId" unique="true">
+      <index name="idxUIdOfFeaturedBlogPost" unique="true">
         <index-field name="id"/>
       </index>
-      <index name="idxNFeaturedBlogPostDateAdded">
+      <index name="idxNDateAddedOfFeaturedBlogPost">
         <index-field name="date_added"/>
       </index>
-      <index name="idxNFeaturedBlogPostDatePublished">
+      <index name="idxNDatePublishedOfFeaturedBlogPost">
         <index-field name="date_published"/>
       </index>
-      <index name="idxNFeaturedBlogPostDateUnpublished">
+      <index name="idxNDateUnpublishedOfFeaturedBlogPost">
         <index-field name="date_unpublished"/>
       </index>
-      <index name="idxNFeaturedBlogPostDateUpdated">
+      <index name="idxNDateUpdatedOfFeaturedBlogPost">
         <index-field name="date_updated"/>
       </index>
-      <index name="idxNFeaturedBlogPostDateRemoved">
+      <index name="idxNDateRemovedOfFeaturedBlogPost">
         <index-field name="date_removed"/>
       </index>
       <orm-attributes>
@@ -1764,7 +1777,7 @@
         <attribute name="export-file-name">FeaturedBlogPost.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFFeaturedBlogPost" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="b50044e5-d3bc-411c-a1d2-cb4db4473f37">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFPostOfFeaturedBlogPost" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="b50044e5-d3bc-411c-a1d2-cb4db4473f37">
       <association-field from="post" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1776,11 +1789,11 @@
       <field name="post" description="Original post." type="integer" size="10" required="true" primary="true" uuid="ee60ce88-2815-4773-bd7c-722b26440d97"/>
       <field name="related_post" description="Related post." type="integer" size="10" required="true" primary="true" uuid="7af22b3c-aabb-4fa3-a0e9-424c1fa68476"/>
       <field name="date_added" description="Date when the post is related." type="datetime" required="true" uuid="ea3c7023-dbcf-41ca-966c-0571542aa407"/>
-      <index name="idxURelatedBlogPost" unique="true">
+      <index name="idxUPostOfRelatedBlogPost" unique="true">
         <index-field name="post"/>
         <index-field name="related_post"/>
       </index>
-      <index name="idxNRelatedBlogPostDateAdded">
+      <index name="idxNDateAddedOfRelatedBlogPost">
         <index-field name="date_added"/>
       </index>
       <orm-attributes>
@@ -1793,7 +1806,7 @@
         <attribute name="export-file-name">RelatedBlogPost.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\RelatedBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFOwnerPost" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="6c4617fa-12a1-48da-acc8-0b7de14c8422">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\RelatedBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFPostOfRelatedBlogPost" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="6c4617fa-12a1-48da-acc8-0b7de14c8422">
       <association-field from="post" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1801,7 +1814,7 @@
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\RelatedBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFRelatedPost" owner-alias="" inverse-alias="related_post" many-owner="true" many-inverse="false" parent-required="true" uuid="345f47c9-df4b-4b41-8793-4003eda7b64a">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\RelatedBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFRelatedPostOfRelatedBlogPost" owner-alias="" inverse-alias="related_post" many-owner="true" many-inverse="false" parent-required="true" uuid="345f47c9-df4b-4b41-8793-4003eda7b64a">
       <association-field from="related_post" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1813,11 +1826,11 @@
       <field name="post" description="Associated post." type="integer" size="10" required="true" primary="true" uuid="17a8f648-7744-4ead-b011-9b75d12fe7d8"/>
       <field name="tag" description="Associated tag." type="integer" size="10" required="true" primary="true" uuid="ad17a0b7-3135-46ca-8734-29b193979f6e"/>
       <field name="date_added" description="Date when the tag has been added to the post." type="datetime" required="true" uuid="77672de2-fd7e-4992-bda8-338e04f18f55"/>
-      <index name="idxUTagsOfBlogPost" unique="true">
+      <index name="idxUPostOfTagsOfBlogPost" unique="true">
         <index-field name="post"/>
         <index-field name="tag"/>
       </index>
-      <index name="idxNTagsOfBlogPostDateAdded">
+      <index name="idxNDateAddedOfTagsOfBlogPost">
         <index-field name="date_added"/>
       </index>
       <orm-attributes>
@@ -1830,7 +1843,7 @@
         <attribute name="export-file-name">TagsOfBlogPost.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\TagsOfBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag" caption="idxFTagOfBlogPost" owner-alias="" inverse-alias="tag" many-owner="true" many-inverse="false" parent-required="true" uuid="43ab0ad0-b8c1-4f39-9865-9ae73771951f">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\TagsOfBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPostTag" caption="idxFTagOfTagsOfBlogPost" owner-alias="" inverse-alias="tag" many-owner="true" many-inverse="false" parent-required="true" uuid="43ab0ad0-b8c1-4f39-9865-9ae73771951f">
       <association-field from="tag" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1838,7 +1851,7 @@
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\TagsOfBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFTaggedBlogPost" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="eef48b82-733d-498b-acef-09421c9f4a1d">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\TagsOfBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFPostOfTagsOfBlogPost" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="eef48b82-733d-498b-acef-09421c9f4a1d">
       <association-field from="post" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1847,10 +1860,10 @@
       </orm-attributes>
     </association>
     <entity name="\BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPostLocalization" local-name="FeaturedBlogPostLocalization" namespace="\BiberLtd\Bundle\BlogBundle\Entity" uuid="da681bce-bf94-4ba9-8453-773d07e7782e">
-      <field name="language" required="true" primary="true" uuid="1dc3dbe1-98ed-4464-8993-ae97f791af24"/>
+      <field name="language" type="integer" size="5" required="true" primary="true" uuid="1dc3dbe1-98ed-4464-8993-ae97f791af24"/>
       <field name="content" type="text" required="true" uuid="317b519b-8294-408d-8b27-5675c26f9d7a"/>
-      <field name="post" required="true" uuid="36164450-c29b-4970-a0ec-51428af5eae4"/>
-      <index name="idx_u_featured_blog_post_localization" unique="true">
+      <field name="post" type="integer" size="10" required="true" uuid="36164450-c29b-4970-a0ec-51428af5eae4"/>
+      <index name="idxULanguageOfFeaturedBlogPostLocalization" unique="true">
         <index-field name="language"/>
       </index>
       <orm-attributes>
@@ -1863,7 +1876,7 @@
         </attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPostLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" owner-alias="" inverse-alias="language" many-owner="true" many-inverse="false" parent-required="true" uuid="6fe18d53-d398-450d-baf9-8001624e2eb2">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPostLocalization" to="\BiberLtd\Bundle\MultiLanguageSupportBundle\Entity\Language" caption="idxFLanguageOfFeaturedBlogPostLocalization" owner-alias="" inverse-alias="language" description="" many-owner="true" many-inverse="false" parent-required="true" uuid="6fe18d53-d398-450d-baf9-8001624e2eb2">
       <association-field from="language" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1871,7 +1884,7 @@
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPostLocalization" to="\BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPost" owner-alias="" inverse-alias="featured_blog_post" many-owner="true" many-inverse="false" parent-required="true" uuid="5102b31f-0132-4a6a-8d4b-527d68c2d2c1">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPostLocalization" to="\BiberLtd\Bundle\BlogBundle\Entity\FeaturedBlogPost" caption="idxFPostOfFeaturedBlogPostLocalization" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="5102b31f-0132-4a6a-8d4b-527d68c2d2c1">
       <association-field from="post" to="id"/>
       <orm-attributes>
         <attribute name="on-delete">CASCADE</attribute>
@@ -1880,32 +1893,35 @@
       </orm-attributes>
     </association>
     <entity name="\BiberLtd\Bundle\BlogBundle\Entity\FilesOfBlogPost" local-name="FilesOfBlogPost" namespace="\BiberLtd\Bundle\BlogBundle\Entity" uuid="37b9b75d-0543-4934-b984-79567684d865">
-      <field name="post" required="true" primary="true" uuid="b438fedf-c5eb-4eb5-ac5e-6e22b6616742"/>
-      <field name="file" required="true" primary="true" uuid="c41a4d7b-7f10-4192-8c20-9bebe68309a5"/>
+      <field name="post" type="integer" size="5" required="true" primary="true" uuid="b438fedf-c5eb-4eb5-ac5e-6e22b6616742"/>
+      <field name="file" type="integer" size="10" required="true" primary="true" uuid="c41a4d7b-7f10-4192-8c20-9bebe68309a5"/>
       <field name="date_added" type="datetime" required="true" uuid="b64e4d73-9228-45bb-abb5-931d8ac4154d"/>
       <field name="sort_order" type="integer" size="10" required="true" uuid="9056c7c9-a3c1-4152-bddd-e59d5d62efc3"/>
       <field name="type" type="string" size="1" required="true" uuid="247cf36d-df78-449d-8a7c-417f327fe705"/>
       <field name="count_view" type="integer" required="true" uuid="dd7dfb62-f0d1-4f37-a2d6-283109c06254"/>
-      <index name="idx_n_files_of_blog_post_date_added">
+      <index name="idxNDateAddedOfFilesOfBlogPost">
         <index-field name="date_added"/>
       </index>
-      <index name="idx_u_files_of_blog_post" unique="true">
+      <index name="idxUPostOfFilesOfBlogPost" unique="true">
         <index-field name="file"/>
         <index-field name="post"/>
+      </index>
+      <index name="idxNFileOfFilesOfBlogPost">
+        <index-field name="file"/>
       </index>
       <orm-attributes>
         <attribute name="table">files_of_blog_post</attribute>
         <attribute name="export-file-name">FilesOfBlogPost.php</attribute>
       </orm-attributes>
     </entity>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\FilesOfBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="a3e7097e-ba36-4fde-89e4-a9123343b7bc">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\FilesOfBlogPost" to="\BiberLtd\Bundle\BlogBundle\Entity\BlogPost" caption="idxFPostOfFilesOfBlogPost" owner-alias="" inverse-alias="post" many-owner="true" many-inverse="false" parent-required="true" uuid="a3e7097e-ba36-4fde-89e4-a9123343b7bc">
       <association-field from="post" to="id"/>
       <orm-attributes>
         <attribute name="side-owning"/>
         <attribute name="side-inverse"/>
       </orm-attributes>
     </association>
-    <association from="\BiberLtd\Bundle\BlogBundle\Entity\FilesOfBlogPost" to="\BiberLtd\Bundle\FileManagementBundle\Entity\File" owner-alias="" inverse-alias="file" many-owner="true" many-inverse="false" parent-required="true" uuid="a7a66a95-0edb-450a-90a8-fb24e640cae5">
+    <association from="\BiberLtd\Bundle\BlogBundle\Entity\FilesOfBlogPost" to="\BiberLtd\Bundle\FileManagementBundle\Entity\File" caption="idxFFileOfFilesOfBlogPost" owner-alias="" inverse-alias="file" many-owner="true" many-inverse="false" parent-required="true" uuid="a7a66a95-0edb-450a-90a8-fb24e640cae5">
       <association-field from="file" to="id"/>
       <orm-attributes>
         <attribute name="side-owning"/>
@@ -1936,7 +1952,7 @@
     <association uuid="3207bf25-161b-495c-823b-e56fd0643399" color="#969696"/>
     <association uuid="345f47c9-df4b-4b41-8793-4003eda7b64a" caption1-position-x="0" caption1-position-y="0" center-position-x="13" center-position-y="0" color="#969696"/>
     <association uuid="3873a818-fd4b-4b92-8ce6-2964e6e8b44a" color="#969696"/>
-    <association uuid="39b83ac5-5c1b-4e05-8a3d-4c2789956f07" caption1-position-x="0" caption1-position-y="0" center-position-x="0" center-position-y="-20" color="#969696"/>
+    <association uuid="39b83ac5-5c1b-4e05-8a3d-4c2789956f07" caption1-position-x="0" caption1-position-y="-9" center-position-x="0" center-position-y="-20" color="#969696"/>
     <association uuid="3ce7245a-507f-41c8-8012-764b5b34c637" color="#969696"/>
     <association uuid="432c0176-0a29-4845-87ee-88070753d665" color="#969696"/>
     <association uuid="43ab0ad0-b8c1-4f39-9865-9ae73771951f" color="#969696"/>
@@ -1944,7 +1960,7 @@
     <association uuid="45c125cd-0ba3-4a9c-973e-92bbcfb91a59" color="#969696"/>
     <association uuid="4a21a97e-810e-4e2d-a330-69d23cf801c7" color="#969696"/>
     <association uuid="5102b31f-0132-4a6a-8d4b-527d68c2d2c1" color="#969696"/>
-    <association uuid="5acf3682-59f9-4105-8a6f-a21c1202c27a" caption1-position-x="0" caption1-position-y="0" center-position-x="0" center-position-y="4" color="#969696"/>
+    <association uuid="5acf3682-59f9-4105-8a6f-a21c1202c27a" caption1-position-x="0" caption1-position-y="0" center-position-x="0" center-position-y="3" color="#969696"/>
     <association uuid="5c053399-bdfe-4fd2-b79b-2eebb1c870ef" color="#969696"/>
     <association uuid="5d9fbbab-e6e7-446b-b35a-5a92b2665907" color="#969696"/>
     <association uuid="691cd89a-3534-4a4c-bf70-544fa15a4c35" color="#969696"/>
@@ -1981,7 +1997,7 @@
     <association uuid="b9e4d241-2e4f-4fbf-a78c-0414234947d6" color="#969696"/>
     <association uuid="bed78311-e828-43f4-a4ed-951beb3ee5eb" color="#969696"/>
     <association uuid="c2c8c7de-1ec3-4525-a56d-d51fcc7005ec" color="#969696"/>
-    <association uuid="cbefcaa0-97cc-4c66-b65b-5d99804927f8" caption1-position-x="0" caption1-position-y="0" center-position-x="0" center-position-y="-20" color="#969696"/>
+    <association uuid="cbefcaa0-97cc-4c66-b65b-5d99804927f8" caption1-position-x="1" caption1-position-y="-2" center-position-x="0" center-position-y="-20" color="#969696"/>
     <association uuid="cd1318f1-243b-4985-833d-9f24f4279801" color="#969696"/>
     <association uuid="d0a6295c-5f68-40e3-bfb4-da2ca6e40fb6" color="#969696"/>
     <association uuid="d120204e-3d7c-47ea-bfe6-c33110876e00" color="#969696"/>
@@ -1994,44 +2010,44 @@
     <association uuid="eef48b82-733d-498b-acef-09421c9f4a1d" color="#969696"/>
     <association uuid="fbc3082b-9294-4f73-82ca-1e446236f969" caption1-position-x="0" caption1-position-y="0" center-position-x="1" center-position-y="0" color="#969696"/>
     <association uuid="ffd383c2-e9de-458f-8324-3d04a22696cf" color="#969696"/>
-    <entity uuid="019e4713-ec7b-4600-b59d-3b7984060e19" bg-color="4294967295" hdr-color="4292006610" position-x="511" position-y="24" size-x="0" size-x2="137" size-y="0" size-y2="59"/>
+    <entity uuid="019e4713-ec7b-4600-b59d-3b7984060e19" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="496" position-y="4" size-x="0" size-x2="132" size-y="0" size-y2="59"/>
     <entity uuid="04602777-d7d4-4b5f-9557-c3a1ba1f9dbb" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="350" position-y="100" size-x="0" size-x2="20" size-y="0" size-y2="20"/>
     <entity uuid="062dc364-3d01-474f-8a28-77bb8b1e21fd" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="550" position-y="1" size-x="0" size-x2="130" size-y="0" size-y2="87"/>
     <entity uuid="07eeeac7-da1a-48f5-96c1-665a12f5d84f" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="450" position-y="401" size-x="0" size-x2="125" size-y="0" size-y2="59"/>
     <entity uuid="0935da16-1ed5-48ac-b4bc-16b04799f560" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="469" position-y="313" size-x="0" size-x2="118" size-y="0" size-y2="73"/>
     <entity uuid="124be203-cd78-4b96-bc03-210c1f0db117" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="-154" position-y="368" size-x="0" size-x2="149" size-y="0" size-y2="129"/>
-    <entity uuid="1421f0f1-e591-42f7-b63c-2a522d14a937" bg-color="4294967295" hdr-color="4292006610" position-x="-126" position-y="1" size-x="0" size-x2="127" size-y="0" size-y2="115"/>
-    <entity uuid="239c27b0-2883-46e8-bcbd-010fd9235aaf" bg-color="4294967295" hdr-color="4292006610" position-x="-126" position-y="186" size-x="0" size-x2="130" size-y="0" size-y2="115"/>
+    <entity uuid="1421f0f1-e591-42f7-b63c-2a522d14a937" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="-116" position-y="7" size-x="0" size-x2="121" size-y="0" size-y2="115"/>
+    <entity uuid="239c27b0-2883-46e8-bcbd-010fd9235aaf" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="-106" position-y="221" size-x="0" size-x2="125" size-y="0" size-y2="115"/>
     <entity uuid="2d0a30b3-246d-47fa-b198-331e87d4a439" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="200" position-y="294" size-x="0" size-x2="121" size-y="0" size-y2="59"/>
     <entity uuid="3044c8f9-33a6-4aff-98ab-a4989389dde5" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="378" position-y="868" size-x="0" size-x2="118" size-y="0" size-y2="45"/>
-    <entity uuid="37003f2f-c374-4082-855d-b3cf8a3206a7" bg-color="4294967295" hdr-color="4292006610" position-x="673" position-y="421" size-x="0" size-x2="142" size-y="0" size-y2="129"/>
-    <entity uuid="37b9b75d-0543-4934-b984-79567684d865" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="1231" position-y="206" size-x="0" size-x2="120" size-y="0" size-y2="101"/>
+    <entity uuid="37003f2f-c374-4082-855d-b3cf8a3206a7" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="680" position-y="421" size-x="0" size-x2="138" size-y="0" size-y2="129"/>
+    <entity uuid="37b9b75d-0543-4934-b984-79567684d865" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="1230" position-y="206" size-x="0" size-x2="117" size-y="0" size-y2="101"/>
     <entity uuid="38d1693c-170e-457b-87d7-b0d358797df7" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="62" position-y="368" size-x="0" size-x2="149" size-y="0" size-y2="185"/>
     <entity uuid="41bcf7a2-e5e3-42a8-af5a-39de1f0e86ff" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="400" position-y="44" size-x="0" size-x2="130" size-y="0" size-y2="115"/>
     <entity uuid="45fa10e6-64bd-4726-82aa-61fd301b1b5f" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="50" position-y="50" size-x="0" size-x2="148" size-y="0" size-y2="157"/>
-    <entity uuid="51ec9be8-4890-4887-addd-6819fa8f6fb7" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="-326" position-y="201" size-x="0" size-x2="147" size-y="0" size-y2="87"/>
-    <entity uuid="52633a6e-346a-4e12-b99e-0f492b048a4c" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="240" position-y="456" size-x="0" size-x2="145" size-y="0" size-y2="255"/>
-    <entity uuid="5caac17f-21c3-4d96-ad7e-e5c9c46f3072" bg-color="4294967295" hdr-color="4292006610" position-x="280" position-y="73" size-x="0" size-x2="121" size-y="0" size-y2="73"/>
-    <entity uuid="7a06efe4-87ce-4810-9039-1e1c8ffb811f" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="917" position-y="469" size-x="0" size-x2="137" size-y="0" size-y2="199"/>
+    <entity uuid="51ec9be8-4890-4887-addd-6819fa8f6fb7" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="-325" position-y="196" size-x="0" size-x2="138" size-y="0" size-y2="115"/>
+    <entity uuid="52633a6e-346a-4e12-b99e-0f492b048a4c" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="248" position-y="459" size-x="0" size-x2="140" size-y="0" size-y2="255"/>
+    <entity uuid="5caac17f-21c3-4d96-ad7e-e5c9c46f3072" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="223" position-y="87" size-x="0" size-x2="115" size-y="0" size-y2="73"/>
+    <entity uuid="7a06efe4-87ce-4810-9039-1e1c8ffb811f" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="934" position-y="524" size-x="0" size-x2="132" size-y="0" size-y2="199"/>
     <entity uuid="7ce99bbb-4d97-4ee5-8703-dfe82e965514" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="100" position-y="94" size-x="0" size-x2="109" size-y="0" size-y2="115"/>
     <entity uuid="9109d3a6-7a5c-4ab9-8ff7-8b5da86662c6" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="50" position-y="401" size-x="0" size-x2="363" size-y="0" size-y2="87"/>
     <entity uuid="9df7cd56-6a97-410f-b0fe-2fd5538bd528" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="350" position-y="51" size-x="0" size-x2="112" size-y="0" size-y2="87"/>
     <entity uuid="a12d9552-e3b0-4189-870d-82bf4cd5b6ed" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="500" position-y="151" size-x="0" size-x2="130" size-y="0" size-y2="87"/>
-    <entity uuid="a70427d3-c8e0-4829-93e3-de66bb9c9c61" bg-color="4294967295" hdr-color="4292006610" position-x="8" position-y="77" size-x="0" size-x2="118" size-y="0" size-y2="87"/>
-    <entity uuid="a89cf5c8-aa5d-42ec-bbba-163c5a014c3d" bg-color="4294967295" hdr-color="4292006610" position-x="783" position-y="51" size-x="0" size-x2="130" size-y="0" size-y2="129"/>
-    <entity uuid="a8ac4769-debb-43f7-a155-857b0534ef04" bg-color="4294967295" hdr-color="4292006610" position-x="-317" position-y="3" size-x="0" size-x2="120" size-y="0" size-y2="73"/>
+    <entity uuid="a70427d3-c8e0-4829-93e3-de66bb9c9c61" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="8" position-y="77" size-x="0" size-x2="118" size-y="0" size-y2="87"/>
+    <entity uuid="a89cf5c8-aa5d-42ec-bbba-163c5a014c3d" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="780" position-y="3" size-x="0" size-x2="124" size-y="0" size-y2="129"/>
+    <entity uuid="a8ac4769-debb-43f7-a155-857b0534ef04" bg-color="4294967295" hdr-color="4292006610" position-x="-349" position-y="16" size-x="0" size-x2="117" size-y="0" size-y2="73"/>
     <entity uuid="afaa4cd5-a9f4-4fa8-a0f3-c68989c619fc" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="50" position-y="1" size-x="0" size-x2="159" size-y="0" size-y2="269"/>
     <entity uuid="c04c801c-5047-41eb-9209-dfd6732d5e31" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="445" position-y="30" size-x="0" size-x2="156" size-y="0" size-y2="213"/>
-    <entity uuid="c04d3548-e6b1-452c-b622-8f3986a8e693" bg-color="4294967295" hdr-color="4292006610" position-x="313" position-y="12" size-x="0" size-x2="129" size-y="0" size-y2="59"/>
-    <entity uuid="c221008d-3462-4c58-b3b3-b4d027b70afc" bg-color="4294967295" hdr-color="4292006610" position-x="-304" position-y="618" size-x="0" size-x2="130" size-y="0" size-y2="101"/>
-    <entity uuid="d01f6c43-64e1-452e-991f-036c673ac11c" bg-color="4294967295" hdr-color="4292006610" position-x="-332" position-y="421" size-x="0" size-x2="130" size-y="0" size-y2="115"/>
-    <entity uuid="d33e0252-193b-4ad3-a4bd-535b22a4dd54" bg-color="4294967295" hdr-color="4292006610" position-x="600" position-y="129" size-x="0" size-x2="121" size-y="0" size-y2="101"/>
+    <entity uuid="c04d3548-e6b1-452c-b622-8f3986a8e693" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="352" position-y="-12" size-x="0" size-x2="125" size-y="0" size-y2="59"/>
+    <entity uuid="c221008d-3462-4c58-b3b3-b4d027b70afc" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="-330" position-y="638" size-x="0" size-x2="124" size-y="0" size-y2="101"/>
+    <entity uuid="d01f6c43-64e1-452e-991f-036c673ac11c" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="-341" position-y="438" size-x="0" size-x2="124" size-y="0" size-y2="115"/>
+    <entity uuid="d33e0252-193b-4ad3-a4bd-535b22a4dd54" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="600" position-y="129" size-x="0" size-x2="121" size-y="0" size-y2="101"/>
     <entity uuid="d731b316-305d-4125-8824-3385eb5120ea" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="300" position-y="251" size-x="0" size-x2="130" size-y="0" size-y2="129"/>
-    <entity uuid="d8535833-d214-46a5-a12e-bd11539eb18b" bg-color="4294967295" hdr-color="4292006610" position-x="327" position-y="216" size-x="0" size-x2="118" size-y="0" size-y2="59"/>
-    <entity uuid="da681bce-bf94-4ba9-8453-773d07e7782e" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="1091" position-y="110" size-x="0" size-x2="146" size-y="0" size-y2="59"/>
+    <entity uuid="d8535833-d214-46a5-a12e-bd11539eb18b" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="354" position-y="216" size-x="0" size-x2="114" size-y="0" size-y2="59"/>
+    <entity uuid="da681bce-bf94-4ba9-8453-773d07e7782e" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="1080" position-y="110" size-x="0" size-x2="137" size-y="0" size-y2="59"/>
     <entity uuid="e19f9517-5f61-4eeb-ba10-cbc7ba6448e0" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="41" position-y="145" size-x="0" size-x2="20" size-y="0" size-y2="20"/>
     <entity uuid="edc820a6-e14d-41ad-a986-7cabb15fd53a" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="197" position-y="99" size-x="0" size-x2="130" size-y="0" size-y2="269"/>
-    <entity uuid="f6d679d7-c495-4963-9006-98a851a54798" bg-color="4294967295" hdr-color="4292006610" position-x="-104" position-y="618" size-x="0" size-x2="149" size-y="0" size-y2="115"/>
+    <entity uuid="f6d679d7-c495-4963-9006-98a851a54798" bg-color="#FFFFFF" hdr-color="#D2D2D2" position-x="-139" position-y="741" size-x="0" size-x2="144" size-y="0" size-y2="115"/>
     <module uuid="1b76a8f1-70bf-4d0d-9efe-09cd274f555f" bg-color="#A2C700" position-x="604" position-y="582" size-x="354" size-x2="1396" size-y="17" size-y2="1068"/>
     <module uuid="264804cf-5ddd-4089-aaa2-d7c0f129a5ed" bg-color="#FDF5F3" position-x="508" position-y="106" size-x="0" size-x2="700" size-y="56" size-y2="417"/>
     <module uuid="860bb986-ef71-4cef-9da2-f560e58c2569" bg-color="#7E7975" position-x="-42" position-y="50" size-x="0" size-x2="490" size-y="0" size-y2="327"/>

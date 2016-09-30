@@ -24,7 +24,8 @@ CREATE TABLE `blog` (
   UNIQUE KEY `idxUBlogId` (`id`) USING BTREE,
   KEY `idxNBlogDateAdded` (`date_added`) USING BTREE,
   KEY `idxNBlogDateUpdated` (`date_updated`) USING BTREE,
-  KEY `idxFSiteOfBlog` (`site`) USING BTREE,
+  KEY `idxNBlogSite` (`site`) USING BTREE,
+  KEY `idxNBlogDateRemoved` (`date_removed`) USING BTREE,
   CONSTRAINT `idxFSiteOfBlog` FOREIGN KEY (`site`) REFERENCES `site` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
 
@@ -41,10 +42,10 @@ CREATE TABLE `blog_localization` (
   `meta_description` varchar(255) COLLATE utf8_turkish_ci DEFAULT NULL COMMENT 'Localized meta description of blog.',
   `meta_keywords` varchar(155) COLLATE utf8_turkish_ci DEFAULT NULL COMMENT 'Localized meta keywords.',
   PRIMARY KEY (`blog`,`language`),
-  UNIQUE KEY `idxUBlogLocalization` (`blog`,`language`) USING BTREE,
-  UNIQUE KEY `idxUBlogUrlKey` (`language`,`url_key`) USING BTREE,
-  CONSTRAINT `idxFBlogLocalizationLanguage` FOREIGN KEY (`language`) REFERENCES `language` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `idxFLocalizedBlog` FOREIGN KEY (`blog`) REFERENCES `blog` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  UNIQUE KEY `idxUBlogLocalizationBlogLanguage` (`blog`,`language`) USING BTREE,
+  UNIQUE KEY `idxUBlogLocalizationLanguageUrlKey` (`language`,`url_key`) USING BTREE,
+  CONSTRAINT `idxFLanguageOfBlogLocalization` FOREIGN KEY (`language`) REFERENCES `language` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFBlogOfBlogLocalization` FOREIGN KEY (`blog`) REFERENCES `blog` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -60,9 +61,9 @@ CREATE TABLE `blog_moderator` (
   KEY `idxFBlogOfModerator` (`blog`) USING BTREE,
   KEY `idxFBlogPostCategoryToModerate` (`category`) USING BTREE,
   KEY `idxNBlogModeratorDateAdded` (`date_added`) USING BTREE,
-  CONSTRAINT `idxFBlogOfModerator` FOREIGN KEY (`blog`) REFERENCES `blog` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `idxFBlogPostCategoryToModerate` FOREIGN KEY (`category`) REFERENCES `blog_post_category` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `idxFModeratorOfBlog` FOREIGN KEY (`moderator`) REFERENCES `member` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `idxFBlogOfBlogModerator` FOREIGN KEY (`blog`) REFERENCES `blog` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFCategoryOfBlogModerator` FOREIGN KEY (`category`) REFERENCES `blog_post_category` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFModeratorOfBlogModerator` FOREIGN KEY (`moderator`) REFERENCES `member` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -116,12 +117,12 @@ CREATE TABLE `blog_post_action` (
   `action` char(1) COLLATE utf8_turkish_ci NOT NULL DEFAULT 'v' COMMENT 'v:view;l:like;d:dislike;f:favorite;u:unfavorite',
   `date_added` datetime NOT NULL COMMENT 'Date when the action has occured.',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idxUBlogPostActionId` (`id`) USING BTREE,
-  KEY `idxNBlogPostActionDateAdded` (`date_added`) USING BTREE,
-  KEY `idxFBlogPostOfAction` (`post`) USING BTREE,
-  KEY `idxFOwnerOfBlogPostAction` (`member`) USING BTREE,
-  CONSTRAINT `idxFBlogPostOfAction` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `idxFOwnerOfBlogPostAction` FOREIGN KEY (`member`) REFERENCES `member` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  UNIQUE KEY `idxUIdOfBlogPostAction` (`id`) USING BTREE,
+  KEY `idxNDateAddedOfBlogPostAction` (`date_added`) USING BTREE,
+  KEY `idxNPostOfBlogPostAction` (`post`) USING BTREE,
+  KEY `idxNMemberOfBlogPostAction` (`member`) USING BTREE,
+  CONSTRAINT `idxFPostOfBlogPostOfAction` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFMemberOfBlogPostAction` FOREIGN KEY (`member`) REFERENCES `member` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -137,13 +138,13 @@ CREATE TABLE `blog_post_category` (
   `date_updated` datetime NOT NULL COMMENT 'Date when the entry is last updated.',
   `date_removed` datetime DEFAULT NULL COMMENT 'Date when the entry is marked as removed.',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idxUBlogPostCategoryId` (`id`) USING BTREE,
-  KEY `idxNBlogPostCategoryDateAdded` (`date_added`) USING BTREE,
-  KEY `idxNBlogPostCategoryDateUpdated` (`date_updated`),
-  KEY `idxNBlogPostCategoryDateRemoved` (`date_removed`),
-  KEY `idxFBlogOfBlgPostCategory` (`blog`) USING BTREE,
-  KEY `idxFParentOfBlogPostCategory` (`parent`) USING BTREE,
-  KEY `idxFSiteOfBlogPostCategory` (`site`) USING BTREE,
+  UNIQUE KEY `idxUIdOfBlogPostCategory` (`id`) USING BTREE,
+  KEY `idxNDateAddedOfBlogPostCategory` (`date_added`) USING BTREE,
+  KEY `idxNDateUpdatedOfBlogPostCategory` (`date_updated`) USING BTREE,
+  KEY `idxNDateRemovedOfBlogPostCategory` (`date_removed`) USING BTREE,
+  KEY `idxNBlogOfBlgPostCategory` (`blog`) USING BTREE,
+  KEY `idxNParentOfBlogPostCategory` (`parent`) USING BTREE,
+  KEY `idxNSiteOfBlogPostCategory` (`site`) USING BTREE,
   CONSTRAINT `idxFBlogOfBlgPostCategory` FOREIGN KEY (`blog`) REFERENCES `blog` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `idxFParentOfBlogPostCategory` FOREIGN KEY (`parent`) REFERENCES `blog_post_category` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `idxFSiteOfBlogPostCategory` FOREIGN KEY (`site`) REFERENCES `site` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -162,10 +163,10 @@ CREATE TABLE `blog_post_category_localization` (
   `meta_keywords` LONGTEXT COLLATE utf8_turkish_ci DEFAULT NULL COMMENT 'Localized comma seperated keywords.',
   `meta_description` LONGTEXT COLLATE utf8_turkish_ci DEFAULT NULL COMMENT 'Localized meta description of category.',
   PRIMARY KEY (`post_category`,`language`),
-  UNIQUE KEY `idxUBlogPostLocalization` (`language`,`post_category`) USING BTREE,
-  UNIQUE KEY `idxUBlogPostUrlKey` (`language`,`url_key`) USING BTREE,
-  CONSTRAINT `idxFBlogPostCategoryLocalizationLanguage` FOREIGN KEY (`language`) REFERENCES `language` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `idxFLocalizedBlogPostCategory` FOREIGN KEY (`post_category`) REFERENCES `blog_post_category` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  UNIQUE KEY `idxULanguageOfBlogPostCategoryLocalization` (`language`,`post_category`) USING BTREE,
+  UNIQUE KEY `idxUUrlKeyOfBlogPostCategoryLocalization` (`language`,`url_key`,`post_category`) USING BTREE,
+  CONSTRAINT `idxFLanguageOfBlogPostCategoryLocalization` FOREIGN KEY (`language`) REFERENCES `language` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFPostCategoryOfBlogPostCategoryLocalization` FOREIGN KEY (`post_category`) REFERENCES `blog_post_category` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -188,15 +189,15 @@ CREATE TABLE `blog_post_comment` (
   `count_dislikes` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'Number of dislikes.',
   `site` int(10) unsigned DEFAULT NULL COMMENT 'Site that blog post comment belongs to.',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idxUBlogPostCommentId` (`id`) USING BTREE,
-  KEY `idxAuthorOfBlogPostComment` (`author`) USING BTREE,
-  KEY `idxFBlogPostOfComment` (`post`) USING BTREE,
-  KEY `idxSiteOfBlogPostComment` (`site`) USING BTREE,
-  KEY `idxFParentBlogPostComment` (`parent`) USING BTREE,
-  CONSTRAINT `idxAuthorOfBlogPostComment` FOREIGN KEY (`author`) REFERENCES `member` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `idxFBlogPostOfComment` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `idxFParentBlogPostComment` FOREIGN KEY (`parent`) REFERENCES `blog_post_comment` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `idxSiteOfBlogPostComment` FOREIGN KEY (`site`) REFERENCES `site` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  UNIQUE KEY `idxUIdOfBlogPostComment` (`id`) USING BTREE,
+  KEY `idxNAuthorOfBlogPostComment` (`author`) USING BTREE,
+  KEY `idxNPostOfBlogPostComment` (`post`) USING BTREE,
+  KEY `idxNSiteOfBlogPostComment` (`site`) USING BTREE,
+  KEY `idxNParentOfBlogPostComment` (`parent`) USING BTREE,
+  CONSTRAINT `idxFAuthorOfBlogPostComment` FOREIGN KEY (`author`) REFERENCES `member` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `idxFPostOfBlogPostComment` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFParentOfBlogPostComment` FOREIGN KEY (`parent`) REFERENCES `blog_post_comment` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFSiteOfBlogPostComment` FOREIGN KEY (`site`) REFERENCES `site` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -211,14 +212,14 @@ CREATE TABLE `blog_post_comment_action` (
   `action` char(1) COLLATE utf8_turkish_ci NOT NULL COMMENT 'l:like;d:dislike',
   `date_added` datetime NOT NULL COMMENT 'Date when acction has taken place.',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idxUBlogPostCommentActionId` (`id`) USING BTREE,
-  UNIQUE KEY `idxUBlogPostCommentAction` (`post`,`comment`,`member`) USING BTREE,
-  KEY `idxFActedCommentOfBlogPost` (`comment`) USING BTREE,
-  KEY `idxFOwnerOfBlogPostCommentAction` (`member`) USING BTREE,
-  KEY `idxNBlogPostCommentDateAdded` (`date_added`) USING BTREE,
-  CONSTRAINT `idxFActedCommentOfBlogPost` FOREIGN KEY (`comment`) REFERENCES `blog_post_comment` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `idxFBlogPostOfActedComment` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `idxFOwnerOfBlogPostCommentAction` FOREIGN KEY (`member`) REFERENCES `member` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  UNIQUE KEY `idxUIdOfBlogPostCommentAction` (`id`) USING BTREE,
+  UNIQUE KEY `idxUPostOfBlogPostCommentAction` (`post`,`comment`,`member`) USING BTREE,
+  KEY `idxNCommentOfBlogPostCommentAction` (`comment`) USING BTREE,
+  KEY `idxNMemberOfBlogPostCommentAction` (`member`) USING BTREE,
+  KEY `idxNDateAddedOfBlogPostCommentAction` (`date_added`) USING BTREE,
+  CONSTRAINT `idxFCommentOBlogPostCommentAction` FOREIGN KEY (`comment`) REFERENCES `blog_post_comment` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFPostOfBlogPostCommentAction` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFMemberOfBlogPostCommentAction` FOREIGN KEY (`member`) REFERENCES `member` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -236,10 +237,10 @@ CREATE TABLE `blog_post_localization` (
   `meta_keywords` varchar(155) COLLATE utf8_turkish_ci DEFAULT NULL COMMENT 'Localized meta keywords.',
   `content` text COLLATE utf8_turkish_ci COMMENT 'Blog content.',
   PRIMARY KEY (`post`,`language`),
-  UNIQUE KEY `idxUBlogPostLocalization` (`language`,`post`) USING BTREE,
-  UNIQUE KEY `idxUBlogPostUrlKey` (`language`,`url_key`) USING BTREE,
-  CONSTRAINT `idxFBlogPostLocalizationLanguage` FOREIGN KEY (`language`) REFERENCES `language` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `idxFLocalizedBlogPost` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  UNIQUE KEY `idxULanguageOfBlogPostLocalization` (`language`,`post`) USING BTREE,
+  UNIQUE KEY `idxUUrlKeyOfBlogPostLocalization` (`language`,`url_key`) USING BTREE,
+  CONSTRAINT `idxFLanguageOfBlogPostLocalization` FOREIGN KEY (`language`) REFERENCES `language` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFPostOfBlogPostLocalization` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -254,13 +255,13 @@ CREATE TABLE `blog_post_moderation` (
   `date_reviewed` datetime DEFAULT NULL COMMENT 'Date when the post is first moderated.',
   `date_updated` datetime DEFAULT NULL COMMENT 'Date when the moderation review is last updated.',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idxUBlogPostModerationId` (`id`) USING BTREE,
-  KEY `idxNBlogPostModerationDateReviewed` (`date_reviewed`) USING BTREE,
-  KEY `idxNBlogPostModerationDateUpdated` (`date_updated`) USING BTREE,
-  KEY `idxFModeratedBlogPost` (`post`) USING BTREE,
-  KEY `idxFModeratorOfBlogPost` (`moderator`) USING BTREE,
-  CONSTRAINT `idxFModeratedBlogPost` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `idxFModeratorOfBlogPost` FOREIGN KEY (`moderator`) REFERENCES `member` (`id`) ON UPDATE CASCADE
+  UNIQUE KEY `idxUIdOfBlogPostModeration` (`id`) USING BTREE,
+  KEY `idxNDateReviewedOfBlogPostModeration` (`date_reviewed`) USING BTREE,
+  KEY `idxNDateUpdatedOfBlogPostModeration` (`date_updated`) USING BTREE,
+  KEY `idxNPostOfBlogPostModeration` (`post`) USING BTREE,
+  KEY `idxNModeratorOfBlogPostModeration` (`moderator`) USING BTREE,
+  CONSTRAINT `idxFPostOfBlogPostModeration` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFModeratorOfBlogPostModeration` FOREIGN KEY (`moderator`) REFERENCES `member` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -276,12 +277,12 @@ CREATE TABLE `blog_post_moderation_reply` (
   `sent_from` char(1) COLLATE utf8_turkish_ci NOT NULL DEFAULT 'a' COMMENT 'm:moderator, a:author',
   `is_read` char(1) COLLATE utf8_turkish_ci NOT NULL DEFAULT 'y' COMMENT 'y:yes;n:no',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idxUBlogPostModerationId` (`id`) USING BTREE,
-  KEY `idxNBlogPostModerationDateReplied` (`date_replied`) USING BTREE,
-  KEY `idxFModerationOfBlogPostReply` (`moderation`) USING BTREE,
-  KEY `idxFMemberOfBlogPostModerationReply` (`author`) USING BTREE,
-  CONSTRAINT `idxFMemberOfBlogPostModerationReply` FOREIGN KEY (`author`) REFERENCES `member` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `idxFModerationOfBlogPostReply` FOREIGN KEY (`moderation`) REFERENCES `blog_post_moderation` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  UNIQUE KEY `idxUIdOfBlogPostModerationReply` (`id`) USING BTREE,
+  KEY `idxNDateRepliedOfBlogPostModerationReply` (`date_replied`) USING BTREE,
+  KEY `idxNModerationOfBlogPostModerationReply` (`moderation`) USING BTREE,
+  KEY `idxNAuthorOfBlogPostModerationReply` (`author`) USING BTREE,
+  CONSTRAINT `idxFAuthorOfBlogPostModerationReply` FOREIGN KEY (`author`) REFERENCES `member` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFModerationOfBlogPostModerationReply` FOREIGN KEY (`moderation`) REFERENCES `blog_post_moderation` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -301,10 +302,10 @@ CREATE TABLE `blog_post_revision` (
   `revision_number` int(10) unsigned DEFAULT NULL COMMENT 'Revision number.',
   `language` int(5) unsigned NOT NULL COMMENT 'Language of revision.',
   `post` int(10) unsigned NOT NULL COMMENT 'Post in revision.',
-  UNIQUE KEY `idxUBlogPostRevision` (`language`,`post`),
-  KEY `idxFBlogPostOfRevision` (`post`),
-  CONSTRAINT `idxFBlogPostOfRevision` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `idxFLanguageOfBlogPostReview` FOREIGN KEY (`language`) REFERENCES `language` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  UNIQUE KEY `idxULanguageOfBlogPostRevision` (`language`,`post`),
+  KEY `idxNPostOfBlogPostRevision` (`post`),
+  CONSTRAINT `idxFPostOfBlogPostRevision` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFLanguageOfBlogPostRevision` FOREIGN KEY (`language`) REFERENCES `language` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci;
 
 -- ----------------------------
@@ -321,16 +322,16 @@ CREATE TABLE `blog_post_tag` (
   `date_updated` datetime NOT NULL COMMENT 'Date when the entry is last updated.',
   `date_removed` datetime DEFAULT NULL COMMENT 'Date when the entry is marked as removed.',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idxUBlogPostTagId` (`id`) USING BTREE,
-  KEY `idxNBlogPostTagDateAdded` (`date_added`) USING BTREE,
-  KEY `idxFMemberOfBlogPost` (`member`) USING BTREE,
-  KEY `idxSiteOfBlogPostTag` (`site`) USING BTREE,
-  KEY `idxFBlogOfTag` (`blog`) USING BTREE,
-  KEY `idxNBlogPostTagDateUpdated` (`date_updated`),
-  KEY `idxNBlogPostTagDateRemoved` (`date_removed`),
-  CONSTRAINT `idxFBlogOfTag` FOREIGN KEY (`blog`) REFERENCES `blog` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `idxFMemberOfBlogPost` FOREIGN KEY (`member`) REFERENCES `blog_post_tag` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `idxSiteOfBlogPostTag` FOREIGN KEY (`site`) REFERENCES `site` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  UNIQUE KEY `idxUIdOfBlogPostTag` (`id`) USING BTREE,
+  KEY `idxNDateAddedOfBlogPostTag` (`date_added`) USING BTREE,
+  KEY `idxNMemberOfBlogPostTag` (`member`) USING BTREE,
+  KEY `idxNSiteOfBlogPostTag` (`site`) USING BTREE,
+  KEY `idxNBlogOfBlogPostTag` (`blog`) USING BTREE,
+  KEY `idxNDateUpdatedOfBlogPostTag` (`date_updated`),
+  KEY `idxNDateRemovedOfBlogPostTag` (`date_removed`),
+  CONSTRAINT `idxFBlogOfBlogPostTag` FOREIGN KEY (`blog`) REFERENCES `blog` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFMemberOfBlogPostTag` FOREIGN KEY (`member`) REFERENCES `blog_post_tag` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFSiteOfBlogPostTag` FOREIGN KEY (`site`) REFERENCES `site` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -343,10 +344,10 @@ CREATE TABLE `blog_post_tag_localization` (
   `name` varchar(155) COLLATE utf8_turkish_ci NOT NULL COMMENT 'Localized tag name.',
   `url_key` varchar(255) COLLATE utf8_turkish_ci DEFAULT NULL COMMENT 'Localized url key of tag.',
   PRIMARY KEY (`tag`),
-  UNIQUE KEY `idxUBlogPostTagLocalization` (`tag`,`language`) USING BTREE,
-  UNIQUE KEY `idxUBlogPostTagUrlKey` (`language`,`name`) USING BTREE,
-  CONSTRAINT `idxFBlogPostTagLocalizationLanguage` FOREIGN KEY (`language`) REFERENCES `language` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `idxFLocalizedBlogPostTag` FOREIGN KEY (`tag`) REFERENCES `blog_post_tag` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  UNIQUE KEY `idxUTagOfBlogPostTagLocalization` (`tag`,`language`) USING BTREE,
+  UNIQUE KEY `idxUUrlKeyOfBlogPostTagLocalization` (`language`,`url_key`) USING BTREE,
+  CONSTRAINT `idxFLanguageOfBlogPostTagLocalization` FOREIGN KEY (`language`) REFERENCES `language` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFTagOfBlogPostTagLocalization` FOREIGN KEY (`tag`) REFERENCES `blog_post_tag` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -360,12 +361,12 @@ CREATE TABLE `categories_of_blog_post` (
   `is_primary` char(1) COLLATE utf8_turkish_ci NOT NULL DEFAULT 'n' COMMENT 'Indicator whether the category is primary.',
   `sort_order` int(10) NOT NULL DEFAULT 1 COMMENT 'Custom sort order.',
   PRIMARY KEY (`post`,`category`),
-  UNIQUE KEY `idxUCategoriesOfBlogPost` (`post`,`category`) USING BTREE,
-  KEY `idxFBlogPostOfCategory` (`post`) USING BTREE,
-  KEY `idxNCategoriesOfBlogPostDateAdded` (`date_added`) USING BTREE,
-  KEY `idxFCategoryOfBlogPost` (`category`) USING BTREE,
-  CONSTRAINT `idxFBlogPostOfCategory` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `idxFCategoryOfBlogPost` FOREIGN KEY (`category`) REFERENCES `blog_post_category` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  UNIQUE KEY `idxUCategoryOfCategoriesOfBlogPost` (`post`,`category`) USING BTREE,
+  KEY `idxNPostOfCategoriesOfBlogPost` (`post`) USING BTREE,
+  KEY `idxNDateAddedOfCategoriesOfBlogPost` (`date_added`) USING BTREE,
+  KEY `idxNCategoryOfCategoriesOfBlogPost` (`category`) USING BTREE,
+  CONSTRAINT `idxFPostOfCategoriesOfBlogPost` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFCategoryOfCategoriesOfBlogPost` FOREIGN KEY (`category`) REFERENCES `blog_post_category` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -376,12 +377,12 @@ CREATE TABLE `favorite_blog_post_of_member` (
   `member` int(10) unsigned NOT NULL COMMENT 'Member who added post to favorite.',
   `post` int(10) unsigned NOT NULL COMMENT 'Post that is being favorited.',
   `date_added` datetime NOT NULL COMMENT 'Date whenthe post is added as favorite.',
-  UNIQUE KEY `idxUFavoriteBlogPostOfMember` (`post`,`member`) USING BTREE,
-  KEY `idxFOwnerOfFavoriteBlogPost` (`member`) USING BTREE,
-  KEY `idxFFavoritedBlogPost` (`post`) USING BTREE,
-  KEY `idxNFavoriteBlogPostOfMemberDateAdded` (`date_added`) USING BTREE,
-  CONSTRAINT `idxFFavoritedBlogPost` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `idxFOwnerOfFavoriteBlogPost` FOREIGN KEY (`member`) REFERENCES `member` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  UNIQUE KEY `idxUMemberPostOfFavoriteBlogPostOfMember` (`post`,`member`) USING BTREE,
+  KEY `idxNMemberOfFavoriteBlogPostOfMember` (`member`) USING BTREE,
+  KEY `idxNPostOfFavoriteBlogPostOfMember` (`post`) USING BTREE,
+  KEY `idxNDateAddedOfFavoriteBlogPostOfMember` (`date_added`) USING BTREE,
+  CONSTRAINT `idxFPostOfFavoriteBlogPostOfMember` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFMemberOfFavoriteBlogPostOfMember` FOREIGN KEY (`member`) REFERENCES `member` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -398,12 +399,12 @@ CREATE TABLE `featured_blog_post` (
   `date_updated` datetime NOT NULL COMMENT 'Date  when the entry is last updated.',
   `date_removed` datetime DEFAULT NULL COMMENT 'Date when the entry is marked as removed.',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idxUFeaturedBlogPostId` (`id`) USING BTREE,
-  KEY `idxNFeaturedBlogPostDateAdded` (`date_added`) USING BTREE,
-  KEY `idxNFeaturedBlogPostDatePublished` (`date_published`) USING BTREE,
-  KEY `idxNFeaturedBlogPostDateUnpublished` (`date_unpublished`) USING BTREE,
-  KEY `idxFFeaturedBlogPost` (`post`) USING BTREE,
-  CONSTRAINT `idxFFeaturedBlogPost` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  UNIQUE KEY `idxUIdOfFeaturedBlogPost` (`id`) USING BTREE,
+  KEY `idxNDateAddedOfFeaturedBlogPost` (`date_added`) USING BTREE,
+  KEY `idxNDatePublishedOfFeaturedBlogPost` (`date_published`) USING BTREE,
+  KEY `idxNDateUnpublishedOfFeaturedBlogPost` (`date_unpublished`) USING BTREE,
+  KEY `idxNPostOfFeaturedBlogPost` (`post`) USING BTREE,
+  CONSTRAINT `idxFPostOfFeaturedBlogPost` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -414,11 +415,11 @@ CREATE TABLE `related_blog_post` (
   `post` int(10) unsigned NOT NULL COMMENT 'Post that is associated with anohter.',
   `related_post` int(10) unsigned NOT NULL COMMENT 'The main post that is to be associated.',
   `date_added` datetime DEFAULT NULL COMMENT 'Date when the blog is added.',
-  UNIQUE KEY `idxURelatedBlogPost` (`post`,`related_post`) USING BTREE,
-  KEY `idxFRelatedrPost` (`related_post`) USING BTREE,
-  KEY `idxNRelatedBlogPostDateAdded` (`date_added`) USING BTREE,
-  CONSTRAINT `idxFOwnerPost` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `idxFRelatedPost` FOREIGN KEY (`related_post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  UNIQUE KEY `idxUPostOfRelatedBlogPost` (`post`,`related_post`) USING BTREE,
+  KEY `idxNRelatedPostOfRelatedBlogPost` (`related_post`) USING BTREE,
+  KEY `idxNDateAddedOfRelatedBlogPost` (`date_added`) USING BTREE,
+  CONSTRAINT `idxFPostOfRelatedBlogPost` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFRelatedPostOfRelatedBlogPost` FOREIGN KEY (`related_post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
 
 -- ----------------------------
@@ -430,9 +431,57 @@ CREATE TABLE `tags_of_blog_post` (
   `tag` int(10) unsigned NOT NULL COMMENT 'Associated tag.',
   `date_added` datetime NOT NULL COMMENT 'Date when tag has been added to the post.',
   PRIMARY KEY (`post`,`tag`),
-  UNIQUE KEY `idxUTagsOfBlogPost` (`post`,`tag`) USING BTREE,
-  KEY `idxUTagsOfBlogPostsDateAdded` (`date_added`) USING BTREE,
-  KEY `idxFTagOfBlogPost` (`tag`) USING BTREE,
-  CONSTRAINT `idxFTaggedBlogPost` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `idxFTagOfBlogPost` FOREIGN KEY (`tag`) REFERENCES `blog_post_tag` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  UNIQUE KEY `idxUPostOfTagsOfBlogPost` (`post`,`tag`) USING BTREE,
+  KEY `idxNDateAddedOfTagsOfBlogPost` (`date_added`) USING BTREE,
+  KEY `idxNTagOfTagsOfBlogPost` (`tag`) USING BTREE,
+  CONSTRAINT `idxFPostOfTagsOfBlogPost` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `idxFTagOfTagsOfBlogPost` FOREIGN KEY (`tag`) REFERENCES `blog_post_tag` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_turkish_ci ROW_FORMAT=COMPACT;
+
+-- ----------------------------
+--  Table structure for `active_blog_post_locale`
+-- ----------------------------
+DROP TABLE IF EXISTS `active_blog_post_locale`;
+CREATE TABLE `active_blog_post_locale` (
+  `blog_post` int(10) unsigned DEFAULT NULL,
+  `language` int(5) unsigned DEFAULT NULL,
+  KEY `idxNActiveBlogPostLocaleBlogPost` (`blog_post`) USING BTREE,
+  KEY `idxNActiveBlogPostLocaleLanguage` (`language`) USING BTREE,
+  CONSTRAINT `idxFBlogPostOfActiveBlogPostLocale` FOREIGN KEY (`blog_post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `idxFLanguageOfActiveBlogPostLocale` FOREIGN KEY (`language`) REFERENCES `language` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+--  Table structure for `featured_blog_post_localization`
+-- ----------------------------
+DROP TABLE IF EXISTS `featured_blog_post_localization`;
+CREATE TABLE `featured_blog_post_localization` (
+  `language` int(5) unsigned DEFAULT NULL,
+  `content` text,
+  `post` int(10) unsigned DEFAULT NULL,
+  UNIQUE KEY `idxULanguageOfFeaturedBlogPostLocalization` (`language`),
+  KEY `idxNPostOfFeaturedBlogPostLocalization` (`post`),
+  CONSTRAINT `idxFLanguageOfFeaturedBlogPostLocalization` FOREIGN KEY (`language`) REFERENCES `language` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `idxFPostOfFeaturedBlogPostLocalization` FOREIGN KEY (`post`) REFERENCES `featured_blog_post` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- ----------------------------
+--  Table structure for `files_of_blog_post`
+-- ----------------------------
+DROP TABLE IF EXISTS `files_of_blog_post`;
+CREATE TABLE `files_of_blog_post` (
+  `post` int(5) unsigned DEFAULT NULL,
+  `file` int(10) unsigned DEFAULT NULL,
+  `date_added` datetime DEFAULT NULL,
+  `sort_order` int(10) DEFAULT NULL,
+  `type` char(1) DEFAULT NULL,
+  `count_view` int(11) DEFAULT NULL,
+  UNIQUE KEY `idxUPostOfFilesOfBlogPost` (`post`,`file`) USING BTREE,
+  KEY `idxNDateAddedOfFilesOfBlogPost` (`date_added`) USING BTREE,
+  KEY `idxNFileOfFilesOfBlogPost` (`file`) USING BTREE,
+  CONSTRAINT `idxFFileOfFilesOfBlogPost` FOREIGN KEY (`file`) REFERENCES `file` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `idxFPostOfFilesOfBlogPost` FOREIGN KEY (`post`) REFERENCES `blog_post` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+SET FOREIGN_KEY_CHECKS=1;
