@@ -839,6 +839,69 @@ class BlogModel extends CoreModel
         return new ModelResponse($response->result->set[0], 1, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
     /**
+     * @param $post
+     * @param $language
+     * @return array|ModelResponse
+     */
+    public function getBlogPostLocalization($post,$language){
+        $timeStamp = time();
+
+        $filter[] = array(
+            'glue' => 'and',
+            'condition' => array(
+                array(
+                    'glue' => 'and',
+                    'condition' => array('column' => $this->entity['bpl']['alias'].'.blog_post', 'comparison' => '=', 'value' => $post),
+                )
+            )
+        );
+        if(!is_null($language)){
+            $mModel = $this->kernel->getContainer()->get('multilanguagesupport.model');
+            $response = $mModel->getLanguage($language);
+            if(!$response->error->exist){
+                $filter[] = array(
+                    'glue' => 'and',
+                    'condition' => array(
+                        array(
+                            'glue' => 'and',
+                            'condition' => array('column' => $this->entity['bpl']['alias'].'.language', 'comparison' => '=', 'value' => $response->result->set->getId()),
+                        )
+                    )
+                );
+            }
+        }
+
+        $wStr = $fStr = '';
+
+        $qStr = 'SELECT '.$this->entity['bpl']['alias'].', '.$this->entity['bp']['alias']
+            .' FROM '.$this->entity['bpl']['name'].' '.$this->entity['bpl']['alias']
+            .' JOIN '.$this->entity['bpl']['alias'].'.blog_post '.$this->entity['bp']['alias'];
+
+
+        if(!is_null($filter)){
+            $fStr = $this->prepareWhere($filter);
+            $wStr .= ' WHERE '.$fStr;
+        }
+
+        $qStr .= $wStr;
+        $q = $this->em->createQuery($qStr);
+        $result = $q->getResult();
+
+        $entities = array();
+        foreach($result as $entry){
+            $id = $entry->getBlogPost()->getId();
+            if(!isset($unique[$id])){
+                $unique[$id] = '';
+                $entities[] = $entry;
+            }
+        }
+        $totalRows = count($entities);
+        if ($totalRows < 1) {
+            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+        }
+        return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
+    }
+    /**
      * @name            getBlogPostRevision()
      *
      * @since           1.0.8
