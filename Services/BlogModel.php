@@ -67,10 +67,11 @@ class BlogModel extends CoreModel{
      * @param array  $categories
      * @param mixed  $post
      * @param string $isPrimary
+     * @param int    $sortOrder
      *
      * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function addCategoriesToPost(array $categories, $post, string $isPrimary = 'n'){
+    public function addCategoriesToPost(array $categories, $post, string $isPrimary = 'n',int $sortOrder = 1){
         $timeStamp = microtime(true);
         $response = $this->getBlogPost($post);
         if($response->error->exist){
@@ -100,6 +101,7 @@ class BlogModel extends CoreModel{
             $assoc = new BundleEntity\CategoriesOfBlogPost();
             $assoc->setPost($post)->setCategory($category)->setDateAdded($now);
             $assoc->setIsPrimary($isPrimary);
+            $assoc->setSortOrder($sortOrder);
             /** persist entry */
             $this->em->persist($assoc);
             $collection[] = $assoc;
@@ -165,10 +167,11 @@ class BlogModel extends CoreModel{
      * @param array  $posts
      * @param mixed  $category
      * @param string $isPrimary
+     * @param int    $sortOrder
      *
      * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function addPostsToCategory(array $posts, $category, string $isPrimary = 'n')
+    public function addPostsToCategory(array $posts, $category, string $isPrimary = 'n', int $sortOrder)
     {
         $timeStamp = microtime(true);
         $response = $this->getBlogPostCategory($category);
@@ -200,6 +203,7 @@ class BlogModel extends CoreModel{
             $assoc = new BundleEntity\CategoriesOfBlogPost();
             $assoc->setPost($post)->setCategory($category)->setDateAdded($now);
             $assoc->setIsPrimary($isPrimary);
+            $assoc->setSortOrder($sortOrder);
             /** persist entry */
             $this->em->persist($assoc);
             $collection[] = $assoc;
@@ -1308,9 +1312,9 @@ class BlogModel extends CoreModel{
                     if($response->error->exist){
                         return $response;
                     }
-                    $entity->setCategory($response->result->set);
+                    $entity->setLanguage($response->result->set);
                     unset($response);
-                    $entity->setBlof($bpCategory);
+                    $entity->setCategory($bpCategory);
                     foreach($translation as $column => $value){
                         $set = 'set'.$this->translateColumnName($column);
                         switch($column){
