@@ -148,7 +148,7 @@ class BlogModel extends CoreModel{
         $now = new \DateTime('now', new \DateTimezone($this->kernel->getContainer()->getParameter('app_timezone')));
         $insertedItems = [];
         foreach($toAdd as $file){
-            $entity = new BundleEntity\FilesOfBlogPost();
+            $entity = new BundleEntity\CategoriesOfBlogPost();;
             $entity->setFile($file)->setPost($post)->setDateAdded($now);
             $this->em->persist($entity);
             $insertedItems[] = $entity;
@@ -1457,7 +1457,7 @@ class BlogModel extends CoreModel{
      */
     public function isFileAssociatedWithBlogPost($file, $post, bool $bypass = false){
         $timeStamp = microtime(true);
-        $fModel = new FileService\FileManagementModel($this->kernel, $this->dbConnection, $this->orm);
+        $fModel = $this->kernel->getContainer()->get('filemanagement.model');
 
         $response = $fModel->getFile($file);
         if($response->error->exist){
@@ -1474,7 +1474,7 @@ class BlogModel extends CoreModel{
 
         $found = false;
 
-        $qStr = 'SELECT COUNT('.$this->entity['fobp']['alias'].')'
+        $qStr = 'SELECT COUNT('.$this->entity['fobp']['alias'].'.post)'
             .' FROM '.$this->entity['fobp']['name'].' '.$this->entity['fobp']['alias']
             .' WHERE '.$this->entity['fobp']['alias'].'.file = '.$file->getId()
             .' AND '.$this->entity['fobp']['alias'].'.post = '.$post->getId();
@@ -2746,6 +2746,46 @@ class BlogModel extends CoreModel{
     }
 
     /**
+     * @param array $files
+     * @param $post
+     * @return ModelResponse
+     */
+    public function removeFilesFromPost(array $files, $post){
+        $timeStamp = microtime(true);
+        $fModel = $this->kernel->getContainer()->get('filemanagement.model');
+
+        $response = $this->getBlogPost($post);
+        if($response->error->exist){
+            return $response;
+        }
+        $post = $response->result->set;
+        $idsToRemove = array();
+        foreach ($files as $file) {
+            $response = $fModel->getFile($file);
+            if($response->error->exist){
+                return $response;
+            }
+            $idsToRemove[] = $response->result->set->getId();
+        }
+        $in = ' IN (' . implode(',', $idsToRemove) . ')';
+        $qStr = 'DELETE FROM '.$this->entity['fobp']['name'].' '.$this->entity['fobp']['alias']
+            .' WHERE '.$this->entity['fobp']['alias'].'.post = '.$post->getId()
+            .' AND '.$this->entity['fobp']['alias'].'.file '.$in;
+
+        $q = $this->em->createQuery($qStr);
+        $result = $q->getResult();
+
+        $deleted = true;
+        if (!$result) {
+            $deleted = false;
+        }
+        if ($deleted) {
+            return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, microtime(true));
+        }
+        return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, microtime(true));
+    }
+
+    /**
      * @param array $collection
      * @return ModelResponse
      */
@@ -3228,6 +3268,53 @@ class BlogModel extends CoreModel{
         }
         return new ModelResponse($entities, $totalRows, 0, null, false, 'S:D:002', 'Entries successfully fetched from database.', $timeStamp, time());
     }
+
+    /**
+     * @param mixed      $post
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
+     *
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     */
+    public function listFilesOfPost($post, array $filter = null, array $sortOrder = null, array $limit = null){
+        $timeStamp = microtime(true);
+        $fModel = $this->kernel->getContainer()->get('filemanagement.model');
+
+        $response = $this->getBlogPost($post);
+        if($response->error->exist){
+            return $response;
+        }
+        $post = $response->result->set;
+        $query_str = 'SELECT '.$this->entity['fobp']['alias']
+            .' FROM '.$this->entity['fobp']['name'].' '.$this->entity['fobp']['alias']
+            .' WHERE '.$this->entity['fobp']['alias'].'.post = '.$post->getId();
+        $query = $this->em->createQuery($query_str);
+        $result = $query->getResult();
+
+        $filesInPost = [];
+        if(count($result) > 0){
+            foreach($result as $fobp){
+                $filesInPost[] = $fobp->getFile()->getId();
+            }
+        }
+        if(count($filesInPost) < 1){
+            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, microtime(true));
+        }
+        $columnI = 'f.id';
+        $conditionI = array('column' => $columnI, 'comparison' => 'in', 'value' => $filesInPost);
+        $filter[] = array(
+            'glue'      => 'and',
+            'condition' => array(
+                array(
+                    'glue'      => 'and',
+                    'condition' => $conditionI,
+                )
+            )
+        );
+        return $fModel->listFiles($filter, $sortOrder, $limit);
+    }
+
     /**
      * @name            updateBlog ()
      *
