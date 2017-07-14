@@ -147,48 +147,39 @@ class BlogModel extends CoreModel
         }
         return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
     }
+
     /**
-     * @name            addFilesToBlogPost()
+     * @param array $files
+     * @param mixed $post
      *
-     * @since           1.0.2
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     * @use             $this->isFileAssociatedWithBlogPost()
-     * @use             $this->getMaxSortOrderOfBlogPostFile()
-     *
-     * @param           array $files
-     * @param           mixed $post
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\BlogBundle\Services\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|\BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
      */
-    public function addFilesToBlogPost(array $files, $post) {
+    public function addFilesToBlogPost(array $files, $post){
         $timeStamp = time();
         $response = $this->getBlogPost($post);
         if($response->error->exist){
             return $response;
         }
         $post = $response->result->set;
-        if (!is_array($files)) {
+        if(!is_array($files)){
             return $this->createException('InvalidParameterValueException', 'Invalid parameter value. $files parameter must be an array collection', 'E:S:001');
         }
-        $toAdd = array();
+        $toAdd = [];
         $fModel = $this->kernel->getContainer()->get('filemanagement.model');
-        foreach ($files as $file) {
+        foreach($files as $file){
             $response = $fModel->getFile($file);
             if($response->error->exist){
                 break;
             }
             $file = $response->result->set;
-            if (!$this->isFileAssociatedWithBlogPost($file, $post, true)) {
+            if(!$this->isFileAssociatedWithBlogPost($file, $post, true)){
                 $toAdd[] = $file;
             }
         }
         $now = new \DateTime('now', new \DateTimezone($this->kernel->getContainer()->getParameter('app_timezone')));
-        $insertedItems = array();
-        foreach ($toAdd as $file) {
-            $entity = new BundleEntity\FilesOfBlogPost();
+        $insertedItems = [];
+        foreach($toAdd as $file){
+            $entity = new BundleEntity\FilesOfBlogPost();;
             $entity->setFile($file)->setPost($post)->setDateAdded($now);
             $this->em->persist($entity);
             $insertedItems[] = $entity;
@@ -196,10 +187,13 @@ class BlogModel extends CoreModel
         $countInserts = count($toAdd);
         if($countInserts > 0){
             $this->em->flush();
+
             return new ModelResponse($insertedItems, $countInserts, 0, null, false, 'S:D:003', 'Selected entries have been successfully inserted into database.', $timeStamp, time());
         }
+
         return new ModelResponse(null, 0, 0, null, true, 'E:D:003', 'One or more entities cannot be inserted into database.', $timeStamp, time());
     }
+
     /**
      * @name            addPostsToCategory()
      *
@@ -1686,29 +1680,21 @@ class BlogModel extends CoreModel
     }
 
     /**
-     * @name            isFileAssociatedWithBlogPost()
+     * @param mixed $file
+     * @param mixed $post
+     * @param bool  $bypass
      *
-     * @since           1.0.4
-     * @version         1.0.9
-     * @author          Can Berkol
-     *
-     * @use             $this->createException()
-     *
-     * @param           mixed       $file
-     * @param           mixed       $post
-     * @param           bool        $bypass     true or false
-     *
-     * @return          BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse|bool
      */
-    public function isFileAssociatedWithBlogPost($file, $post, $bypass = false){
+    public function isFileAssociatedWithBlogPost($file, $post, bool $bypass = false){
         $timeStamp = time();
-        $fModel = new FileService\FileManagementModel($this->kernel, $this->dbConnection, $this->orm);
+        $fModel = $this->kernel->getContainer()->get('filemanagement.model');
 
         $response = $fModel->getFile($file);
         if($response->error->exist){
             return $response;
         }
-        $post = $response->result->set;
+        $file = $response->result->set;
 
         $response = $this->getBlogPost($post);
 
@@ -1719,19 +1705,19 @@ class BlogModel extends CoreModel
 
         $found = false;
 
-        $qStr = 'SELECT COUNT(' . $this->entity['fobp']['alias'] . ')'
-            . ' FROM ' . $this->entity['fobp']['name'] . ' ' . $this->entity['fobp']['alias']
-            . ' WHERE ' . $this->entity['fobp']['alias'] . '.file = ' . $file->getId()
-            . ' AND ' . $this->entity['fobp']['alias'] . '.post = ' . $post->getId();
+        $qStr = 'SELECT COUNT('.$this->entity['fobp']['alias'].'.post)'
+            .' FROM '.$this->entity['fobp']['name'].' '.$this->entity['fobp']['alias']
+            .' WHERE '.$this->entity['fobp']['alias'].'.file = '.$file->getId()
+            .' AND '.$this->entity['fobp']['alias'].'.post = '.$post->getId();
         $query = $this->em->createQuery($qStr);
 
         $result = $query->getSingleScalarResult();
 
         /** flush all into database */
-        if ($result > 0) {
+        if($result > 0){
             $found = true;
         }
-        if ($bypass) {
+        if($bypass){
             return $found;
         }
 
@@ -2180,6 +2166,52 @@ class BlogModel extends CoreModel
             )
         );
         return $this->listBlogPostCategories($filter, $sortOrder, $limit);
+    }
+
+    /**
+     * @param mixed      $post
+     * @param array|null $filter
+     * @param array|null $sortOrder
+     * @param array|null $limit
+     *
+     * @return \BiberLtd\Bundle\CoreBundle\Responses\ModelResponse
+     */
+    public function listFilesOfPost($post, array $filter = null, array $sortOrder = null, array $limit = null){
+        $timeStamp = time();
+        $fModel = $this->kernel->getContainer()->get('filemanagement.model');
+
+        $response = $this->getBlogPost($post);
+        if($response->error->exist){
+            return $response;
+        }
+        $post = $response->result->set;
+        $query_str = 'SELECT '.$this->entity['fobp']['alias']
+            .' FROM '.$this->entity['fobp']['name'].' '.$this->entity['fobp']['alias']
+            .' WHERE '.$this->entity['fobp']['alias'].'.post = '.$post->getId();
+        $query = $this->em->createQuery($query_str);
+        $result = $query->getResult();
+
+        $filesInPost = [];
+        if(count($result) > 0){
+            foreach($result as $fobp){
+                $filesInPost[] = $fobp->getFile()->getId();
+            }
+        }
+        if(count($filesInPost) < 1){
+            return new ModelResponse(null, 0, 0, null, true, 'E:D:002', 'No entries found in database that matches to your criterion.', $timeStamp, time());
+        }
+        $columnI = 'f.id';
+        $conditionI = array('column' => $columnI, 'comparison' => 'in', 'value' => $filesInPost);
+        $filter[] = array(
+            'glue'      => 'and',
+            'condition' => array(
+                array(
+                    'glue'      => 'and',
+                    'condition' => $conditionI,
+                )
+            )
+        );
+        return $fModel->listFiles($filter, $sortOrder, $limit);
     }
     
     /**
@@ -3099,6 +3131,46 @@ class BlogModel extends CoreModel
         $qStr = 'DELETE FROM '.$this->entity['cobp']['name'].' '.$this->entity['cobp']['alias']
             .' WHERE '.$this->entity['cobp']['alias'].'.post = '.$post->getId()
             .' AND '.$this->entity['cobp']['alias'].'.category '.$in;
+
+        $q = $this->em->createQuery($qStr);
+        $result = $q->getResult();
+
+        $deleted = true;
+        if (!$result) {
+            $deleted = false;
+        }
+        if ($deleted) {
+            return new ModelResponse(null, 0, 0, null, false, 'S:D:001', 'Selected entries have been successfully removed from database.', $timeStamp, time());
+        }
+        return new ModelResponse(null, 0, 0, null, true, 'E:E:001', 'Unable to delete all or some of the selected entries.', $timeStamp, time());
+    }
+
+    /**
+     * @param array $files
+     * @param $post
+     * @return ModelResponse
+     */
+    public function removeFilesFromPost(array $files, $post){
+        $timeStamp = time();
+        $fModel = $this->kernel->getContainer()->get('filemanagement.model');
+
+        $response = $this->getBlogPost($post);
+        if($response->error->exist){
+            return $response;
+        }
+        $post = $response->result->set;
+        $idsToRemove = array();
+        foreach ($files as $file) {
+            $response = $fModel->getFile($file);
+            if($response->error->exist){
+                return $response;
+            }
+            $idsToRemove[] = $response->result->set->getId();
+        }
+        $in = ' IN (' . implode(',', $idsToRemove) . ')';
+        $qStr = 'DELETE FROM '.$this->entity['fobp']['name'].' '.$this->entity['fobp']['alias']
+            .' WHERE '.$this->entity['fobp']['alias'].'.post = '.$post->getId()
+            .' AND '.$this->entity['fobp']['alias'].'.file '.$in;
 
         $q = $this->em->createQuery($qStr);
         $result = $q->getResult();
