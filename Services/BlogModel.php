@@ -148,7 +148,7 @@ class BlogModel extends CoreModel{
         $now = new \DateTime('now', new \DateTimezone($this->kernel->getContainer()->getParameter('app_timezone')));
         $insertedItems = [];
         foreach($toAdd as $file){
-            $entity = new BundleEntity\CategoriesOfBlogPost();;
+            $entity = new BundleEntity\FilesOfBlogPost();;
             $entity->setFile($file)->setPost($post)->setDateAdded($now);
             $this->em->persist($entity);
             $insertedItems[] = $entity;
