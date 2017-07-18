@@ -138,7 +138,7 @@ class BlogModel extends CoreModel{
         foreach($files as $file){
             $response = $fModel->getFile($file);
             if($response->error->exist){
-                break;
+                continue;
             }
             $file = $response->result->set;
             if(!$this->isFileAssociatedWithBlogPost($file, $post, true)){
@@ -191,13 +191,13 @@ class BlogModel extends CoreModel{
         foreach ($posts as $post) {
             $response = $this->getBlogPost($post);
             if ($response->error->exist) {
-                break;
+                continue;
             }
             $post = $response->result->set;
 
             /** Check if association exists */
             if ($this->isPostAssociatedWithCategory($post, $category, true)) {
-                break;
+                continue;
             }
             /** prepare object */
             $assoc = new BundleEntity\CategoriesOfBlogPost();
